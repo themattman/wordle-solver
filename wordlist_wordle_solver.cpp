@@ -113,8 +113,6 @@ void RandomPlusWordleSolver::processResult(const WordleGuess& guess) {
     cout << "numSetWords before:" << m_wordSet.size() << endl;
     trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
     cout << "numSetWords green done:" << m_wordSet.size() << endl;
-    trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
-    cout << "numSetWords black done:" << m_wordSet.size() << endl;
     trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
     cout << "numSetWords yellow done:" << m_wordSet.size() << endl;
 
@@ -123,7 +121,9 @@ void RandomPlusWordleSolver::processResult(const WordleGuess& guess) {
     auto results = processIntersectionOfIncludes();
     propagateIncludes(guess, results);
     cout << "numSetWords done done:" << m_wordSet.size() << endl;
-    //printVector(m_wordSet);
+
+    trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
+    cout << "numSetWords black done:" << m_wordSet.size() << endl;
 }
 
 void RandomPlusWordleSolver::propagateIncludes(const WordleGuess& wg, const vector<string>& refinedResult) {
@@ -170,13 +170,10 @@ vector<string> RandomPlusWordleSolver::processIntersectionOfIncludes() {
         }
     }
 
-    //set<string> s(make_move_iterator(result.begin()), make_move_iterator(result.end()));
     set<string> s(first.begin(), first.end());
     m_wordSet = move(s);
 
     return first;
-
-    //copy(result.begin(), result.end(), m_wordSet.begin());
 }
 
 void RandomPlusWordleSolver::printVector(const vector<string>& v, const string& s) const {

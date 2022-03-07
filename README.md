@@ -4,7 +4,8 @@ Weekend project to come up with automated strategies to solve Wordle
 
 ## Setup
 ```
-g++ -g main.cpp -o solver
+cmake .
+make
 ```
 
 ## How to Use
