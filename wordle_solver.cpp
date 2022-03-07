@@ -30,16 +30,16 @@ int main() {
     auto solver = RandomPlusWordleSolver();
     size_t numGuesses = 1;
     WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
-    if (wg != CorrectWordleGuess) {
+    //if (wg != CorrectWordleGuess) {
         solver.processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
             wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
-            if (wg == CorrectWordleGuess) {
-                break;
-            }
+            // if (wg == CorrectWordleGuess) {
+            //     break;
+            // }
             solver.processResult(wg);
         }
-    }
+//}
 
     if (numGuesses >= MAX_GUESSES && wg != CorrectWordleGuess) {
         cout << "Darn!" << endl;

@@ -2,13 +2,14 @@
 
 #include "wordle_solver.h"
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <set>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
+//#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -54,7 +55,7 @@ protected:
     }
 
     vector<string> m_wordlist;
-    unordered_set<string> m_wordSet;
+    set<string> m_wordSet;
     vector<
         unordered_map<char, vector<string>>
         > m_letterMaps;
@@ -150,18 +151,44 @@ public:
 ///////////////////
 class RandomPlusWordleSolver : public RandomWordleSolver {
 public:
-    RandomPlusWordleSolver() : RandomWordleSolver() {}
+    RandomPlusWordleSolver() : RandomWordleSolver() {
+        for (size_t i = 0; i < LETTER_COUNT; i++) {
+            m_workingSets.push_back(set<string>());
+        }
+    }
 
     void processResult(const WordleGuess& guess) override {
-        if (guess != CorrectWordleGuess) {
-            // most restrictive -> least restrictive
-            cout << "numSetWords before:" << m_wordSet.size() << endl;
-            trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
-            cout << "numSetWords green done:" << m_wordSet.size() << endl;
-            trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
-            cout << "numSetWords black done:" << m_wordSet.size() << endl;
-            trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
-            cout << "numSetWords yellow done:" << m_wordSet.size() << endl;
+        // most restrictive -> least restrictive
+        cout << "numSetWords before:" << m_wordSet.size() << endl;
+        trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
+        cout << "numSetWords green done:" << m_wordSet.size() << endl;
+        trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
+        cout << "numSetWords black done:" << m_wordSet.size() << endl;
+        trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
+        cout << "numSetWords yellow done:" << m_wordSet.size() << endl;
+
+        // fix up wordSet
+        m_wordSet.clear();
+
+        for(size_t i = 0; i < LETTER_COUNT-1; i++) {
+            vector<string> first;
+            copy(m_workingSets[i].begin(), m_workingSets[i].end(), back_inserter(first));
+            vector<string> second;
+            copy(m_workingSets[i+1].begin(), m_workingSets[i+1].end(), back_inserter(second));
+            vector<string> third;
+
+            //if (m_workingSets[i].size() > 0 && m_workingSets[i+1].size() > 0) {
+            if (first.size() > 0 && second.size() > 0) {
+                //set_intersection(m_workingSets[i].begin(), m_workingSets[i].end(), m_workingSets[i+1].begin(), m_workingSets[i+1].end(), m_wordSet);
+                set_intersection(first.begin(), first.end(), second.begin(), second.end(), third.begin());
+                m_workingSets[i].clear();
+            }
+        }
+        m_workingSets[LETTER_COUNT-1].clear();
+
+        cout << "numSetWords done done:" << m_wordSet.size() << endl;
+        for (auto& w : m_wordSet) {
+            cout << " w:" << w << endl;
         }
     }
 protected:
@@ -176,31 +203,19 @@ protected:
     }
 
     void trimGreens(WordleGuess g, const vector<size_t>& positions) {
-        m_wordSet.clear();
         for (auto& p : positions) {
-            char curGreenChar = g.guessStr[p];
-            for (auto it = m_letterMaps[p][curGreenChar].begin(); it != m_letterMaps[p][curGreenChar].end(); it++) {
-                m_wordSet.insert(*it);
-            }
+            includeInSet(g.guessStr[p], p);
+            /* removeAllFromMapExcept(g.guessStr[p], p); */
         }
     }
 
     void trimYellows(WordleGuess g, const vector<size_t>& positions) {
         for (auto& p : positions) {
-            char curYellowChar = g.guessStr[p];
             for (size_t i = 0; i < LETTER_COUNT; i++) {
-                if (i != p) {
-                    // include in final answer
-                } else {
-                    //exclude
+                if (i == p) {
                     excludeFromSet(g.guessStr[p], i);
-                    /* for (auto it = m_letterMaps[i][curYellowChar].begin(); it != m_letterMaps[i][curYellowChar].end(); it++) { */
-                    /*     string& removeWord = *it; */
-                    /*     if (m_wordSet.find(removeWord) != m_wordSet.end()) { */
-                    /*         m_wordSet.erase(m_wordSet.find(removeWord)); */
-                    /*     } */
-                    /* } */
-                    /* m_letterMaps[i][curYellowChar].clear(); */
+                } else {
+                    includeInSet(g.guessStr[p], i);
                 }
             }
         }
@@ -209,11 +224,13 @@ protected:
     void trimBlacks(WordleGuess g, const vector<size_t>& positions) {
         for (auto& p : positions) {
             for (size_t i = 0; i < LETTER_COUNT; i++) {
-                // delete curBlackChar element from all maps, iterate over all elements and remove from master set
                 excludeFromSet(g.guessStr[p], i);
             }
         }
     }
+
+    /* void removeAllFromMapExcept(char excludeChar, size_t letterPosition) { */
+    /* } */
 
     void excludeFromSet(char excludeChar, size_t letterPosition) {
         for (auto it = m_letterMaps[letterPosition][excludeChar].begin(); it != m_letterMaps[letterPosition][excludeChar].end(); it++) {
@@ -225,6 +242,19 @@ protected:
         m_letterMaps[letterPosition][excludeChar].clear();
     }
 
-    void includeInSet() {
+    void includeInSet(char includeChar, size_t letterPosition) {
+        for (auto it = m_letterMaps[letterPosition][includeChar].begin(); it != m_letterMaps[letterPosition][includeChar].end(); it++) {
+            m_workingSets[letterPosition].insert(*it);
+        }
+
+        cout << "letter: [" << includeChar << "]" << endl;
+        for (auto it = m_letterMaps[letterPosition].begin(); it != m_letterMaps[letterPosition].end(); it++) {
+            if (it->first != includeChar) {
+                cout << " del:" << it->first << endl;
+                it->second.clear();
+            }
+        }
     }
+
+    vector<set<string>> m_workingSets;
 };
