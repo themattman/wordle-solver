@@ -62,6 +62,9 @@ protected:
     void trimBlacks(WordleGuess g, const vector<size_t>& positions);
     void excludeFromSet(char excludeChar, size_t letterPosition);
     void includeInSet(char includeChar, size_t letterPosition);
+    vector<string> processIntersectionOfIncludes();
+    void printVector(const vector<string>& v, const string& s) const;
+    void propagateIncludes(const WordleGuess& wg, const vector<string>& refinedResult);
 
     vector<set<string>> m_workingSets;
 };

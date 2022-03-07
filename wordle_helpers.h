@@ -13,11 +13,9 @@ class Helpers {
 public:
     static WordleGuess promptUser(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
-        cout << "> ";
 
         string input = collectUserInput(/*isRepeat=*/false);
         while(!isUserInputValid(input)) {
-            cout << "> ";
             input = collectUserInput(/*isRepeat=*/true);
         }
 
@@ -50,6 +48,7 @@ private:
         if (isRepeat) {
             cout << "Invalid response. Try again." << endl;
         }
+        cout << "> ";
         string userInput;
         cin >> userInput;
         return userInput;

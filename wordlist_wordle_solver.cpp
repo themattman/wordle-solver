@@ -120,18 +120,36 @@ void RandomPlusWordleSolver::processResult(const WordleGuess& guess) {
 
     // fix up wordSet
     m_wordSet.clear();
+    auto results = processIntersectionOfIncludes();
+    propagateIncludes(guess, results);
+    cout << "numSetWords done done:" << m_wordSet.size() << endl;
+    //printVector(m_wordSet);
+}
 
-    // Take set intersection of all includes
+void RandomPlusWordleSolver::propagateIncludes(const WordleGuess& wg, const vector<string>& refinedResult) {
+    for (size_t i = 0; i < LETTER_COUNT; i++) {
+        if (wg.results[i] == WordleResult::GREEN) {
+            char includeChar = wg.guessStr[i];
+            m_letterMaps[i][includeChar] = refinedResult;
+        }
+    }
+}
+
+vector<string> RandomPlusWordleSolver::processIntersectionOfIncludes() {
+    cout << "process-intersection-of-includes" << endl;
     vector<string> first;
     vector<string> result;
+    copy(m_workingSets[0].begin(), m_workingSets[0].end(), back_inserter(first));
+    m_workingSets[0].clear();
+    sort(first.begin(), first.end());
+
     for(size_t i = 0; i < LETTER_COUNT-1; i++) {
+        copy(m_workingSets[i].begin(), m_workingSets[i].end(), back_inserter(first));
+        m_workingSets[i].clear();
+        sort(first.begin(), first.end());
         if (first.size() == 0) {
-            copy(m_workingSets[i].begin(), m_workingSets[i].end(), back_inserter(first));
-            m_workingSets[i].clear();
-            sort(first.begin(), first.end());
-            if (first.size() == 0) {
-                continue;
-            }
+            cout << "first is empty" << endl;
+            continue;
         }
 
         vector<string> second;
@@ -140,15 +158,30 @@ void RandomPlusWordleSolver::processResult(const WordleGuess& guess) {
         sort(second.begin(), second.end());
 
         if (second.size() > 0) {
-            set_intersection(first.begin(), first.end(), second.begin(), second.end(), result.begin());
+            cout << "second isn't  empty" << endl;
+            printVector(first, "f");
+            printVector(second, "s");
+            set_intersection(first.begin(), first.end(), second.begin(), second.end(), inserter(result, result.begin()));
+            printVector(result, "r");
             first = result;
             result.clear();
+        } else {
+            cout << "second is empty" << endl;
         }
     }
-    m_workingSets[LETTER_COUNT-1].clear();
 
-    cout << "numSetWords done done:" << m_wordSet.size() << endl;
-    for (auto& w : m_wordSet) {
+    //set<string> s(make_move_iterator(result.begin()), make_move_iterator(result.end()));
+    set<string> s(first.begin(), first.end());
+    m_wordSet = move(s);
+
+    return first;
+
+    //copy(result.begin(), result.end(), m_wordSet.begin());
+}
+
+void RandomPlusWordleSolver::printVector(const vector<string>& v, const string& s) const {
+    cout << "vector " << s << " size:" << v.size() << endl;
+    for (auto& w : v) {
         cout << " w:" << w << endl;
     }
 }
