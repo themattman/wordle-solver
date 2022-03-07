@@ -21,6 +21,7 @@ Guess #2: ponds
 Guess #3: cloth
 > GGGGG # user input
 Hell yeah!
+Wordle 3/6
 ```
 
 
