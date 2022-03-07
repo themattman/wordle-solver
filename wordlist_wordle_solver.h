@@ -27,7 +27,6 @@ protected:
         > m_letterMaps;
 };
 
-
 /////////////////////
 
 class RandomWordleSolver : public WordlistWordleSolver {

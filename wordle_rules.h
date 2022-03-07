@@ -29,8 +29,8 @@ struct WordleGuess {
     }
 };
 
-auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN});
+static auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
+                                                  WordleResult::GREEN,
+                                                  WordleResult::GREEN,
+                                                  WordleResult::GREEN,
+                                                  WordleResult::GREEN});

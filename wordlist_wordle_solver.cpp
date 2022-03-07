@@ -1,5 +1,3 @@
-#pragma once
-
 #include "wordlist_wordle_solver.h"
 #include "wordle_rules.h"
 #include "wordle_solver.h"
@@ -59,14 +57,6 @@ string RandomWordleSolver::makeInitialGuess() {
     return "alive";
 }
 
-string RandomWordleSolver::makeSubsequentGuess() {
-    return makeInitialGuess();
-}
-
-size_t RandomWordleSolver::getRandomNumber() {
-    return rand() % m_wordlist.size();
-}
-
 bool RandomWordleSolver::containsDoubleLetter(string word) {
     for (size_t i = 0; i < word.size(); i++) {
         for (size_t j = i+1; j < word.size(); j++) {
@@ -118,7 +108,7 @@ RandomPlusWordleSolver::RandomPlusWordleSolver() : RandomWordleSolver() {
     }
 }
 
-void RandomPlusWordleSolver::processResult(const WordleGuess& guess) override {
+void RandomPlusWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
     cout << "numSetWords before:" << m_wordSet.size() << endl;
     trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
@@ -131,6 +121,7 @@ void RandomPlusWordleSolver::processResult(const WordleGuess& guess) override {
     // fix up wordSet
     m_wordSet.clear();
 
+    // Take set intersection of all includes
     vector<string> first;
     vector<string> result;
     for(size_t i = 0; i < LETTER_COUNT-1; i++) {
