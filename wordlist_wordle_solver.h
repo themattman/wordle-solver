@@ -35,17 +35,7 @@ protected:
             for (size_t i = 0; i < LETTER_COUNT; i++) {
                 char curChar = word[i];
                 if (m_letterMaps[i].find(curChar) != m_letterMaps[i].end()) {
-                    /* if (i == 2 && curChar == 'a') { */
-                    /*     cout << " w:" << word << endl; */
-                    /* } */
                     m_letterMaps[i][curChar].push_back(word);
-                    /* if (i == 2 && curChar == 'a') { */
-                    /*     cout << "--------" << endl; */
-                    /*     for (auto it = m_letterMaps[i][curChar].begin(); it != m_letterMaps[i][curChar].end(); it++) { */
-                    /*         cout << " wi:" << *it << endl; */
-                    /*     } */
-                    /*     cout << "========" << endl; */
-                    /* } */
                 } else {
                     m_letterMaps[i][curChar] = {word};
                 }
@@ -74,8 +64,7 @@ public:
         // - distribution of common letters
         if (m_wordSet.size() > 0) {
             size_t randomNumber = getRandomNumber();
-            //string candidateWord = m_wordlist[randomNumber];
-            string candidateWord = *(m_wordSet.begin()); // + randomNumber);
+            string candidateWord = *(m_wordSet.begin());
             while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
                 cout << "candidateWord not accepted:" << candidateWord << endl;
                 candidateWord = m_wordlist[randomNumber];
@@ -214,7 +203,6 @@ protected:
     void trimGreens(WordleGuess g, const vector<size_t>& positions) {
         for (auto& p : positions) {
             includeInSet(g.guessStr[p], p);
-            /* removeAllFromMapExcept(g.guessStr[p], p); */
         }
     }
 
@@ -237,9 +225,6 @@ protected:
             }
         }
     }
-
-    /* void removeAllFromMapExcept(char excludeChar, size_t letterPosition) { */
-    /* } */
 
     void excludeFromSet(char excludeChar, size_t letterPosition) {
         for (auto it = m_letterMaps[letterPosition][excludeChar].begin(); it != m_letterMaps[letterPosition][excludeChar].end(); it++) {
