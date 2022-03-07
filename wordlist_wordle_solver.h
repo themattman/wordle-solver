@@ -170,18 +170,27 @@ public:
         // fix up wordSet
         m_wordSet.clear();
 
+        vector<string> first;
+        vector<string> result;
         for(size_t i = 0; i < LETTER_COUNT-1; i++) {
-            vector<string> first;
-            copy(m_workingSets[i].begin(), m_workingSets[i].end(), back_inserter(first));
+            if (first.size() == 0) {
+                copy(m_workingSets[i].begin(), m_workingSets[i].end(), back_inserter(first));
+                m_workingSets[i].clear();
+                sort(first.begin(), first.end());
+                if (first.size() == 0) {
+                    continue;
+                }
+            }
+
             vector<string> second;
             copy(m_workingSets[i+1].begin(), m_workingSets[i+1].end(), back_inserter(second));
-            vector<string> third;
+            m_workingSets[i+1].clear();
+            sort(second.begin(), second.end());
 
-            //if (m_workingSets[i].size() > 0 && m_workingSets[i+1].size() > 0) {
-            if (first.size() > 0 && second.size() > 0) {
-                //set_intersection(m_workingSets[i].begin(), m_workingSets[i].end(), m_workingSets[i+1].begin(), m_workingSets[i+1].end(), m_wordSet);
-                set_intersection(first.begin(), first.end(), second.begin(), second.end(), third.begin());
-                m_workingSets[i].clear();
+            if (second.size() > 0) {
+                set_intersection(first.begin(), first.end(), second.begin(), second.end(), result.begin());
+                first = result;
+                result.clear();
             }
         }
         m_workingSets[LETTER_COUNT-1].clear();
