@@ -14,9 +14,9 @@ public:
     static WordleGuess promptUser(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
 
-        string input = collectUserInput();
-        while(isUserInputValid(input)) {
-            input = collectUserInput();
+        string input = collectUserInput(/*isRepeat=*/false);
+        while(!isUserInputValid(input)) {
+            input = collectUserInput(/*isRepeat=*/true);
         }
 
         return stringToWordleGuess(output, input);
@@ -44,7 +44,10 @@ private:
         return WordleGuess(guess, wr);
     }
 
-    static string collectUserInput() {
+    static string collectUserInput(bool isRepeat) {
+        if (isRepeat) {
+            cout << "Invalid response. Try again." << endl;
+        }
         string userInput;
         cin >> userInput;
         return userInput;
@@ -56,7 +59,7 @@ private:
         }
 
         for (auto& s : userInput) {
-            if (s == 'G' || s == 'Y' || s == 'B') {
+            if (!(s == 'G' || s == 'Y' || s == 'B')) {
                 return false;
             }
         }

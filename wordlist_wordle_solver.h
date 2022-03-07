@@ -71,9 +71,10 @@ public:
         // Put constraints like:
         // - no double letter
         // - distribution of common letters
-        if (m_wordlist.size() > 0) {
+        if (m_wordSet.size() > 0) {
             size_t randomNumber = getRandomNumber();
-            string candidateWord = m_wordlist[randomNumber];
+            //string candidateWord = m_wordlist[randomNumber];
+            string candidateWord = *(m_wordSet.begin()); // + randomNumber);
             while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
                 cout << "candidateWord not accepted:" << candidateWord << endl;
                 candidateWord = m_wordlist[randomNumber];
@@ -90,10 +91,11 @@ public:
     }
 protected:
     size_t getRandomNumber() {
-        random_device rd;  // obtain a random number from hardware
-        mt19937 gen(rd()); // seed the generator
-        uniform_int_distribution<> distr(0, m_wordlist.size()); // define the range
-        return distr(gen);
+        /* random_device rd;  // obtain a random number from hardware */
+        /* mt19937 gen(rd()); // seed the generator */
+        /* uniform_int_distribution<> distr(0, m_wordlist.size()); // define the range */
+        /* return distr(gen); */
+        return rand() % m_wordlist.size();
     }
 
     bool containsDoubleLetter(string word) {
@@ -151,9 +153,16 @@ public:
     RandomPlusWordleSolver() : RandomWordleSolver() {}
 
     void processResult(const WordleGuess& guess) override {
-        trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
-        trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
-        trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
+        if (guess != CorrectWordleGuess) {
+            // most restrictive -> least restrictive
+            cout << "numSetWords before:" << m_wordSet.size() << endl;
+            trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
+            cout << "numSetWords green done:" << m_wordSet.size() << endl;
+            trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
+            cout << "numSetWords black done:" << m_wordSet.size() << endl;
+            trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
+            cout << "numSetWords yellow done:" << m_wordSet.size() << endl;
+        }
     }
 protected:
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) {
@@ -167,89 +176,55 @@ protected:
     }
 
     void trimGreens(WordleGuess g, const vector<size_t>& positions) {
+        m_wordSet.clear();
         for (auto& p : positions) {
             char curGreenChar = g.guessStr[p];
-            cout << "numGreens: " << m_letterMaps[p][curGreenChar].size() << endl;
+            for (auto it = m_letterMaps[p][curGreenChar].begin(); it != m_letterMaps[p][curGreenChar].end(); it++) {
+                m_wordSet.insert(*it);
+            }
         }
-        //find_if(m_wordlist.begin(), m_wordlist.end(), matchesPosition);
     }
 
     void trimYellows(WordleGuess g, const vector<size_t>& positions) {
         for (auto& p : positions) {
             char curYellowChar = g.guessStr[p];
-            cout << "round [" << p << "]" << endl;
-            size_t sum = 0;
             for (size_t i = 0; i < LETTER_COUNT; i++) {
                 if (i != p) {
-                    cout << " numYellows: " << m_letterMaps[i][curYellowChar].size() << endl;
-                    sum += m_letterMaps[i][curYellowChar].size();
+                    // include in final answer
+                } else {
+                    //exclude
+                    excludeFromSet(g.guessStr[p], i);
+                    /* for (auto it = m_letterMaps[i][curYellowChar].begin(); it != m_letterMaps[i][curYellowChar].end(); it++) { */
+                    /*     string& removeWord = *it; */
+                    /*     if (m_wordSet.find(removeWord) != m_wordSet.end()) { */
+                    /*         m_wordSet.erase(m_wordSet.find(removeWord)); */
+                    /*     } */
+                    /* } */
+                    /* m_letterMaps[i][curYellowChar].clear(); */
                 }
             }
-            cout << " sum: " << sum << endl;
-            //cout << "numYellows: " << m_letterMaps[p][curYellowChar].size() << endl;
         }
     }
 
     void trimBlacks(WordleGuess g, const vector<size_t>& positions) {
         for (auto& p : positions) {
-            char curBlackChar = g.guessStr[p];
-            cout << "round [" << p << "]" << endl;
-            size_t sum = 0;
             for (size_t i = 0; i < LETTER_COUNT; i++) {
                 // delete curBlackChar element from all maps, iterate over all elements and remove from master set
-                cout << " numBlacks: " << m_letterMaps[i][curBlackChar].size() << endl;
-                sum += m_letterMaps[i][curBlackChar].size();
-                for (auto it = m_letterMaps[i][curBlackChar].begin(); it != m_letterMaps[i][curBlackChar].end(); i++) {
-                    cout << " =>" << *it << endl;
-                    //string& removeWord = *it;
-                    /* if (m_wordSet.find(removeWord) != m_wordSet.end()) { */
-                    /*     m_wordSet.erase(m_wordSet.find(removeWord)); */
-                    /* } else { */
-                    /*     cout << "noexist:" << removeWord << endl; */
-                    /* } */
-                }
-                //m_letterMaps[i][curBlackChar].clear();
+                excludeFromSet(g.guessStr[p], i);
             }
-            cout << " sum: " << sum << endl;
         }
-        /* for (auto& p : positions) { */
-        /*     vector<vector<>::iterator> deleteIdxs; */
-        /*     char incorrectLetter = g.guessStr[p]; */
-        /*     for (size_t i = 0; i < m_wordlist.size(); i++) { */
-        /*         if (m_wordlist[i][p] == incorrectLetter) { */
-        /*             deleteIdxs.push_back(i); */
-        /*         } */
-        /*     } */
-
-        /*     for (size_t i = 0; i < deleteIdxs.size(); i++) { */
-        /*     } */
-        /* } */
     }
 
-    /* unordered_set<string> m_wordSet; */
+    void excludeFromSet(char excludeChar, size_t letterPosition) {
+        for (auto it = m_letterMaps[letterPosition][excludeChar].begin(); it != m_letterMaps[letterPosition][excludeChar].end(); it++) {
+            string& removeWord = *it;
+            if (m_wordSet.find(removeWord) != m_wordSet.end()) {
+                m_wordSet.erase(m_wordSet.find(removeWord));
+            }
+        }
+        m_letterMaps[letterPosition][excludeChar].clear();
+    }
+
+    void includeInSet() {
+    }
 };
-
-/*
-
-
-set< >
-
-existence of letters in spot
-5 different slot maps.
-[a]: <>
-[b]: <>
-
-set_union for yellows
-deletes for blacks
-set_intersection for greens
-
-
-
-
-
-
-
-
-
-
- */
