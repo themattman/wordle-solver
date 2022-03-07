@@ -9,7 +9,6 @@
 #include <set>
 #include <string>
 #include <unordered_map>
-//#include <unordered_set>
 #include <vector>
 
 using namespace std;
@@ -111,7 +110,7 @@ protected:
             numVowels = isVowel(letter) ? numVowels+1 : numVowels;
         }
 
-        return numVowels > 1;
+        return numVowels <= 1;
     }
 };
 
