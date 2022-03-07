@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 static const size_t MAX_GUESSES  = 6;
@@ -11,17 +12,15 @@ enum class WordleResult {
     BLACK
 };
 
-auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN,
-                                           WordleResult::GREEN});
-
 struct WordleGuess {
-    WordleGuess(string cGuess, vector<WordleResult> cResults)
+    WordleGuess(std::string cGuess, std::vector<WordleResult> cResults)
         : guessStr(cGuess), results(cResults) {}
-    string guessStr;
-    vector<WordleResult> results;
+    WordleGuess(std::string cGuess)
+        : guessStr(cGuess) {
+            auto results = std::vector<WordleResult>{};
+        }
+    std::string guessStr;
+    std::vector<WordleResult> results;
     inline bool operator==(const WordleGuess& w1) const {
         return w1.results == results;
     }
@@ -29,3 +28,9 @@ struct WordleGuess {
         return w1.results != results;
     }
 };
+
+auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
+                                           WordleResult::GREEN,
+                                           WordleResult::GREEN,
+                                           WordleResult::GREEN,
+                                           WordleResult::GREEN});
