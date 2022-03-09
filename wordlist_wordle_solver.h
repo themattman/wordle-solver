@@ -78,6 +78,7 @@ class TrieBasedWordleSolver : public RandomWordleSolver {
 public:
     TrieBasedWordleSolver() = default;
     string makeInitialGuess() override;
+    string makeSubsequentGuess() override;
     void processResult(const WordleGuess& guess) override;
 protected:
     using WordlistWordleSolver::getRandomNumber;

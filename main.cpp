@@ -15,6 +15,7 @@ Echo best guess
 #include "wordle_solver.h"
 #include "wordlist_wordle_solver.h"
 #include "wordle_helpers.h"
+#include "wordle_checker.h"
 
 #include <fstream>
 #include <iostream>
@@ -26,7 +27,42 @@ using namespace std;
 
 
 int main() {
-    //auto solver = RandomPlusWordleSolver();
+    auto solver = TrieBasedWordleSolver();
+    auto checker = WordleChecker();
+    checker.setRandomAnswer();
+
+    size_t numGuesses = 0;
+    auto guess = WordleGuess(solver.makeInitialGuess());
+    cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
+    bool result = checker.check(guess, numGuesses);
+    if (guess != CorrectWordleGuess) {
+        if (result) {
+            solver.processResult(guess);
+        }
+        while (numGuesses <= MAX_GUESSES) {
+            guess = WordleGuess(solver.makeSubsequentGuess());
+            cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
+            result = checker.check(guess, numGuesses);
+            if (result) {
+                if (guess == CorrectWordleGuess) {
+                    break;
+                }
+                solver.processResult(guess);
+            }
+        }
+    }
+
+    if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+        cout << "Darn!" << endl;
+    } else {
+        cout << "Hell yeah!" << endl;
+        cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
+    }
+
+    return 0;
+}
+
+int userMain() {
     auto solver = TrieBasedWordleSolver();
     //return 0;
     size_t numGuesses = 1;
@@ -34,7 +70,7 @@ int main() {
     if (wg != CorrectWordleGuess) {
         solver.processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
+            wg = Helpers::promptUser(solver.makeSubsequentGuess(), numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
