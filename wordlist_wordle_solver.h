@@ -1,11 +1,9 @@
 #pragma once
 
 #include "wordle_solver.h"
+#include "wordle_trie.h"
 
-#include <algorithm>
-#include <fstream>
 #include <iostream>
-#include <random>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -16,10 +14,14 @@ using namespace std;
 
 class WordlistWordleSolver : public WordleSolver {
 public:
-    WordlistWordleSolver() { loadWordList(); }
+    WordlistWordleSolver() {
+        m_trie = new WordleTrie();
+        loadWordList();
+    }
 protected:
     void loadWordList();
 
+    WordleTrie* m_trie;
     vector<string> m_wordlist;
     set<string> m_wordSet;
     vector<
@@ -68,3 +70,6 @@ protected:
 
     vector<set<string>> m_workingSets;
 };
+
+//////////////////
+
