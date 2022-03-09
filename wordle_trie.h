@@ -44,6 +44,7 @@ public:
     }
     string getCandidate(size_t offset);
     size_t getNumCandidates() const { return m_candidates.size(); }
+    void printCandidates();
 private:
     friend WordleTrieNode::~WordleTrieNode();
 
