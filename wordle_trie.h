@@ -42,7 +42,8 @@ public:
     void fixupBlack(char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-
+    string getCandidate(size_t offset);
+    size_t getNumCandidates() const { return m_candidates.size(); }
 private:
     friend WordleTrieNode::~WordleTrieNode();
 
@@ -52,6 +53,7 @@ private:
     void removeAllOfLetter(char letter, WordleTrieNode& node);
     void removeSingleLetter(size_t letterPosition, char letter);
     void removeSiblingsExcept(size_t letterPosition, char letter);
+    void removeAllChildren(WordleTrieNode& node);
 
     WordleTrieNode* getChild(size_t letterPosition, char letter);
 

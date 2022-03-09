@@ -20,6 +20,7 @@ public:
     }
 protected:
     void loadWordList();
+    size_t getRandomNumber() { return rand() % m_trie->getNumCandidates(); }
 
     WordleTrie* m_trie;
     vector<string> m_wordlist;
@@ -76,12 +77,12 @@ protected:
 class TrieBasedWordleSolver : public RandomWordleSolver {
 public:
     TrieBasedWordleSolver() = default;
+    string makeInitialGuess() override;
     void processResult(const WordleGuess& guess) override;
 protected:
+    using WordlistWordleSolver::getRandomNumber;
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
     void trimGreens(WordleGuess g, const vector<size_t>& positions);
     void trimYellows(WordleGuess g, const vector<size_t>& positions);
     void trimBlacks(WordleGuess g, const vector<size_t>& positions);
-
-    vector<set<string>> m_workingSets;
 };
