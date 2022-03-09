@@ -100,9 +100,11 @@ void WordleTrie::removeLetterAtLevel(char letter, WordleTrieNode& node) {
 }
 
 void WordleTrie::printCandidates() {
+    cerr << "~~print~~" << endl;
     for (auto& c : m_candidates) {
         cerr << c << endl;
     }
+    cerr << "~~~~~~" << endl;
 }
 
 void WordleTrie::addAllOfLetterToSolution(char letter) {

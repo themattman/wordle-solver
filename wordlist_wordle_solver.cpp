@@ -294,6 +294,7 @@ string TrieBasedWordleSolver::makeInitialGuess() {
         string candidateWord = m_trie->getCandidate(getRandomNumber());
         while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
             candidateWord = m_trie->getCandidate(getRandomNumber());
+            cout << "c:" << candidateWord << endl;
         }
         return candidateWord;
     }
@@ -301,17 +302,27 @@ string TrieBasedWordleSolver::makeInitialGuess() {
     return "alive";
 }
 
+string TrieBasedWordleSolver::makeSubsequentGuess() {
+    if (m_trie->getNumCandidates() > 0) {
+        string candidateWord = m_trie->getCandidate(getRandomNumber());
+        if (candidateWord.size() == 0) {
+            throw;
+        }
+        return candidateWord;
+    }
+    throw;
+}
+
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    //cout << "numCandidates before:" << m_trie->getNumCandidates() << endl;
+    cout << "numCandidates before:" << m_trie->getNumCandidates() << endl;
     trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
-    //cout << "numCandidates green done:" << m_trie->getNumCandidates() << endl;
+    cout << "numCandidates green done:" << m_trie->getNumCandidates() << endl;
     trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
-    //cout << "numCandidates yellow done:" << m_trie->getNumCandidates() << endl;
-    // m_trie->completeAdds();
+    cout << "numCandidates yellow done:" << m_trie->getNumCandidates() << endl;
     trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
-    //cout << "numCandidates black done:" << m_trie->getNumCandidates() << endl;
-    //m_trie->printCandidates();
+    cout << "numCandidates black done:" << m_trie->getNumCandidates() << endl;
+    m_trie->printCandidates();
 }
 
 vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const {
