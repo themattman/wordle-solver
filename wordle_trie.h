@@ -12,16 +12,21 @@ class WordleTrie;
 class WordleTrieNode {
 public:
     WordleTrieNode() = delete;
-    WordleTrieNode(char v, WordleTrie* wt) : val(v), children(), m_wordleTrie(wt) {}
+    WordleTrieNode(char v, WordleTrie* wt, string prefix="", bool isLeaf=false)
+        : val(v), children(), m_wordleTrie(wt), m_prefix(prefix), m_isLeaf(isLeaf) {}
     char val;
-    vector<WordleTrieNode*> children;
+    vector<WordleTrieNode> children;
     ~WordleTrieNode();
     bool operator==(const WordleTrieNode& node) const {
         //cout << "v:" << node.val << "==" << val << endl;
         return node.val == val; }
     bool operator!=(const WordleTrieNode& node) const { return node.val != val; }
 private:
+    friend WordleTrie;
     WordleTrie* m_wordleTrie;
+    WordleTrieNode* m_parent;
+    bool m_isLeaf;
+    string m_prefix;
 };
 
 class WordleTrie {
@@ -35,16 +40,16 @@ public:
         removeSingleLetter(letterPosition, letter);
     }
     void fixupBlack(char letter) {
-        removeAllOfLetter(letter, m_root);
+        removeAllOfLetter(letter, *m_root);
     }
 
 private:
     friend WordleTrieNode::~WordleTrieNode();
 
-    void insertAtNode(string remainingWord, WordleTrieNode* node);
+    void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);
-    void removeFromCandidates(const vector<WordleTrieNode*>& candidates);
-    void removeAllOfLetter(char letter, WordleTrieNode* node);
+    void removeFromCandidates(WordleTrieNode* node);
+    void removeAllOfLetter(char letter, WordleTrieNode& node);
     void removeSingleLetter(size_t letterPosition, char letter);
     void removeSiblingsExcept(size_t letterPosition, char letter);
 

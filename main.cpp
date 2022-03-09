@@ -26,8 +26,9 @@ using namespace std;
 
 
 int main() {
-    auto solver = RandomPlusWordleSolver();
-    return 0;
+    //auto solver = RandomPlusWordleSolver();
+    auto solver = TrieBasedWordleSolver();
+    //return 0;
     size_t numGuesses = 1;
     WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
     if (wg != CorrectWordleGuess) {

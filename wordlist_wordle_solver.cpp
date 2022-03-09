@@ -225,7 +225,7 @@ void RandomPlusWordleSolver::printVector(const vector<string>& v, const string& 
     }
 }
 
-vector<size_t> RandomPlusWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) {
+vector<size_t> RandomPlusWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const {
     vector<size_t> positions;
     for (size_t i = 0; i < allPositions.size(); i++) {
         if (allPositions[i] == wr) {
@@ -282,5 +282,47 @@ void RandomPlusWordleSolver::includeInSet(char includeChar, size_t letterPositio
             cout << " del:" << it->first << endl;
             it->second.clear();
         }
+    }
+}
+
+/////////////////
+
+void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
+    // most restrictive -> least restrictive
+    cout << "numSetWords before:" << m_wordSet.size() << endl;
+    trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
+    cout << "numSetWords green done:" << m_wordSet.size() << endl;
+    trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
+    cout << "numSetWords yellow done:" << m_wordSet.size() << endl;
+    trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
+    cout << "numSetWords black done:" << m_wordSet.size() << endl;
+}
+
+vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const {
+    vector<size_t> positions;
+    for (size_t i = 0; i < allPositions.size(); i++) {
+        if (allPositions[i] == wr) {
+            positions.push_back(i);
+        }
+    }
+    return positions;
+}
+
+void TrieBasedWordleSolver::trimGreens(WordleGuess g, const vector<size_t>& positions) {
+    for (auto& p : positions) {
+        m_trie->fixupGreen(p, g.guessStr[p]);
+    }
+}
+
+void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& positions) {
+    for (auto& p : positions) {
+        m_trie->fixupYellow(p, g.guessStr[p]);
+    }
+}
+
+void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {
+    for (auto& p : positions) {
+        cout << "p:" << p << " l:" << g.guessStr[p] << endl;
+        m_trie->fixupBlack(g.guessStr[p]);
     }
 }

@@ -58,7 +58,7 @@ public:
     RandomPlusWordleSolver();
     void processResult(const WordleGuess& guess) override;
 protected:
-    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr);
+    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
     void trimGreens(WordleGuess g, const vector<size_t>& positions);
     void trimYellows(WordleGuess g, const vector<size_t>& positions);
     void trimBlacks(WordleGuess g, const vector<size_t>& positions);
@@ -73,3 +73,15 @@ protected:
 
 //////////////////
 
+class TrieBasedWordleSolver : public RandomWordleSolver {
+public:
+    TrieBasedWordleSolver() = default;
+    void processResult(const WordleGuess& guess) override;
+protected:
+    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
+    void trimGreens(WordleGuess g, const vector<size_t>& positions);
+    void trimYellows(WordleGuess g, const vector<size_t>& positions);
+    void trimBlacks(WordleGuess g, const vector<size_t>& positions);
+
+    vector<set<string>> m_workingSets;
+};
