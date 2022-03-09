@@ -55,6 +55,12 @@ Tree
 
  */
 
+WordlistWordleSolver::WordlistWordleSolver(Selector* s) {
+    *m_selector = *s;
+    m_trie = new WordleTrie();
+    loadWordList();
+}
+
 void WordlistWordleSolver::loadWordList() {
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         m_letterMaps.push_back(unordered_map<char, vector<string>>{});
@@ -83,45 +89,20 @@ void WordlistWordleSolver::loadWordList() {
 /////////////////////
 
 string RandomWordleSolver::makeInitialGuess() {
-    // Put constraints like:
-    // - no double letter
-    // - distribution of common letters
-    if (m_wordSet.size() > 0) {
-        size_t randomNumber = getRandomNumber();
-        string candidateWord = *(m_wordSet.begin());
-        while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
-            candidateWord = m_wordlist[randomNumber];
-        }
-        return candidateWord;
-    }
+    return m_selector->select(m_wordlist.begin(), m_wordlist.end());
+    // // Put constraints like:
+    // // - no double letter
+    // // - distribution of common letters
+    // if (m_wordSet.size() > 0) {
+    //     size_t randomNumber = getRandomNumber();
+    //     string candidateWord = *(m_wordSet.begin());
+    //     while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
+    //         candidateWord = m_wordlist[randomNumber];
+    //     }
+    //     return candidateWord;
+    // }
 
-    return "alive";
-}
-
-bool RandomWordleSolver::containsDoubleLetter(string word) {
-    for (size_t i = 0; i < word.size(); i++) {
-        for (size_t j = i+1; j < word.size(); j++) {
-            if (word[i] == word[j]) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-bool RandomWordleSolver::isVowel(char letter) {
-    return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'y');
-}
-
-bool RandomWordleSolver::containsOneVowel(string word) {
-    size_t numVowels = 0;
-
-    for (auto& letter : word) {
-        numVowels = isVowel(letter) ? numVowels+1 : numVowels;
-    }
-
-    return numVowels <= 1;
+    // return "alive";
 }
 
 ///////////////////
@@ -287,30 +268,34 @@ void RandomPlusWordleSolver::includeInSet(char includeChar, size_t letterPositio
 /////////////////
 
 string TrieBasedWordleSolver::makeInitialGuess() {
+    return m_selector->select(m_wordlist.begin(), m_wordlist.end());
+
     // Put constraints like:
     // - no double letter
     // - distribution of common letters
+    return "honey";
     if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate(getRandomNumber());
-        while (containsDoubleLetter(candidateWord) && containsOneVowel(candidateWord)) {
-            candidateWord = m_trie->getCandidate(getRandomNumber());
-            cout << "c:" << candidateWord << endl;
-        }
-        return candidateWord;
-    }
-
-    return "alive";
-}
-
-string TrieBasedWordleSolver::makeSubsequentGuess() {
-    if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate(getRandomNumber());
+        string candidateWord = m_trie->getCandidate();
         if (candidateWord.size() == 0) {
             throw;
         }
         return candidateWord;
     }
+
     throw;
+    //return "alive";
+}
+
+string TrieBasedWordleSolver::makeSubsequentGuess() {
+    return makeInitialGuess();
+    // if (m_trie->getNumCandidates() > 0) {
+    //     string candidateWord = m_trie->getCandidate();
+    //     if (candidateWord.size() == 0) {
+    //         throw;
+    //     }
+    //     return candidateWord;
+    // }
+    // throw;
 }
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
@@ -349,6 +334,7 @@ void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& pos
 
 void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {
     for (auto& p : positions) {
+        cout << "black [" << p << "]" << endl;
         m_trie->fixupBlack(g.guessStr[p]);
     }
 }

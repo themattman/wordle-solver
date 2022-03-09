@@ -14,10 +14,8 @@ using namespace std;
 
 class WordlistWordleSolver : public WordleSolver {
 public:
-    WordlistWordleSolver() {
-        m_trie = new WordleTrie();
-        loadWordList();
-    }
+    // TODO: how to inherit ctor from PV base class
+    WordlistWordleSolver(Selector s);
 protected:
     void loadWordList();
     size_t getRandomNumber() { return rand() % m_trie->getNumCandidates(); }
@@ -34,29 +32,23 @@ protected:
 
 class RandomWordleSolver : public WordlistWordleSolver {
 public:
-    RandomWordleSolver() : WordlistWordleSolver() {}
-    string makeInitialGuess();
-    string makeSubsequentGuess() { return makeInitialGuess(); }
+    string makeInitialGuess() override;
+    string makeSubsequentGuess() override { return makeInitialGuess(); }
 protected:
-    size_t getRandomNumber() { return rand() % m_wordlist.size(); }
-    bool containsDoubleLetter(string word);
-    bool isVowel(char letter);
-    bool containsOneVowel(string word);
+    size_t getRandomNumber() const { return rand() % m_wordlist.size(); }
 };
 
 ///////////////////
 
 class NaiveRandomWordleSolver : public RandomWordleSolver {
 public:
-    NaiveRandomWordleSolver() : RandomWordleSolver() {}
-    void processResult(const WordleGuess& guess);
+    void processResult(const WordleGuess& guess) override;
 };
 
 ///////////////////
 
 class RandomPlusWordleSolver : public RandomWordleSolver {
 public:
-    RandomPlusWordleSolver();
     void processResult(const WordleGuess& guess) override;
 protected:
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
@@ -76,7 +68,8 @@ protected:
 
 class TrieBasedWordleSolver : public RandomWordleSolver {
 public:
-    TrieBasedWordleSolver() = default;
+    using WordleSolver::WordleSolver;
+    // TrieBasedWordleSolver(Selector* s) {}
     string makeInitialGuess() override;
     string makeSubsequentGuess() override;
     void processResult(const WordleGuess& guess) override;

@@ -5,3 +5,5 @@ set(CMAKE_CXX_FLAGS "-std=c++14 -g")
 
 add_executable(solver main.cpp wordlist_wordle_solver.cpp wordle_trie.cpp wordle_checker.cpp)
 
+add_executable(test_solver wordle_checker_test.cpp wordle_checker.cpp)
+

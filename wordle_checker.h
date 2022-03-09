@@ -12,11 +12,17 @@ using namespace std;
 class WordleChecker {
 public:
     WordleChecker() : m_numGuesses(0) { loadDictionary(); }
+    /**
+      * true:  operation was success, answer is set
+      * false: input word not in dictionary
+      * throws if dictionary empty or (guess or answer) isn't correct length
+      */
     bool check(WordleGuess& wg, size_t& outNumGuesses);
-    /*
-     * true:  operation was success, answer is set
-     * false: input isn't valid
-     */
+
+    /**
+      * true:  operation was success, answer is set
+      * false: input isn't valid
+      */
     bool setAnswer(string answer);
     void setRandomAnswer();
 private:

@@ -14,8 +14,10 @@ Echo best guess
 
 #include "wordle_solver.h"
 #include "wordlist_wordle_solver.h"
-#include "wordle_helpers.h"
 #include "wordle_checker.h"
+#include "wordle_helpers.h"
+#include "wordle_selectors.h"
+
 
 #include <fstream>
 #include <iostream>
@@ -27,9 +29,11 @@ using namespace std;
 
 
 int main() {
-    auto solver = TrieBasedWordleSolver();
+    auto selector = EnhancedRandomSelector();
+    auto solver = TrieBasedWordleSolver(selector);
     auto checker = WordleChecker();
-    checker.setRandomAnswer();
+    //checker.setRandomAnswer();
+    checker.setAnswer("haute");
 
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver.makeInitialGuess());

@@ -39,7 +39,7 @@ public:
     void fixupBlack(char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(size_t offset);
+    string getCandidate();
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:
