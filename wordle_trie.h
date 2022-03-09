@@ -16,9 +16,7 @@ public:
         : val(v), children(), m_wordleTrie(wt), m_prefix(prefix), m_isLeaf(isLeaf) {}
     char val;
     vector<WordleTrieNode> children;
-    bool operator==(const WordleTrieNode& node) const {
-        //cout << "v:" << node.val << "==" << val << endl;
-        return node.val == val; }
+    bool operator==(const WordleTrieNode& node) const { return node.val == val; }
     bool operator!=(const WordleTrieNode& node) const { return node.val != val; }
 private:
     friend WordleTrie;
@@ -32,18 +30,11 @@ class WordleTrie {
 public:
     WordleTrie() { m_root = new WordleTrieNode('_', this); }
     bool insert(string word);
-    //void initiateTurn();
-    // take intersection of all m_workingSets
-    //void completeAdds();
     void fixupGreen(size_t letterPosition, char letter) {
         removeExceptLetterAtLevel(0, letterPosition, letter, *m_root);
-        //addLetterAtLevelToSolution(letterPosition, letter);
-        //removeSiblingsExcept(letterPosition, letter);
     }
     void fixupYellow(size_t letterPosition, char letter) {
         removeSingleLetter(letterPosition, letter);
-        //addAllOfLetterToSolution(letter);
-        //promoteLetter(letter);
     }
     void fixupBlack(char letter) {
         removeAllOfLetter(letter, *m_root);
