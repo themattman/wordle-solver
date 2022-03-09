@@ -314,7 +314,7 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     cout << "numCandidates yellow done:" << m_trie->getNumCandidates() << endl;
     trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
     cout << "numCandidates black done:" << m_trie->getNumCandidates() << endl;
-    m_trie->printCandidates();
+    //m_trie->printCandidates();
 }
 
 vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const {
@@ -334,9 +334,9 @@ void TrieBasedWordleSolver::trimGreens(WordleGuess g, const vector<size_t>& posi
 }
 
 void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& positions) {
-    // for (auto& p : positions) {
-    //     m_trie->fixupYellow(p, g.guessStr[p]);
-    // }
+    for (auto& p : positions) {
+        m_trie->fixupYellow(p, g.guessStr[p]);
+    }
 }
 
 void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {

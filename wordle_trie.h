@@ -16,7 +16,6 @@ public:
         : val(v), children(), m_wordleTrie(wt), m_prefix(prefix), m_isLeaf(isLeaf) {}
     char val;
     vector<WordleTrieNode> children;
-    ~WordleTrieNode();
     bool operator==(const WordleTrieNode& node) const {
         //cout << "v:" << node.val << "==" << val << endl;
         return node.val == val; }
@@ -38,6 +37,7 @@ public:
     }
     void fixupYellow(size_t letterPosition, char letter) {
         removeSingleLetter(letterPosition, letter);
+        //promoteLetter(letter);
     }
     void fixupBlack(char letter) {
         removeAllOfLetter(letter, *m_root);
@@ -46,14 +46,13 @@ public:
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:
-    friend WordleTrieNode::~WordleTrieNode();
-
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);
     void removeFromCandidates(WordleTrieNode* node);
+    void removeLetterAtLevel(char letter, WordleTrieNode& node);
     void removeAllOfLetter(char letter, WordleTrieNode& node);
     void removeSingleLetter(size_t letterPosition, char letter);
-    void removeSiblingsExcept(size_t letterPosition, char letter);
+    void removeSingleLetter(size_t curDepth, size_t letterPosition, char letter, WordleTrieNode& node);
     void removeAllChildren(WordleTrieNode& node);
 
     WordleTrieNode* getChild(size_t letterPosition, char letter);

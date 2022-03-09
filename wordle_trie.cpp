@@ -8,12 +8,6 @@
 
 using namespace std;
 
-WordleTrieNode::~WordleTrieNode() {
-    //cout << "dtor" << endl;
-    // if (m_wordleTrie) {
-    //     m_wordleTrie->removeFromCandidates(this);
-    // }
-}
 
 string WordleTrie::getCandidate(size_t offset) {
     if (offset >= m_candidates.size()) {
@@ -29,9 +23,7 @@ bool WordleTrie::insert(string word) {
         return false;
     }
     insertAtNode("", word, m_root);
-    // cout << m_candidates.size() << " insert(" << word << ") ";
     m_candidates.insert(word);
-    // cout << m_candidates.size() << endl;
     return true;
 }
 
@@ -61,7 +53,7 @@ bool WordleTrie::letterExists(char letter, WordleTrieNode* node, WordleTrieNode*
 
 void WordleTrie::removeFromCandidates(WordleTrieNode* node) {
     if (node->m_isLeaf) {
-        // cout << "isLeaf: [" << node->m_prefix+node->val << "]" << endl;
+        cout << "isLeaf: [" << node->m_prefix+node->val << "]" << endl;
         auto nodeIter = m_candidates.find(node->m_prefix+node->val);
         if (nodeIter != m_candidates.end()) {
             m_candidates.erase(nodeIter);
@@ -70,27 +62,26 @@ void WordleTrie::removeFromCandidates(WordleTrieNode* node) {
 }
 
 void WordleTrie::removeAllOfLetter(char letter, WordleTrieNode& node) {
-    vector<WordleTrieNode>::iterator toRemoveIter;
-
-    // Remove letter at current level, if it exists
+    // Base Case: At a leaf that can be deleted
     if (node.m_isLeaf && node.val == letter) {
-        //cout << "Removing" << node.m_prefix << "|" << node.val << endl;
         removeFromCandidates(&node);
-    } else {
-        for (auto it = node.children.begin(); it != node.children.end(); it++) {
-            if (it->val == letter) {
-                toRemoveIter = it;
-                // delete all children
-                removeAllChildren(*it);
-                removeFromCandidates(&(*toRemoveIter));
-                break;
-            }
-        }
+        return;
+    }
 
-        // Remove letter from all children
-        for (auto it = node.children.begin(); it != node.children.end(); it++) {
-            //cout << "recurse" << endl;
-            removeAllOfLetter(letter, *it);
+    removeLetterAtLevel(letter, node);
+ 
+    // Remove letter from all other children
+    for (auto it = node.children.begin(); it != node.children.end(); it++) {
+        removeAllOfLetter(letter, *it);
+    }
+}
+
+void WordleTrie::removeLetterAtLevel(char letter, WordleTrieNode& node) {
+   // Remove letter and its children at current level, if it exists
+    for (auto it = node.children.begin(); it != node.children.end(); it++) {
+        if (it->val == letter) {
+            removeAllChildren(*it);
+            break;
         }
     }
 }
@@ -102,17 +93,26 @@ void WordleTrie::printCandidates() {
 }
 
 void WordleTrie::removeSingleLetter(size_t letterPosition, char letter) {
+    removeSingleLetter(0, letterPosition, letter, *m_root);
 }
 
-void WordleTrie::removeSiblingsExcept(size_t letterPosition, char letter) {
+void WordleTrie::removeSingleLetter(size_t curDepth, size_t letterPosition, char letter, WordleTrieNode& node) {
+    if (curDepth == letterPosition) {
+        removeLetterAtLevel(letter, node);
+        return;
+    }
+    for (size_t i = 0; i < node.children.size(); i++) {
+        removeSingleLetter(curDepth + 1, letterPosition, letter, node.children[i]);
+    }
 }
 
 void WordleTrie::removeAllChildren(WordleTrieNode& node) {
+    if (node.m_isLeaf) {
+        removeFromCandidates(&node);
+        return;
+    }
+
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
-        if (it->m_isLeaf) {
-            removeFromCandidates(&(*it));
-        } else {
-            removeAllChildren(*it);
-        }
+        removeAllChildren(*it);
     }
 }
