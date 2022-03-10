@@ -1,6 +1,6 @@
 /*
- * Date: 03/06/2022
- * Author: Matt Kneiser
+ * Date:    03/06/2022
+ * Author:  Matt Kneiser
  * Purpose: Solve Wordle
  */
 
@@ -29,7 +29,7 @@ using namespace std;
 
 
 int main() {
-    auto selector = EnhancedRandomSelector();
+    auto selector = EnhancedRandomSelector<>(); // TODO: dependency is tricky here
     auto solver = TrieBasedWordleSolver(selector);
     auto checker = WordleChecker();
     //checker.setRandomAnswer();

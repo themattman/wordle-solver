@@ -32,6 +32,11 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
             wg.results.push_back(WordleResult::GREEN);
             m_frequencyMap[wg.guessStr[i]]--;
             cout << "G";
+        }
+    }
+
+    for (size_t i = 0; i < LETTER_COUNT; i++) {
+        if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
         } else if (m_answer.find(wg.guessStr[i]) != string::npos && m_frequencyMap[wg.guessStr[i]] != 0) {
             wg.results.push_back(WordleResult::YELLOW);
             cout << "Y";

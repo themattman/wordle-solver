@@ -1,21 +1,22 @@
 #include "wordle_selectors.h"
 
+#include <iterator>
 #include <string>
 
 using namespace std;
 
 // TODO: begin & end
-string RandomSelector::select(iterator begin, iterator end) {
+string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
     return *(begin + getRandom(begin, end));
 }
 
-size_t RandomSelector::getRandom(iterator begin, iterator end) {
+size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) {
     srand(time(NULL));
     size_t numElements = end-begin;
     return rand() % numElements;
 }
 
-string EnhancedRandomSelector::select(iterator begin, iterator end) {
+string EnhancedRandomSelector::select(ForwardIterator begin, ForwardIterator end) {
     string selection;
     do {
         selection = RandomSelector::select(begin, end);
@@ -51,7 +52,7 @@ bool EnhancedRandomSelector::containsOneVowel(const string& word) {
 
 ////////////////
 
-string MostCommonLetterSelector::select(iterator begin, iterator end) {
+string MostCommonLetterSelector::select(ForwardIterator begin, ForwardIterator end) {
     m_iterBegin = begin;
     m_iterEnd = end;
     computeFrequencyMap();

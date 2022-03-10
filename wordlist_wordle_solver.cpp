@@ -55,7 +55,8 @@ Tree
 
  */
 
-WordlistWordleSolver::WordlistWordleSolver(Selector* s) {
+template <typename FwdIter>
+WordlistWordleSolver::WordlistWordleSolver(Selector<FwdIter>* s) {
     *m_selector = *s;
     m_trie = new WordleTrie();
     loadWordList();
