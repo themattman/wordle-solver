@@ -21,14 +21,18 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
     }
 
     if (m_dict.find(wg.guessStr) == m_dict.end()) {
-        cout << "Not in dictionary. Try again." << endl;
+        if (DEBUG) {
+            cout << "Not in dictionary. Try again." << endl;
+        }
         return false;
     }
 
     auto result = vector<WordleResult>(LETTER_COUNT, WordleResult::BLACK);
 
     resetFrequencyMap();
-    cout << "      ";
+    if (DEBUG) {
+        cout << "      ";
+    }
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
             m_frequencyMap[wg.guessStr[i]]--;
@@ -52,19 +56,19 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
         switch(r) {
         case WordleResult::GREEN:
             wg.results.push_back(WordleResult::GREEN);
-            cout << "G";
+            if (DEBUG) cout << "G";
             break;
         case WordleResult::YELLOW:
             wg.results.push_back(WordleResult::YELLOW);
-            cout << "Y";
+            if (DEBUG) cout << "Y";
             break;
         case WordleResult::BLACK:
             wg.results.push_back(WordleResult::BLACK);
-            cout << "B";
+            if (DEBUG) cout << "B";
             break;
         }
     }
-    cout << endl;
+    if (DEBUG) cout << endl;
 
     outNumGuesses = ++m_numGuesses;
     return true;
@@ -86,7 +90,9 @@ bool WordleChecker::setAnswer(string answer) {
     }
 
     m_answer = answer;
-    cerr << "Answer set to: [" << answer << "]" << endl;
+    if (DEBUG) {
+        cerr << "Answer set to: [" << answer << "]" << endl;
+    }
     return true;
 }
 

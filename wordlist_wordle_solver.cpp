@@ -82,7 +82,9 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
     {
         eachLineCallback(word);
     }
-    cout << "Size of wordlist: " << m_wordlist.size() << endl;
+    if (DEBUG) {
+        cout << "Size of wordlist: " << m_wordlist.size() << endl;
+    }
 }
 
 /////////////////////
@@ -111,7 +113,9 @@ string TrieBasedWordleSolver::makeSubsequentGuess() {
 }
 
 void TrieBasedWordleSolver::printNumCands(const string& color) const {
-    cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
+    if (DEBUG) {
+        cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
+    }
 }
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {

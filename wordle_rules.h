@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#define DEBUG false
+
 static const size_t MAX_GUESSES  = 6;
 static const size_t LETTER_COUNT = 5;
 

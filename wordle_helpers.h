@@ -2,9 +2,12 @@
 
 #include "wordle_solver.h"
 
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
+
+#define DICTIONARY_FILENAME "answers.txt"
 
 using namespace std;
 
@@ -20,6 +23,22 @@ public:
         }
 
         return stringToWordleGuess(output, input);
+    }
+
+    static size_t getSizeOfDictionary(const string& filename=DICTIONARY_FILENAME) {
+        auto filein = ifstream(filename);
+        size_t sz = 0;
+        string word;
+        while (std::getline(filein, word)) { sz++; }
+        return sz;
+    }
+
+    static vector<string> getDictionary(const string& filename=DICTIONARY_FILENAME) {
+        auto filein = ifstream(filename);
+        vector<string> words;
+        string word;
+        while (std::getline(filein, word)) { words.push_back(word); }
+        return words;
     }
 private:
     static WordleGuess stringToWordleGuess(const string& guess, const string& str) {

@@ -17,7 +17,6 @@ $ ./solver [strategy selection]
 #include "wordle_helpers.h"
 #include "wordle_selectors.h"
 
-
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -27,7 +26,57 @@ $ ./solver [strategy selection]
 using namespace std;
 
 
-int main() {
+bool runGame(const string& answer) {
+    auto selector = new RandomSelector();
+    auto solver = new TrieBasedWordleSolver(selector);
+    auto checker = WordleChecker();
+    checker.setAnswer(answer);
+
+    size_t numGuesses = 0;
+    auto guess = WordleGuess(solver->makeInitialGuess());
+    bool result = checker.check(guess, numGuesses);
+    if (guess != CorrectWordleGuess) {
+        if (result) {
+            solver->processResult(guess);
+        }
+        while (numGuesses < MAX_GUESSES) {
+            guess = WordleGuess(solver->makeSubsequentGuess());
+            result = checker.check(guess, numGuesses);
+            if (result) {
+                if (guess == CorrectWordleGuess) {
+                    break;
+                }
+                solver->processResult(guess);
+            }
+        }
+    }
+
+    if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+        return false;
+    }
+
+    cerr << "ng:" << numGuesses << endl;
+    return true;
+}
+
+
+void runAllWords() {
+    size_t sz = Helpers::getSizeOfDictionary();
+    vector<string> words = Helpers::getDictionary();
+    size_t successes = 0;
+    size_t runs = 0;
+    for (; runs < sz; runs++) {
+        if (runGame(words[runs])) {
+            successes++;
+            cout << "success" << endl;
+        } else {
+            cout << "failure" << endl;
+        }
+    }
+    cout << successes << "/" << runs << endl;
+}
+
+void runDebug() {
     auto selector = new RandomSelector();
     auto solver = new TrieBasedWordleSolver(selector);
     auto checker = WordleChecker();
@@ -60,6 +109,11 @@ int main() {
         cout << "Hell yeah!" << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
     }
+}
+
+int main() {
+    runAllWords();
+    // runDebug();
 
     return 0;
 }
