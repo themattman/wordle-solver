@@ -14,7 +14,7 @@ using SetIterator = unordered_set<string>::iterator;
 
 class Selector {
 public:
-    Selector() = default;
+    Selector() { srand(time(nullptr)); }
     virtual string select(ForwardIterator begin, ForwardIterator end) = 0;
     // virtual string select(SetIterator begin, SetIterator end, size_t rangeSize) = 0;
 };

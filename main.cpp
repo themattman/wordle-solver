@@ -45,7 +45,7 @@ int main() {
         if (result) {
             solver->processResult(guess);
         }
-        while (numGuesses <= MAX_GUESSES) {
+        while (numGuesses < MAX_GUESSES) {
             guess = WordleGuess(solver->makeSubsequentGuess());
             cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
             result = checker.check(guess, numGuesses);

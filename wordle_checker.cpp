@@ -25,29 +25,49 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
         return false;
     }
 
+    auto result = vector<WordleResult>(LETTER_COUNT, WordleResult::BLACK);
+
     resetFrequencyMap();
-    cout << "      ";
+    //cout << "      ";
     for (size_t i = 0; i < LETTER_COUNT; i++) {
+        cout << "correctness:" << wg.guessStr[i] << "=" << m_answer[i] << "|" << m_frequencyMap[wg.guessStr[i]] << endl;
         if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
-            wg.results.push_back(WordleResult::GREEN);
+            cout << "match!" << endl;
             m_frequencyMap[wg.guessStr[i]]--;
-            cout << "G";
+            result[i] = WordleResult::GREEN;
         }
     }
 
     for (size_t i = 0; i < LETTER_COUNT; i++) {
-        if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
+        if (wg.guessStr[i] == m_answer[i]) {
+            // frequencyMap already updated
+            continue;
         } else if (m_answer.find(wg.guessStr[i]) != string::npos && m_frequencyMap[wg.guessStr[i]] != 0) {
+            m_frequencyMap[wg.guessStr[i]]--;
+            result[i] = WordleResult::YELLOW;
+        } else {
+            result[i] = WordleResult::BLACK;
+        }
+    }
+
+    for (auto& r : result) {
+        switch(r) {
+        case WordleResult::GREEN:
+            wg.results.push_back(WordleResult::GREEN);
+            cout << "G";
+            break;
+        case WordleResult::YELLOW:
             wg.results.push_back(WordleResult::YELLOW);
             cout << "Y";
-            m_frequencyMap[wg.guessStr[i]]--;
-        } else {
+            break;
+        case WordleResult::BLACK:
             wg.results.push_back(WordleResult::BLACK);
             cout << "B";
+            break;
         }
     }
-
     cout << endl;
+
     outNumGuesses = ++m_numGuesses;
     return true;
 }

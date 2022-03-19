@@ -56,8 +56,6 @@ Tree
  */
 
 WordlistWordleSolver::WordlistWordleSolver(Selector* s) : WordleSolver(s) {
-    cout << "WLWS" << endl;
-    cout << "WLWS:" << s << "|" << m_selector << endl;
     loadWordList();
 }
 

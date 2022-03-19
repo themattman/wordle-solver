@@ -8,7 +8,6 @@ using namespace std;
 
 // TODO: begin & end
 string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
-    cout << "select(" << endl;
     cout << "select0(" << *begin << endl;
     advance(begin, getRandom(begin, end));
     cout << "select1(" << *begin << endl;
@@ -23,8 +22,8 @@ string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
 // }
 
 size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) const {
-    srand(time(NULL));
     size_t numElements = end-begin;
+    cout << "numElems:" << numElements << "|" << rand() << endl;
     return rand() % numElements;
 }
 

@@ -31,16 +31,8 @@ protected:
 
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
-    //using WordlistWordleSolver::WordlistWordleSolver;
-    PassthroughWordleSolver(Selector* s) : WordlistWordleSolver(s) {
-        cout << "PTWS" << endl;
-        cout << "PTWS:" << s << "|" << m_selector << endl;
-    }
-    string makeInitialGuess() override { cout << "initial sz:" << m_wordlist.size() << " - " << m_selector << endl;
-        auto r = m_selector->select(m_wordlist.begin(), m_wordlist.end());
-        cout << "done" << endl;
-        return r;
-    }
+    using WordlistWordleSolver::WordlistWordleSolver;
+    string makeInitialGuess() override { return m_selector->select(m_wordlist.begin(), m_wordlist.end()); }
     string makeSubsequentGuess() override { cout << "subseq" << endl; return makeInitialGuess(); }
     void processResult(const WordleGuess& guess) override {}
 };
