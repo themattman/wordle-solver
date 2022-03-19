@@ -44,6 +44,10 @@ the Checker is the "referee."
 
   - Primitive 5-letter dictionary from the Internet
 
+- `guess_nums.txt`
+
+  - Results from current algorithm
+
 - `main.cpp`
 
   - main() lives here
@@ -83,16 +87,16 @@ the Checker is the "referee."
 
 ## ToDo
 
-- Get basic strategy working
+[X] Get basic strategy working
 
-- More complex strategies with letter distributions from the dictionary
+[] More complex strategies with letter distributions from the dictionary
 
-- Better dictionary
+[] Better dictionary
 
-- Support changing rules of game to more letters, more guesses, etc
+[] Support changing rules of game to more letters, more guesses, etc
 
-- Select strategy from cmd line
+[] Select strategy from cmd line
 
-- Automate hundreds of rounds of Solver v Checker
+[X] Automate hundreds of rounds of Solver v Checker
 
-- Measure success rates of various algos against whole dictionary
+[-] Measure success rates of various algos against whole dictionary
