@@ -58,7 +58,6 @@ Tree
 
 WordlistWordleSolver::WordlistWordleSolver(Selector* s) : WordleSolver(s) {
     loadWordList([this](const string& word) -> void {
-        //wl.insert(word);
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
         for (size_t i = 0; i < LETTER_COUNT; i++) {
@@ -97,9 +96,7 @@ TrieBasedWordleSolver::TrieBasedWordleSolver(Selector* s) : PassthroughWordleSol
 }
 
 string TrieBasedWordleSolver::makeInitialGuess() {
-    // cout << "initial trie g" << endl;
     if (m_trie->getNumCandidates() > 0) {
-        // cout << "initial trie g" << endl;
         string candidateWord = m_trie->getCandidate(m_selector);
         if (candidateWord.size() == 0) {
             throw;
@@ -112,14 +109,6 @@ string TrieBasedWordleSolver::makeInitialGuess() {
 
 string TrieBasedWordleSolver::makeSubsequentGuess() {
     return makeInitialGuess();
-    // if (m_trie->getNumCandidates() > 0) {
-    //     string candidateWord = m_trie->getCandidate();
-    //     if (candidateWord.size() == 0) {
-    //         throw;
-    //     }
-    //     return candidateWord;
-    // }
-    // throw;
 }
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {

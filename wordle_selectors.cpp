@@ -8,21 +8,16 @@ using namespace std;
 
 string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
     advance(begin, getRandom(begin, end));
-    cout << "selectFwd(" << *begin << ")" << endl;
     return *begin;
 }
 
 string RandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
-    cout << "selectSet()" << endl;
-    cout << "selectSet(" << *begin << ")" << endl;
     advance(begin, getRandom(begin, end, rangeSize));
-    cout << "selectSet(" << *begin << ")" << endl;
     return *begin;
 }
 
 size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) const {
     size_t numElements = end-begin;
-    cout << "numElems:" << numElements << "|" << rand() << endl;
     return rand() % numElements;
 }
 
@@ -131,7 +126,6 @@ void MostCommonLetterSelector::rateCandidates() {
     for (auto it = m_iterBegin; it != m_iterEnd; it++) {
         WordScore ws;
         ws.word = *it;
-        cout << "it:" << *it << endl;
         for (auto& c : ws.word) {
             auto letterScoreIt = m_frequencyMapWord.find(c);
             if (letterScoreIt != m_frequencyMapWord.end()) {
@@ -142,9 +136,7 @@ void MostCommonLetterSelector::rateCandidates() {
 
     sort(m_sortedWords.begin(), m_sortedWords.end(), compareWordScores);
     auto it = m_sortedWords.begin();
-    cout << "#1:" << it->word << endl;
     advance(it, 1);
-    cout << "#2:" << it->word << endl;
 }
 
 void MostCommonLetterSelector::computeFrequencyMap() {

@@ -34,7 +34,7 @@ class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
     string makeInitialGuess() override { return m_selector->select(m_wordlist.begin(), m_wordlist.end()); }
-    string makeSubsequentGuess() override { cout << "subseq" << endl; return makeInitialGuess(); }
+    string makeSubsequentGuess() override { return makeInitialGuess(); }
     void processResult(const WordleGuess& guess) override {}
 };
 

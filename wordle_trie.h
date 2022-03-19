@@ -42,7 +42,7 @@ public:
         removeAllOfLetter(letter, *m_root);
     }
     string getCandidate(Selector* selector);
-    size_t getNumCandidates() const { cout << "numCands:" << m_candidates.size() << endl; return m_candidates.size(); }
+    size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);

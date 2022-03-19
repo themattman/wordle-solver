@@ -58,9 +58,17 @@ the Checker is the "referee."
 
   - Basic game constraints defined here
 
+- `wordle_selectors.[h|cpp]`
+
+  - Selection Algorithms to feed to Solver
+
 - `wordle_solver.h`
 
   - Base class/interface for the Solver
+
+- `wordle_trie.[h|cpp]`
+
+  - Trie data structure used for Wordle
 
 - `wordlist_wordle_solver.[h|cpp]`
 

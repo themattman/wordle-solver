@@ -73,5 +73,26 @@ what does this mean for my algo?
 can i make a new selector strategy?
 RandomSelector<iterable>
 
+answer: haute
+ guess: verve
+        BBBBG
+ guess: veest
+        BYBBY
 
+^^ this tells me that you must handle greens first for elimination... but also need letter frequency before being overaggressive for blacks
+store all locations of same letter. if only letter and black, then eliminate all.
+otherwise, 
+
+if freq > 1
+ yellow = eliminate current
+ black = eliminate current
+
+
+Black:
+if letterFreqInGuess == 1
+ removeAll
+else if letterFreqInGuess == 2 && 1 == G:
+ removeAllExcept(depth)
+else if letterFreqInGuess == 2 && 1 == Y:
+ 
  */
