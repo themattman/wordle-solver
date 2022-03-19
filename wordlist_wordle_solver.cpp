@@ -82,7 +82,6 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
     {
         eachLineCallback(word);
     }
-    // cout << "Size of candidates: " << m_trie->getNumCandidates() << endl;
     cout << "Size of wordlist: " << m_wordlist.size() << endl;
 }
 
@@ -111,15 +110,18 @@ string TrieBasedWordleSolver::makeSubsequentGuess() {
     return makeInitialGuess();
 }
 
+void TrieBasedWordleSolver::printNumCands(const string& color) const {
+    cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
+}
+
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    cout << "numCandidates before:" << m_trie->getNumCandidates() << endl;
     trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
-    cout << "numCandidates green done:" << m_trie->getNumCandidates() << endl;
+    printNumCands("green");
     trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
-    cout << "numCandidates yellow done:" << m_trie->getNumCandidates() << endl;
+    printNumCands("yellow");
     trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
-    cout << "numCandidates black done:" << m_trie->getNumCandidates() << endl;
+    printNumCands("black");
     m_trie->printCandidates();
 }
 

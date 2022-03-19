@@ -9,7 +9,6 @@
 using namespace std;
 
 using ForwardIterator = vector<string>::iterator;
-// using SetIterator = unordered_set<string>::iterator;
 using SetIterator = set<string>::iterator;
 
 class Selector {
@@ -31,7 +30,7 @@ private:
 class EnhancedRandomSelector : public RandomSelector {
 public:
     string select(ForwardIterator begin, ForwardIterator end) override;
-    // string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
+    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -65,5 +64,5 @@ private:
     ForwardIterator m_iterEnd;
     unordered_map<char, size_t> m_frequencyMapLetter;
     unordered_map<char, size_t> m_frequencyMapWord;
-    vector<WordScore> m_sortedWords; //use customSorter approach? // for rating
+    vector<WordScore> m_sortedWords;
 };

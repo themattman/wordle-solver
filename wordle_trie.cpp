@@ -10,7 +10,6 @@ using namespace std;
 
 
 string WordleTrie::getCandidate(Selector* selector) {
-    // cout << "getCand" << endl;
     return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
 }
 
@@ -50,27 +49,21 @@ void WordleTrie::removeFromCandidates(WordleTrieNode* node) {
     if (node->m_isLeaf) {
         auto nodeIter = m_candidates.find(node->m_prefix+node->val);
         if (nodeIter != m_candidates.end()) {
-            if (*nodeIter == "haute") {
-                cout << node->m_prefix <<"|" << node->val << endl;
-            }
             m_candidates.erase(nodeIter);
         }
     }
 }
 
 void WordleTrie::removeAllOfLetter(char letter, WordleTrieNode& node) {
-    // cout << "removeAllOfLetter(" << letter << "," << node.val << endl;
     // Base Case: At a leaf that can be deleted
     if (node.m_isLeaf && node.val == letter) {
         removeFromCandidates(&node);
         return;
     }
 
-    // cout << "removeAllOfLetter(" << letter << "," << node.val << ")" << endl;
     removeLetterAtLevel(letter, node);
  
     // Remove letter from all other children
-    // cout << "for ("<< letter << "," << node.val << ")" << endl;
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
         removeAllOfLetter(letter, *it);
     }
@@ -92,7 +85,6 @@ void WordleTrie::removeExceptLetterAtLevel(size_t curDepth, size_t letterPositio
 }
 
 void WordleTrie::removeLetterAtLevel(char letter, WordleTrieNode& node) {
-    // cout << "removeLetterAtLevel(" << letter << "," << node.val << endl;
    // Remove letter and its children at current level, if it exists
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
         if (it->val == letter) {
@@ -103,11 +95,11 @@ void WordleTrie::removeLetterAtLevel(char letter, WordleTrieNode& node) {
 }
 
 void WordleTrie::printCandidates() {
-    cerr << "~~print~~" << endl;
-    for (auto& c : m_candidates) {
-        cerr << c << endl;
-    }
-    cerr << "~~~~~~" << endl;
+    // cerr << "~~print~~" << endl;
+    // for (auto& c : m_candidates) {
+    //     cerr << c << endl;
+    // }
+    // cerr << "~~~~~~" << endl;
 }
 
 void WordleTrie::addAllOfLetterToSolution(char letter) {

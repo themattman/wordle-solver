@@ -41,7 +41,6 @@ public:
             removeSingleLetter(letterPosition, letter);
         } else {
             removeSingleLetter(letterPosition, letter);
-            //removeSingleLetter(0, letterPosition, letter, *m_root); ?
         }
     }
     void fixupBlack(size_t letterPosition, char letter, const string& guessStr) {

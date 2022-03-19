@@ -34,13 +34,13 @@ string EnhancedRandomSelector::select(ForwardIterator begin, ForwardIterator end
     return selection;
 }
 
-// string EnhancedRandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
-//     string selection;
-//     do {
-//         selection = RandomSelector::select(begin, end, rangeSize);
-//     } while (containsDoubleLetter(selection) && containsOneVowel(selection));
-//     return selection;
-// }
+string EnhancedRandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
+    string selection;
+    do {
+        selection = RandomSelector::select(begin, end, rangeSize);
+    } while (containsDoubleLetter(selection) && containsOneVowel(selection));
+    return selection;
+}
 
 bool EnhancedRandomSelector::containsDoubleLetter(const string& word) const {
     for (size_t i = 0; i < word.size(); i++) {

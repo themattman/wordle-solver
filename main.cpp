@@ -1,4 +1,4 @@
-/*
+/**
  * Date:    03/06/2022
  * Author:  Matt Kneiser
  * Purpose: Solve Wordle
@@ -6,10 +6,9 @@
 
 /*
 $ ./solver [strategy selection]
-Spit out random word
-Take user input for correct/incorrect letters via B/Y/G
-Echo best guess
-<repeat>
+1. Echo best guess
+2. Checker checks the guess
+<repeat MAX_GUESSES times>
  */
 
 #include "wordle_solver.h"
@@ -29,12 +28,9 @@ using namespace std;
 
 
 int main() {
-    // auto selector = new EnhancedRandomSelector();
     auto selector = new RandomSelector();
     auto solver = new TrieBasedWordleSolver(selector);
-    // auto solver = new PassthroughWordleSolver(selector);
     auto checker = WordleChecker();
-    //checker.setRandomAnswer();
     checker.setAnswer("haute");
 
     size_t numGuesses = 0;
@@ -67,29 +63,3 @@ int main() {
 
     return 0;
 }
-
-// int userMain() {
-//     auto solver = TrieBasedWordleSolver();
-//     //return 0;
-//     size_t numGuesses = 1;
-//     WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
-//     if (wg != CorrectWordleGuess) {
-//         solver.processResult(wg);
-//         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-//             wg = Helpers::promptUser(solver.makeSubsequentGuess(), numGuesses);
-//             if (wg == CorrectWordleGuess) {
-//                 break;
-//             }
-//             solver.processResult(wg);
-//         }
-//     }
-
-//     if (numGuesses >= MAX_GUESSES && wg != CorrectWordleGuess) {
-//         cout << "Darn!" << endl;
-//     } else {
-//         cout << "Hell yeah!" << endl;
-//         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
-//     }
-
-//     return 0;
-// }
