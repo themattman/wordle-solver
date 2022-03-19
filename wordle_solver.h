@@ -8,13 +8,13 @@
 using namespace std;
 
 
-template <typename FwdIter>
 class WordleSolver {
 public:
-    WordleSolver(Selector<FwdIter>* s) { *m_selector = *s; }
+    WordleSolver() = default;
+    WordleSolver(Selector* s) { *m_selector = *s; }
     virtual string makeInitialGuess() = 0;
     virtual void processResult(const WordleGuess& guess) = 0;
     virtual string makeSubsequentGuess() = 0;
-private:
-    Selector<FwdIter>* m_selector;
+protected:
+    Selector* m_selector;
 };

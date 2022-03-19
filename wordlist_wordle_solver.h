@@ -12,11 +12,11 @@
 using namespace std;
 
 
-template <typename FwdIter>
-class WordlistWordleSolver : public WordleSolver<FwdIter> {
+class WordlistWordleSolver : public WordleSolver {
 public:
     // TODO: how to inherit ctor from PV base class
-    WordlistWordleSolver(Selector<FwdIter>* s);
+    using WordleSolver::WordleSolver;
+    WordlistWordleSolver(Selector* s);
 protected:
     void loadWordList();
     size_t getRandomNumber() { return rand() % m_trie->getNumCandidates(); }
@@ -31,28 +31,27 @@ protected:
 
 /////////////////////
 
-template <typename FwdIter>
-class RandomWordleSolver : public WordlistWordleSolver<FwdIter> {
+class RandomWordleSolver : public WordlistWordleSolver {
 public:
+    using WordlistWordleSolver::WordlistWordleSolver;
     string makeInitialGuess() override;
     string makeSubsequentGuess() override { return makeInitialGuess(); }
 protected:
-    size_t getRandomNumber() const { return rand() % WordlistWordleSolver<FwdIter>::m_wordlist.size(); }
+    size_t getRandomNumber() const { return rand() % WordlistWordleSolver::m_wordlist.size(); }
 };
 
 ///////////////////
 
-template <typename FwdIter>
-class NaiveRandomWordleSolver : public RandomWordleSolver<FwdIter> {
+class NaiveRandomWordleSolver : public RandomWordleSolver {
 public:
     void processResult(const WordleGuess& guess) override;
 };
 
 ///////////////////
 
-template <typename FwdIter>
-class RandomPlusWordleSolver : public RandomWordleSolver<FwdIter> {
+class RandomPlusWordleSolver : public RandomWordleSolver {
 public:
+    RandomPlusWordleSolver();
     void processResult(const WordleGuess& guess) override;
 protected:
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
@@ -70,16 +69,16 @@ protected:
 
 //////////////////
 
-template <typename FwdIter>
-class TrieBasedWordleSolver : public RandomWordleSolver<FwdIter> {
+class TrieBasedWordleSolver : public RandomWordleSolver {
 public:
+    using RandomWordleSolver::RandomWordleSolver;
     //using WordleSolver::WordleSolver;
     // TrieBasedWordleSolver(Selector* s) {}
     string makeInitialGuess() override;
     string makeSubsequentGuess() override;
     void processResult(const WordleGuess& guess) override;
 protected:
-    using WordlistWordleSolver<FwdIter>::getRandomNumber;
+    using WordlistWordleSolver::getRandomNumber;
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
     void trimGreens(WordleGuess g, const vector<size_t>& positions);
     void trimYellows(WordleGuess g, const vector<size_t>& positions);

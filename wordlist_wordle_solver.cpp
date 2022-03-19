@@ -55,8 +55,7 @@ Tree
 
  */
 
-template <typename FwdIter>
-WordlistWordleSolver::WordlistWordleSolver(Selector<FwdIter>* s) {
+WordlistWordleSolver::WordlistWordleSolver(Selector* s) {
     *m_selector = *s;
     m_trie = new WordleTrie();
     loadWordList();
@@ -269,14 +268,14 @@ void RandomPlusWordleSolver::includeInSet(char includeChar, size_t letterPositio
 /////////////////
 
 string TrieBasedWordleSolver::makeInitialGuess() {
-    return m_selector->select(m_wordlist.begin(), m_wordlist.end());
+    // return m_selector->select(m_wordlist.begin(), m_wordlist.end());
 
     // Put constraints like:
     // - no double letter
     // - distribution of common letters
-    return "honey";
+    // return "honey";
     if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate();
+        string candidateWord = m_trie->getCandidate(m_selector);
         if (candidateWord.size() == 0) {
             throw;
         }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "wordle_solver.h"
 
 #include <iostream>
@@ -39,7 +41,7 @@ public:
     void fixupBlack(char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate();
+    string getCandidate(Selector* selector);
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:

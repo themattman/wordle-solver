@@ -1,31 +1,37 @@
 #pragma once
 
 #include <iterator>
+#include <set>
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 using namespace std;
 
-template <typename ForwardIterator>
+using ForwardIterator = vector<string>::iterator;
+using SetIterator = unordered_set<string>::iterator;
+
 class Selector {
 public:
     Selector() = default;
     virtual string select(ForwardIterator begin, ForwardIterator end) = 0;
+    virtual string select(SetIterator begin, SetIterator end, size_t rangeSize) = 0;
 };
 
-template <typename ForwardIterator>
-class RandomSelector : Selector<ForwardIterator> {
+class RandomSelector : public Selector {
 public:
     string select(ForwardIterator begin, ForwardIterator end) override;
+    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
 private:
     size_t getRandom(ForwardIterator begin, ForwardIterator end) const;
+    size_t getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const;
 };
 
-template <typename ForwardIterator>
-class EnhancedRandomSelector : RandomSelector<ForwardIterator> {
+class EnhancedRandomSelector : public RandomSelector {
 public:
     string select(ForwardIterator begin, ForwardIterator end) override;
+    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -40,20 +46,20 @@ struct WordScore {
     size_t score;
 };
 
-bool compareWordScores(const WordScore& w1, const WordScore& w2) {
+inline bool compareWordScores(const WordScore& w1, const WordScore& w2) {
     return w1.score < w2.score;
 }
 
-template <typename ForwardIterator>
-class MostCommonLetterSelector : Selector<ForwardIterator> {
+class MostCommonLetterSelector : public Selector {
 public:
     string select(ForwardIterator begin, ForwardIterator end) override;
 private:
     string getBestCandidate() const;
     string getWordWithMostCommonLetter(char letter) const;
     char getMostCommonLetter() const;
+    void rateCandidates();
     void computeFrequencyMap();
-    char count(char letter, const string& word) const;
+    size_t count(char letter, const string& word) const;
 
     ForwardIterator m_iterBegin;
     ForwardIterator m_iterEnd;
