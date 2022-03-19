@@ -3,6 +3,7 @@
 #include "wordle_solver.h"
 #include "wordle_trie.h"
 
+#include <functional>
 #include <iostream>
 #include <set>
 #include <string>
@@ -18,7 +19,7 @@ public:
     using WordleSolver::WordleSolver;
     WordlistWordleSolver(Selector* s);
 protected:
-    void loadWordList();
+    void loadWordList(function<void(string)> eachLineCallbackActor);
 
     vector<string> m_wordlist;
     set<string> m_wordSet;
@@ -41,10 +42,8 @@ public:
 
 class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
-    TrieBasedWordleSolver(Selector* s) : PassthroughWordleSolver(s) {
-        m_trie = new WordleTrie();
-    };
     using PassthroughWordleSolver::PassthroughWordleSolver;
+    TrieBasedWordleSolver(Selector* s);
     string makeInitialGuess() override;
     string makeSubsequentGuess() override;
     void processResult(const WordleGuess& guess) override;

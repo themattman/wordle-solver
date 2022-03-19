@@ -28,11 +28,9 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
     auto result = vector<WordleResult>(LETTER_COUNT, WordleResult::BLACK);
 
     resetFrequencyMap();
-    //cout << "      ";
+    cout << "      ";
     for (size_t i = 0; i < LETTER_COUNT; i++) {
-        cout << "correctness:" << wg.guessStr[i] << "=" << m_answer[i] << "|" << m_frequencyMap[wg.guessStr[i]] << endl;
         if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
-            cout << "match!" << endl;
             m_frequencyMap[wg.guessStr[i]]--;
             result[i] = WordleResult::GREEN;
         }

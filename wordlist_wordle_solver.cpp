@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <fstream>
+#include <functional>
 #include <iostream>
 #include <random>
 #include <set>
@@ -56,20 +57,8 @@ Tree
  */
 
 WordlistWordleSolver::WordlistWordleSolver(Selector* s) : WordleSolver(s) {
-    loadWordList();
-}
-
-void WordlistWordleSolver::loadWordList() { // eachLineCallbackActor
-    for (size_t i = 0; i < LETTER_COUNT; i++) {
-        m_letterMaps.push_back(unordered_map<char, vector<string>>{});
-    }
-    // src: https://raw.githubusercontent.com/printfn/wordle-dict/main/answers.txt
-    auto filein = ifstream("answers.txt");
-    string word;
-    while (std::getline(filein, word))
-    {
-        // TODO: initialize trie in derived
-        //m_trie->insert(word);
+    loadWordList([this](const string& word) -> void {
+        //wl.insert(word);
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
         for (size_t i = 0; i < LETTER_COUNT; i++) {
@@ -80,6 +69,19 @@ void WordlistWordleSolver::loadWordList() { // eachLineCallbackActor
                 m_letterMaps[i][curChar] = {word};
             }
         }
+    });
+}
+
+void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback) {
+    for (size_t i = 0; i < LETTER_COUNT; i++) {
+        m_letterMaps.push_back(unordered_map<char, vector<string>>{});
+    }
+    // src: https://raw.githubusercontent.com/printfn/wordle-dict/main/answers.txt
+    auto filein = ifstream("answers.txt");
+    string word;
+    while (std::getline(filein, word))
+    {
+        eachLineCallback(word);
     }
     // cout << "Size of candidates: " << m_trie->getNumCandidates() << endl;
     cout << "Size of wordlist: " << m_wordlist.size() << endl;
@@ -87,8 +89,17 @@ void WordlistWordleSolver::loadWordList() { // eachLineCallbackActor
 
 /////////////////////
 
+TrieBasedWordleSolver::TrieBasedWordleSolver(Selector* s) : PassthroughWordleSolver(s) {
+    m_trie = new WordleTrie();
+    loadWordList([this](const string& line){
+        m_trie->insert(line);
+    });
+}
+
 string TrieBasedWordleSolver::makeInitialGuess() {
+    // cout << "initial trie g" << endl;
     if (m_trie->getNumCandidates() > 0) {
+        // cout << "initial trie g" << endl;
         string candidateWord = m_trie->getCandidate(m_selector);
         if (candidateWord.size() == 0) {
             throw;
@@ -147,7 +158,6 @@ void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& pos
 
 void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        cout << "black [" << p << "]" << endl;
         m_trie->fixupBlack(g.guessStr[p]);
     }
 }

@@ -10,7 +10,8 @@ using namespace std;
 
 
 string WordleTrie::getCandidate(Selector* selector) {
-    return ""; //selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
+    // cout << "getCand" << endl;
+    return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
 }
 
 bool WordleTrie::insert(string word) {
@@ -65,11 +66,11 @@ void WordleTrie::removeAllOfLetter(char letter, WordleTrieNode& node) {
         return;
     }
 
-    cout << "removeAllOfLetter(" << letter << "," << node.val << ")" << endl;
+    // cout << "removeAllOfLetter(" << letter << "," << node.val << ")" << endl;
     removeLetterAtLevel(letter, node);
  
     // Remove letter from all other children
-    cout << "for ("<< letter << "," << node.val << ")" << endl;
+    // cout << "for ("<< letter << "," << node.val << ")" << endl;
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
         removeAllOfLetter(letter, *it);
     }

@@ -31,8 +31,8 @@ using namespace std;
 int main() {
     // auto selector = new EnhancedRandomSelector();
     auto selector = new RandomSelector();
-    // auto solver = new TrieBasedWordleSolver(selector);
-    auto solver = new PassthroughWordleSolver(selector);
+    auto solver = new TrieBasedWordleSolver(selector);
+    // auto solver = new PassthroughWordleSolver(selector);
     auto checker = WordleChecker();
     //checker.setRandomAnswer();
     checker.setAnswer("haute");

@@ -4,28 +4,28 @@
 #include <set>
 #include <string>
 #include <unordered_map>
-#include <unordered_set>
 #include <vector>
 
 using namespace std;
 
 using ForwardIterator = vector<string>::iterator;
-using SetIterator = unordered_set<string>::iterator;
+// using SetIterator = unordered_set<string>::iterator;
+using SetIterator = set<string>::iterator;
 
 class Selector {
 public:
     Selector() { srand(time(nullptr)); }
     virtual string select(ForwardIterator begin, ForwardIterator end) = 0;
-    // virtual string select(SetIterator begin, SetIterator end, size_t rangeSize) = 0;
+    virtual string select(SetIterator begin, SetIterator end, size_t rangeSize) = 0;
 };
 
 class RandomSelector : public Selector {
 public:
     string select(ForwardIterator begin, ForwardIterator end) override;
-    // string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
+    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
 private:
     size_t getRandom(ForwardIterator begin, ForwardIterator end) const;
-    // size_t getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const;
+    size_t getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const;
 };
 
 class EnhancedRandomSelector : public RandomSelector {

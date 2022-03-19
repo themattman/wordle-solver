@@ -6,20 +6,19 @@
 
 using namespace std;
 
-// TODO: begin & end
 string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
-    cout << "select0(" << *begin << endl;
     advance(begin, getRandom(begin, end));
-    cout << "select1(" << *begin << endl;
+    cout << "selectFwd(" << *begin << ")" << endl;
     return *begin;
-    // return *(begin + getRandom(begin, end));
 }
 
-// string RandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
-//     advance(begin, getRandom(begin, end, rangeSize));
-//     return *begin;
-//     // return *(begin + getRandom(begin, end, rangeSize));
-// }
+string RandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
+    cout << "selectSet()" << endl;
+    cout << "selectSet(" << *begin << ")" << endl;
+    advance(begin, getRandom(begin, end, rangeSize));
+    cout << "selectSet(" << *begin << ")" << endl;
+    return *begin;
+}
 
 size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) const {
     size_t numElements = end-begin;
@@ -27,10 +26,10 @@ size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) con
     return rand() % numElements;
 }
 
-// size_t RandomSelector::getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const {
-//     srand(time(NULL));
-//     return rand() % rangeSize;
-// }
+size_t RandomSelector::getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const {
+    srand(time(NULL));
+    return rand() % rangeSize;
+}
 
 string EnhancedRandomSelector::select(ForwardIterator begin, ForwardIterator end) {
     string selection;
@@ -150,7 +149,7 @@ void MostCommonLetterSelector::rateCandidates() {
 
 void MostCommonLetterSelector::computeFrequencyMap() {
     for (auto it = m_iterBegin; it != m_iterEnd; it++) {
-        unordered_set<char> lettersInWord;
+        set<char> lettersInWord;
         for (auto& c : *it) {
             if (m_frequencyMapLetter.find(c) == m_frequencyMapLetter.end()) {
                 if (lettersInWord.find(c) == lettersInWord.end()) {
