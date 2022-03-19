@@ -141,12 +141,12 @@ void TrieBasedWordleSolver::trimGreens(WordleGuess g, const vector<size_t>& posi
 
 void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        m_trie->fixupYellow(p, g.guessStr[p]);
+        m_trie->fixupYellow(p, g.guessStr[p], g.guessStr);
     }
 }
 
 void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        m_trie->fixupBlack(g.guessStr[p]);
+        m_trie->fixupBlack(p, g.guessStr[p], g.guessStr);
     }
 }
