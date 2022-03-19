@@ -10,7 +10,7 @@ using namespace std;
 
 
 string WordleTrie::getCandidate(Selector* selector) {
-    return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
+    return ""; //selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
 }
 
 bool WordleTrie::insert(string word) {

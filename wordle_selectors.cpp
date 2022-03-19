@@ -8,16 +8,19 @@ using namespace std;
 
 // TODO: begin & end
 string RandomSelector::select(ForwardIterator begin, ForwardIterator end) {
+    cout << "select(" << endl;
+    cout << "select0(" << *begin << endl;
     advance(begin, getRandom(begin, end));
+    cout << "select1(" << *begin << endl;
     return *begin;
     // return *(begin + getRandom(begin, end));
 }
 
-string RandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
-    advance(begin, getRandom(begin, end, rangeSize));
-    return *begin;
-    // return *(begin + getRandom(begin, end, rangeSize));
-}
+// string RandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
+//     advance(begin, getRandom(begin, end, rangeSize));
+//     return *begin;
+//     // return *(begin + getRandom(begin, end, rangeSize));
+// }
 
 size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) const {
     srand(time(NULL));
@@ -25,10 +28,10 @@ size_t RandomSelector::getRandom(ForwardIterator begin, ForwardIterator end) con
     return rand() % numElements;
 }
 
-size_t RandomSelector::getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const {
-    srand(time(NULL));
-    return rand() % rangeSize;
-}
+// size_t RandomSelector::getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const {
+//     srand(time(NULL));
+//     return rand() % rangeSize;
+// }
 
 string EnhancedRandomSelector::select(ForwardIterator begin, ForwardIterator end) {
     string selection;
@@ -38,13 +41,13 @@ string EnhancedRandomSelector::select(ForwardIterator begin, ForwardIterator end
     return selection;
 }
 
-string EnhancedRandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
-    string selection;
-    do {
-        selection = RandomSelector::select(begin, end, rangeSize);
-    } while (containsDoubleLetter(selection) && containsOneVowel(selection));
-    return selection;
-}
+// string EnhancedRandomSelector::select(SetIterator begin, SetIterator end, size_t rangeSize) {
+//     string selection;
+//     do {
+//         selection = RandomSelector::select(begin, end, rangeSize);
+//     } while (containsDoubleLetter(selection) && containsOneVowel(selection));
+//     return selection;
+// }
 
 bool EnhancedRandomSelector::containsDoubleLetter(const string& word) const {
     for (size_t i = 0; i < word.size(); i++) {
