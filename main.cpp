@@ -73,6 +73,7 @@ void runAllWords() {
             cout << "failure" << endl;
         }
     }
+    cerr << successes << "/" << runs << endl;
     cout << successes << "/" << runs << endl;
 }
 

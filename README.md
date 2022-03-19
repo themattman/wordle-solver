@@ -25,6 +25,12 @@ Hell yeah!
 Wordle 3/6
 ```
 
+### Test solver against all words in dictionary
+```
+$ ./solver 2>guess_nums.txt
+$ cut -d':' -f2 guess_nums.txt | awk 's+=$1{print s/NR}' | tail -n 1   # Average number of guesses
+```
+
 ## Overview
 
 There is a Checker & a Solver. These two entities comprise the Wordle game. The Solver is the "player" while
