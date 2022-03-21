@@ -10,6 +10,7 @@ make
 
 ## How to Use
 
+- Original Interactive Mode (not operable currently)
 ```
 $ ./solver
 Size of wordlist: 2315
@@ -26,14 +27,22 @@ Wordle 3/6
 ```
 
 ### Test solver against all words in dictionary
+
+- Current usage
 ```
 $ ./solver 2>guess_nums.txt
 $ cut -d':' -f2 guess_nums.txt | awk 's+=$1{print s/NR}' | tail -n 1   # Average number of guesses
 ```
 
+## Best Results
+
+As you can see in `guess_nums.txt`, my current best algorithm wins within 6 guesses 98.1% of the time over the dictionary.
+
+With 7 guesses allowed, this goes up to only 11 failures (i.e. 99.52% success)
+
 ## Overview
 
-There is a Checker & a Solver. These two entities comprise the Wordle game. The Solver is the "player" while
+There is a Checker and Solver. These two entities comprise the Wordle game. The Solver is the "player" while
 
 the Checker is the "referee."
 
@@ -89,7 +98,7 @@ the Checker is the "referee."
 
 [X] Get basic strategy working
 
-[] More complex strategies with letter distributions from the dictionary
+[X] More complex strategies with letter distributions from the dictionary
 
 [] Better dictionary
 
@@ -101,7 +110,7 @@ the Checker is the "referee."
 
 [-] Measure success rates of various algos against whole dictionary
 
-[] Define richer exceptions and catch them in main to help in debugging
+[-] Define richer exceptions and catch them in main to help in debugging
 
 [] Thread each parallel execution (Clang Mac doesn't support threading :( )
 
