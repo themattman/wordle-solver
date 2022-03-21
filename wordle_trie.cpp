@@ -9,7 +9,7 @@
 using namespace std;
 
 
-string WordleTrie::getCandidate(Selector* selector) {
+string WordleTrie::getCandidate(Selector<SetIterator>* selector) {
     return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size());
 }
 

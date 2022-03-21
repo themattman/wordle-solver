@@ -11,6 +11,9 @@
 
 using namespace std;
 
+inline size_t countOccurs(char letter, const string& word) {
+    return std::count(word.begin(), word.end(), letter);
+}
 
 class Helpers {
 public:

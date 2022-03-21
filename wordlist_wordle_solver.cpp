@@ -1,5 +1,7 @@
 #include "wordlist_wordle_solver.h"
+#include "wordle_helpers.h"
 #include "wordle_rules.h"
+#include "wordle_selectors.h"
 #include "wordle_solver.h"
 
 #include <algorithm>
@@ -56,7 +58,8 @@ Tree
 
  */
 
-WordlistWordleSolver::WordlistWordleSolver(Selector* s) : WordleSolver(s) {
+WordlistWordleSolver::WordlistWordleSolver() : WordleSolver() {
+    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::MostCommonLetter);
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -89,7 +92,8 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 
 /////////////////////
 
-TrieBasedWordleSolver::TrieBasedWordleSolver(Selector* s) : PassthroughWordleSolver(s) {
+TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
+    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::MostCommonLetter);
     m_trie = new WordleTrie();
     loadWordList([this](const string& line){
         m_trie->insert(line);
@@ -100,12 +104,14 @@ string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
         string candidateWord = m_trie->getCandidate(m_selector);
         if (candidateWord.size() == 0) {
+            cout << "empty word" << endl;
             throw;
         }
         return candidateWord;
     }
 
-    throw;
+    cout << "no more candidates" << endl;
+    throw WordleNoMoreCandidatesException("no more candidates");
 }
 
 string TrieBasedWordleSolver::makeSubsequentGuess() {
@@ -139,20 +145,47 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleRe
     return positions;
 }
 
-void TrieBasedWordleSolver::trimGreens(WordleGuess g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimGreens(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         m_trie->fixupGreen(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimYellows(WordleGuess g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimYellows(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        m_trie->fixupYellow(p, g.guessStr[p], g.guessStr);
+        m_trie->fixupYellow(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimBlacks(WordleGuess g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimBlacks(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        m_trie->fixupBlack(p, g.guessStr[p], g.guessStr);
+        if (countOccurs(g.guessStr[p], g.guessStr) > 1) {
+            if (isAnotherOccurrenceNotBlack(p, g)) {
+                // only remove letter for current slot
+                m_trie->fixupYellow(p, g.guessStr[p]);
+            } else {
+                // remove letter from all slots
+                m_trie->fixupBlack(p, g.guessStr[p]);
+            }
+        } else {
+            m_trie->fixupBlack(p, g.guessStr[p]);
+        }
     }
 }
+
+bool TrieBasedWordleSolver::isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const {
+    char letter = g.guessStr[position];
+    for (size_t i = 0; i < g.guessStr.size(); i++) {
+        if (i == position) continue;
+        if (g.guessStr[i] == letter) {
+            if (g.results[i] != WordleResult::BLACK) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// SAVES
+// GREEN
+// BBBGB

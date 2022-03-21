@@ -15,8 +15,10 @@ $ ./solver [strategy selection]
 #include "wordlist_wordle_solver.h"
 #include "wordle_checker.h"
 #include "wordle_helpers.h"
+#include "wordle_rules.h"
 #include "wordle_selectors.h"
 
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <random>
@@ -27,59 +29,70 @@ using namespace std;
 
 
 bool runGame(const string& answer) {
-    auto selector = new RandomSelector();
-    auto solver = new TrieBasedWordleSolver(selector);
-    auto checker = WordleChecker();
-    checker.setAnswer(answer);
+    //auto selector = new RandomSelector();
+    try {
+        //auto selector = new MostCommonLetterSelector();
+        auto solver = new TrieBasedWordleSolver();
+        auto checker = WordleChecker();
+        checker.setAnswer(answer);
 
-    size_t numGuesses = 0;
-    auto guess = WordleGuess(solver->makeInitialGuess());
-    bool result = checker.check(guess, numGuesses);
-    if (guess != CorrectWordleGuess) {
-        if (result) {
-            solver->processResult(guess);
-        }
-        while (numGuesses < MAX_GUESSES) {
-            guess = WordleGuess(solver->makeSubsequentGuess());
-            result = checker.check(guess, numGuesses);
+        size_t numGuesses = 0;
+        auto guess = WordleGuess(solver->makeInitialGuess());
+        bool result = checker.check(guess, numGuesses);
+        if (guess != CorrectWordleGuess) {
             if (result) {
-                if (guess == CorrectWordleGuess) {
-                    break;
-                }
                 solver->processResult(guess);
             }
+            while (numGuesses < MAX_GUESSES) {
+                guess = WordleGuess(solver->makeSubsequentGuess());
+                result = checker.check(guess, numGuesses);
+                if (result) {
+                    if (guess == CorrectWordleGuess) {
+                        break;
+                    }
+                    solver->processResult(guess);
+                }
+            }
         }
-    }
 
-    if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+        if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+            cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+            return false;
+        }
+
+        cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+        return true;
+    } catch (std::runtime_error e) {
+        cout << e.what() << endl;
+        return false;
+    } catch (WordleNoMoreCandidatesException e) {
+        cout << e.what() << endl;
+        return false;
+    } catch (...) {
+        cout << "caught generic" << endl;
         return false;
     }
-
-    cerr << "ng:" << numGuesses << endl;
-    return true;
 }
 
 
 void runAllWords() {
-    size_t sz = Helpers::getSizeOfDictionary();
     vector<string> words = Helpers::getDictionary();
+    // size_t i = 0;
     size_t successes = 0;
     size_t runs = 0;
-    for (; runs < sz; runs++) {
-        if (runGame(words[runs])) {
+    for (auto& word : words) {
+        if (runGame(word)) {
             successes++;
-            cout << "success" << endl;
-        } else {
-            cout << "failure" << endl;
         }
+        runs++;
     }
-    cerr << successes << "/" << runs << endl;
-    cout << successes << "/" << runs << endl;
+    cout << successes << "/" << runs << "=" << (100*successes/runs) << endl;
+    cout << "done." << endl;
 }
 
 void runDebug() {
-    auto selector = new RandomSelector();
-    auto solver = new TrieBasedWordleSolver(selector);
+    // auto selector = new RandomSelector();
+    auto solver = new TrieBasedWordleSolver();
     auto checker = WordleChecker();
     checker.setAnswer("haute");
 

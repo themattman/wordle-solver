@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <iterator>
 #include <set>
 #include <string>
@@ -8,29 +9,29 @@
 
 using namespace std;
 
+
 using ForwardIterator = vector<string>::iterator;
 using SetIterator = set<string>::iterator;
 
+template <typename IterType>
 class Selector {
 public:
     Selector() { srand(time(nullptr)); }
-    virtual string select(ForwardIterator begin, ForwardIterator end) = 0;
-    virtual string select(SetIterator begin, SetIterator end, size_t rangeSize) = 0;
+    virtual string select(IterType begin, IterType end, size_t rangeSize) = 0;
 };
 
-class RandomSelector : public Selector {
+template <typename IterType>
+class RandomSelector : public Selector<IterType> {
 public:
-    string select(ForwardIterator begin, ForwardIterator end) override;
-    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
+    string select(IterType begin, IterType end, size_t rangeSize) override;
 private:
-    size_t getRandom(ForwardIterator begin, ForwardIterator end) const;
-    size_t getRandom(SetIterator begin, SetIterator end, size_t rangeSize) const;
+    size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
 };
 
-class EnhancedRandomSelector : public RandomSelector {
+template <typename IterType>
+class EnhancedRandomSelector : public RandomSelector<IterType> {
 public:
-    string select(ForwardIterator begin, ForwardIterator end) override;
-    string select(SetIterator begin, SetIterator end, size_t rangeSize) override;
+    string select(IterType begin, IterType end, size_t rangeSize) override;
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -45,24 +46,93 @@ struct WordScore {
     size_t score;
 };
 
-inline bool compareWordScores(const WordScore& w1, const WordScore& w2) {
-    return w1.score < w2.score;
-}
+struct WordScoreComp {
+    bool operator() (const WordScore& w1, const WordScore& w2) const {
+        return w1.score > w2.score;
+    }
+};
 
-class MostCommonLetterSelector : public Selector {
+template <typename IterType>
+class MostCommonLetterSelector : public Selector<IterType> {
 public:
-    string select(ForwardIterator begin, ForwardIterator end) override;
+    string select(IterType begin, IterType end, size_t rangeSize) override;
 private:
     string getBestCandidate() const;
-    string getWordWithMostCommonLetter(char letter) const;
+    void clearOldState();
+    string getWordWithMostCommonLetter() const;
     char getMostCommonLetter() const;
     void rateCandidates();
     void computeFrequencyMap();
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                      unordered_map<string, size_t>& wordScore);
+    void sortWordsByFrequency();
     size_t count(char letter, const string& word) const;
 
-    ForwardIterator m_iterBegin;
-    ForwardIterator m_iterEnd;
+    bool m_uninitialized{true};
+    IterType m_iterBegin;
+    IterType m_iterEnd;
     unordered_map<char, size_t> m_frequencyMapLetter;
-    unordered_map<char, size_t> m_frequencyMapWord;
-    vector<WordScore> m_sortedWords;
+    unordered_map<string, size_t> m_wordScore;
+
+    unordered_map<char, size_t> m_alphabetFrequencyMapLetter;
+    unordered_map<string, size_t> m_alphabetWordScore;
+    set<WordScore, WordScoreComp> m_sortedWords{};
 };
+
+
+//////////
+
+enum class SelectorType {
+    Random,
+    EnhancedRandom,
+    MostCommonLetter
+};
+
+template <typename IterType>
+struct SelectorFactory {
+    // static Selector<SetIterator>* makeSelector(const SelectorType& selectorType) {
+    //     switch (selectorType) {
+    //     case SelectorType::Random:
+    //         return new RandomSelector<SetIterator>();
+    //     case SelectorType::EnhancedRandom:
+    //         return new EnhancedRandomSelector<SetIterator>();
+    //     case SelectorType::MostCommonLetter:
+    //         return new MostCommonLetterSelector<SetIterator>();
+    //         }
+    //     cerr << "Error: bad selectorName" << endl;
+    //     throw;
+    // }
+    // static Selector<ForwardIterator>* makeSelector(const SelectorType& selectorType) {
+    //     switch (selectorType) {
+    //     case SelectorType::Random:
+    //         return new RandomSelector<ForwardIterator>();
+    //     case SelectorType::EnhancedRandom:
+    //         return new EnhancedRandomSelector<ForwardIterator>();
+    //     case SelectorType::MostCommonLetter:
+    //         return new MostCommonLetterSelector<ForwardIterator>();
+    //         }
+    //     cerr << "Error: bad selectorName" << endl;
+    //     throw;
+    // }
+    static Selector<IterType>* makeSelector(const SelectorType& selectorType) {
+        switch (selectorType) {
+        case SelectorType::Random:
+            return new RandomSelector<IterType>();
+        case SelectorType::EnhancedRandom:
+            return new EnhancedRandomSelector<IterType>();
+        case SelectorType::MostCommonLetter:
+            return new MostCommonLetterSelector<IterType>();
+            }
+        cerr << "Error: bad selectorName" << endl;
+        throw;
+    }
+};
+
+// Explicity Instantiation to keep linker happy, TODO: why?
+template class RandomSelector<SetIterator>;
+template class EnhancedRandomSelector<SetIterator>;
+template class MostCommonLetterSelector<SetIterator>;
+
+template class RandomSelector<ForwardIterator>;
+template class EnhancedRandomSelector<ForwardIterator>;
+template class MostCommonLetterSelector<ForwardIterator>;

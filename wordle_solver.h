@@ -12,10 +12,10 @@ using namespace std;
 class WordleSolver {
 public:
     WordleSolver() = default;
-    WordleSolver(Selector* s) { m_selector = s; }
+    //virtual WordleSolver(const SelectorType& selectorType);
     virtual string makeInitialGuess() = 0;
     virtual string makeSubsequentGuess() = 0;
     virtual void processResult(const WordleGuess& guess) = 0;
-protected:
-    Selector* m_selector;
+//protected:
+    //Selector* m_selector;
 };

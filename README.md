@@ -100,3 +100,15 @@ the Checker is the "referee."
 [X] Automate hundreds of rounds of Solver v Checker
 
 [-] Measure success rates of various algos against whole dictionary
+
+[] Define richer exceptions and catch them in main to help in debugging
+
+[] Thread each parallel execution (Clang Mac doesn't support threading :( )
+
+[] Break ties with more common letter in dictionary. TieBreaker class????
+
+Why is compile failing?
+What does this mean (from ctpl):
+```
+auto push(F && f, Rest&&... rest) ->std::future<decltype(f(0, rest...))> {
+```

@@ -36,25 +36,16 @@ public:
     void fixupGreen(size_t letterPosition, char letter) {
         removeExceptLetterAtLevel(0, letterPosition, letter, *m_root);
     }
-    void fixupYellow(size_t letterPosition, char letter, const string& guessStr) {
-        if (countOccurs(letter, guessStr) == 1) {
-            removeSingleLetter(letterPosition, letter);
-        } else {
-            removeSingleLetter(letterPosition, letter);
-        }
+    void fixupYellow(size_t letterPosition, char letter) {
+        removeSingleLetter(letterPosition, letter);
     }
-    void fixupBlack(size_t letterPosition, char letter, const string& guessStr) {
-        if (countOccurs(letter, guessStr) == 1) {
-            removeAllOfLetter(letter, *m_root);
-        } else {
-            removeSingleLetter(letterPosition, letter);
-        }
+    void fixupBlack(size_t letterPosition, char letter) {
+        removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(Selector* selector);
+    string getCandidate(Selector<SetIterator>* selector);
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:
-    size_t countOccurs(char letter, const string& word) { return std::count(word.begin(), word.end(), letter); }
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);
     void addAllOfLetterToSolution(char letter);

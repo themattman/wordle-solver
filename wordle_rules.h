@@ -1,5 +1,6 @@
 #pragma once
 
+#include <exception>
 #include <string>
 #include <vector>
 
@@ -36,3 +37,12 @@ static auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
                                                   WordleResult::GREEN,
                                                   WordleResult::GREEN,
                                                   WordleResult::GREEN});
+
+struct WordleNoMoreCandidatesException : std::runtime_error
+{
+    WordleNoMoreCandidatesException(char const* const message) throw()
+        : std::runtime_error(message) {}
+    char const* what() const throw() {
+        return "WordleException: no more candidates left to choose from";
+    }
+};

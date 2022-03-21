@@ -17,10 +17,11 @@ class WordlistWordleSolver : public WordleSolver {
 public:
     // TODO: how to inherit ctor from PV base class
     using WordleSolver::WordleSolver;
-    WordlistWordleSolver(Selector* s);
+    WordlistWordleSolver();
 protected:
     void loadWordList(function<void(string)> eachLineCallbackActor);
 
+    Selector<SetIterator>* m_selector;
     vector<string> m_wordlist;
     set<string> m_wordSet;
     vector<
@@ -33,9 +34,10 @@ protected:
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
-    string makeInitialGuess() override { return m_selector->select(m_wordlist.begin(), m_wordlist.end()); }
+    string makeInitialGuess() override { return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size()); }
     string makeSubsequentGuess() override { return makeInitialGuess(); }
     void processResult(const WordleGuess& guess) override {}
+    //Selector<ForwardIterator>* m_selector;
 };
 
 //////////////////
@@ -43,15 +45,17 @@ public:
 class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
-    TrieBasedWordleSolver(Selector* s);
+    TrieBasedWordleSolver();
     string makeInitialGuess() override;
     string makeSubsequentGuess() override;
     void processResult(const WordleGuess& guess) override;
+    size_t getNumCandidates() const { return m_trie->getNumCandidates(); }
 protected:
     vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
+    bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;
     void printNumCands(const string& color) const;
-    void trimGreens(WordleGuess g, const vector<size_t>& positions);
-    void trimYellows(WordleGuess g, const vector<size_t>& positions);
-    void trimBlacks(WordleGuess g, const vector<size_t>& positions);
+    void trimGreens(const WordleGuess& g, const vector<size_t>& positions);
+    void trimYellows(const WordleGuess& g, const vector<size_t>& positions);
+    void trimBlacks(const WordleGuess& g, const vector<size_t>& positions);
     WordleTrie* m_trie;
 };
