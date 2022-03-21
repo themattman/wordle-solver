@@ -42,7 +42,7 @@ public:
     void fixupBlack(size_t letterPosition, char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(Selector<SetIterator>* selector);
+    string getCandidate(Selector<SetIterator>* selector, const vector<WordleResult>& knowns);
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates();
 private:

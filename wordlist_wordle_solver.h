@@ -15,7 +15,6 @@ using namespace std;
 
 class WordlistWordleSolver : public WordleSolver {
 public:
-    // TODO: how to inherit ctor from PV base class
     using WordleSolver::WordleSolver;
     WordlistWordleSolver();
 protected:
@@ -34,10 +33,11 @@ protected:
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
-    string makeInitialGuess() override { return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size()); }
+    string makeInitialGuess() override {
+        return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects);
+    }
     string makeSubsequentGuess() override { return makeInitialGuess(); }
     void processResult(const WordleGuess& guess) override {}
-    //Selector<ForwardIterator>* m_selector;
 };
 
 //////////////////
@@ -51,7 +51,7 @@ public:
     void processResult(const WordleGuess& guess) override;
     size_t getNumCandidates() const { return m_trie->getNumCandidates(); }
 protected:
-    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const;
+    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr);
     bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;
     void printNumCands(const string& color) const;
     void trimGreens(const WordleGuess& g, const vector<size_t>& positions);

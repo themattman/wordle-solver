@@ -102,7 +102,7 @@ TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
 
 string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate(m_selector);
+        string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects);
         if (candidateWord.size() == 0) {
             cout << "empty word" << endl;
             throw;
@@ -135,11 +135,15 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     m_trie->printCandidates();
 }
 
-vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) const {
+vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) {
     vector<size_t> positions;
     for (size_t i = 0; i < allPositions.size(); i++) {
         if (allPositions[i] == wr) {
             positions.push_back(i);
+            if (wr == WordleResult::GREEN && m_knownCorrects[i] != WordleResult::GREEN) {
+                m_knownCorrects[i] = WordleResult::GREEN;
+                // cout << "New correct letter! (" << i << ")" << endl;
+            }
         }
     }
     return positions;
@@ -185,7 +189,3 @@ bool TrieBasedWordleSolver::isAnotherOccurrenceNotBlack(size_t position, const W
     }
     return false;
 }
-
-// SAVES
-// GREEN
-// BBBGB

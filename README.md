@@ -107,6 +107,8 @@ the Checker is the "referee."
 
 [] Break ties with more common letter in dictionary. TieBreaker class????
 
+[X] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
+
 Why is compile failing?
 What does this mean (from ctpl):
 ```

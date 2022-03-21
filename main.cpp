@@ -20,6 +20,7 @@ $ ./solver [strategy selection]
 
 #include <exception>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <string>
@@ -77,7 +78,6 @@ bool runGame(const string& answer) {
 
 void runAllWords() {
     vector<string> words = Helpers::getDictionary();
-    // size_t i = 0;
     size_t successes = 0;
     size_t runs = 0;
     for (auto& word : words) {
@@ -86,7 +86,7 @@ void runAllWords() {
         }
         runs++;
     }
-    cout << successes << "/" << runs << "=" << (100*successes/runs) << endl;
+    cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;
 }
 
