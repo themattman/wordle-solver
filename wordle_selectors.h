@@ -61,9 +61,7 @@ public:
 private:
     string getBestCandidate() const;
     void clearOldState();
-    string getWordWithMostCommonLetter() const;
     char getMostCommonLetter() const;
-    void rateCandidates();
     void computeFrequencyMap();
     void computeFrequencyMapInternalBetter(unordered_map<char, size_t>& letterMap,
                                            unordered_map<string, size_t>& wordScore);
@@ -95,30 +93,6 @@ enum class SelectorType {
 
 template <typename IterType>
 struct SelectorFactory {
-    // static Selector<SetIterator>* makeSelector(const SelectorType& selectorType) {
-    //     switch (selectorType) {
-    //     case SelectorType::Random:
-    //         return new RandomSelector<SetIterator>();
-    //     case SelectorType::EnhancedRandom:
-    //         return new EnhancedRandomSelector<SetIterator>();
-    //     case SelectorType::MostCommonLetter:
-    //         return new MostCommonLetterSelector<SetIterator>();
-    //         }
-    //     cerr << "Error: bad selectorName" << endl;
-    //     throw;
-    // }
-    // static Selector<ForwardIterator>* makeSelector(const SelectorType& selectorType) {
-    //     switch (selectorType) {
-    //     case SelectorType::Random:
-    //         return new RandomSelector<ForwardIterator>();
-    //     case SelectorType::EnhancedRandom:
-    //         return new EnhancedRandomSelector<ForwardIterator>();
-    //     case SelectorType::MostCommonLetter:
-    //         return new MostCommonLetterSelector<ForwardIterator>();
-    //         }
-    //     cerr << "Error: bad selectorName" << endl;
-    //     throw;
-    // }
     static Selector<IterType>* makeSelector(const SelectorType& selectorType) {
         switch (selectorType) {
         case SelectorType::Random:

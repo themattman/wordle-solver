@@ -63,7 +63,6 @@ bool EnhancedRandomSelector<IterType>::containsOneVowel(const string& word) cons
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
                                                   const vector<WordleKnown>& knowns) {
-    //cout << "select(empty):" << rangeSize << endl;
     clearOldState();
     m_knowns = knowns;
     m_iterBegin = begin;
@@ -82,29 +81,17 @@ void MostCommonLetterSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::getBestCandidate() const {
-    cout << "getBestCand(" << m_sortedWords.size() << "):" << m_sortedWords.begin()->word << ":" << m_sortedWords.begin()->score << endl;
+    //cout << "getBestCand(" << m_sortedWords.size() << "):" << m_sortedWords.begin()->word << ":" << m_sortedWords.begin()->score << endl;
     auto it = m_sortedWords.begin();
+    size_t bestScore = it->score;
     advance(it, 1);
     if (it != m_sortedWords.end()) {
-        cout << "getBestCand:" << it->word << ":" << it->score << endl;
+        if (bestScore == it->score) {
+            cout << "Tie!" << endl;
+        }
+        //cout << "getBestCand:" << it->word << ":" << it->score << endl;
     }
     return m_sortedWords.begin()->word;
-    //return getWordWithMostCommonLetter(); //getMostCommonLetter());
-}
-
-template <typename IterType>
-string MostCommonLetterSelector<IterType>::getWordWithMostCommonLetter() const {
-    return m_sortedWords.begin()->word;
-    // size_t mostCommonLetterCount = 0;
-    // string wordWithMostCommonLetter;
-    // for (auto it = m_iterBegin; it != m_iterEnd; it++) {
-    //     size_t letterCount = count(letter, *it);
-    //     if (letterCount > mostCommonLetterCount) {
-    //         mostCommonLetterCount = letterCount;
-    //         wordWithMostCommonLetter = *it;
-    //     }
-    // }
-    // return wordWithMostCommonLetter;
 }
 
 template <typename IterType>
@@ -137,33 +124,12 @@ char MostCommonLetterSelector<IterType>::getMostCommonLetter() const {
 }
 
 template <typename IterType>
-void MostCommonLetterSelector<IterType>::rateCandidates() {
-    // for (auto it = m_iterBegin; it != m_iterEnd; it++) {
-    //     WordScore ws;
-    //     ws.word = *it;
-    //     for (auto& c : ws.word) {
-    //         auto letterScoreIt = m_frequencyMapWord.find(c);
-    //         if (letterScoreIt != m_frequencyMapWord.end()) {
-    //             ws.score += letterScoreIt->second;
-    //         }
-    //     }
-    // }
-
-    // sort(m_sortedWords.begin(), m_sortedWords.end(), compareWordScores);
-    // auto it = m_sortedWords.begin();
-    // advance(it, 1);
-}
-
-template <typename IterType>
 void MostCommonLetterSelector<IterType>::computeFrequencyMap() {
-    // cout << "computeFreqMap" << endl;
     if (m_alphabetFrequencyMapLetter.size() == 0) {
-        // cout << "firsttime" << endl;
         computeFrequencyMapInternalBetter(m_alphabetFrequencyMapLetter, m_alphabetWordScore);
         m_frequencyMapLetter = m_alphabetFrequencyMapLetter;
         m_wordScore = m_alphabetWordScore;
     } else {
-        // cout << "not firsttime" << endl;
         computeFrequencyMapInternalBetter(m_frequencyMapLetter, m_wordScore);
     }
     sortWordsByFrequency();
@@ -171,7 +137,6 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMap() {
 
 template <typename IterType>
 void MostCommonLetterSelector<IterType>::sortWordsByFrequency() {
-    //cout << "sortWordsByFreq:" << m_wordScore.size() << endl;
     for (auto wordIt = m_wordScore.begin(); wordIt != m_wordScore.end(); wordIt++) {
         auto ws = WordScore();
         ws.word = wordIt->first;
@@ -214,13 +179,14 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalBetter(unord
                 if (m_knowns[i].result != WordleResult::GREEN) {
                     if (greenLetters.find(c) == greenLetters.end()) {
                         score += letterMap[c];
-                    } else {
-                        //score += letterMap[c]/8;
-                        cout << "no score, letter already green:" << c << "-" << *wordIt << "newscore:" << letterMap[c]/2 << endl;
+                    // } else {
+                    //     //score += letterMap[c]/8;
+                    //     //cout << "no score, letter already green:" << c << "-" << *wordIt << "newscore:" << letterMap[c
+                        // ]/2 << endl;
                     }
                 }
-            } else {
-                cout << "not incrementing on 2nd occur of letter:" << c << "-" << *wordIt << endl;
+            // } else {
+                // cout << "not incrementing on 2nd occur of letter:" << c << "-" << *wordIt << endl;
             }
             wordLetters.insert(c);
             i++;
@@ -238,12 +204,6 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalBetter(unord
 template <typename IterType>
 void MostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                                                      unordered_map<string, size_t>& wordScore) {
-    // cout << "~~letter0Map~~" << endl;
-    // for (auto it = letterMap.begin(); it != letterMap.end(); it++) {
-    //     cout << it->first << ":" << it->second << endl;
-    // }
-    // cout << "==letter0Map==" << endl;
-
     // Compute letter scores
     for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
         for (auto& c : *wordIt) {
@@ -259,28 +219,11 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_m
         size_t score = 0;
         set<char> wordLetters;
         for (auto& c : *wordIt) {
-            // cout << "letter:" << c << ":" << letterMap[c] << endl;
             if (wordLetters.find(c) == wordLetters.end()) {
                 wordLetters.insert(c);
                 score += letterMap[c];
-            // } else {
-            //     cout << "not incrementing on 2nd occur of letter:" << c << endl;
             }
         }
-        // cout << "word:" << *wordIt << ":" << score << endl;
         wordScore.insert({*wordIt, score});
     }
-
-    // cout << "~~letterMap~~" << endl;
-    // for (auto it = letterMap.begin(); it != letterMap.end(); it++) {
-    //     cout << it->first << ":" << it->second << endl;
-    // }
 }
-
-/*
-iterate over every letter of every word
-bump letterMap
-now have computed score for every letter
-
-
- */

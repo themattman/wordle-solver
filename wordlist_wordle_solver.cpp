@@ -143,7 +143,9 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& al
             if (wr == WordleResult::GREEN && m_knownCorrects[i].result != WordleResult::GREEN) {
                 m_knownCorrects[i].result = WordleResult::GREEN;
                 m_knownCorrects[i].letter = allPositions.guessStr[i];
-                cout << "New correct letter! (" << i << ")" << endl;
+                if (DEBUG) {
+                    cout << "New correct letter! (" << i << ")" << endl;
+                }
             }
         }
     }

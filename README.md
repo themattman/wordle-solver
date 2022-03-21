@@ -93,7 +93,7 @@ the Checker is the "referee."
 
 [] Better dictionary
 
-[] Support changing rules of game to more letters, more guesses, etc
+[X] Support changing rules of game to more letters, more guesses, etc. [Works! Tested 7 guesses]
 
 [] Select strategy from cmd line
 
@@ -105,11 +105,13 @@ the Checker is the "referee."
 
 [] Thread each parallel execution (Clang Mac doesn't support threading :( )
 
-[] Break ties with more common letter in dictionary. TieBreaker class????
+[] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
 [X] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
 
-[] Average remaining words is 1.9... how could it be below 2??
+[] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
+
+[] Prompt user for interactive vs. run across dictionary modes
 
 Why is compile failing?
 What does this mean (from ctpl):
