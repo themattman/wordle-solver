@@ -57,11 +57,11 @@ bool runGame(const string& answer) {
         }
 
         if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-            cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+            cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
             return false;
         }
 
-        cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+        //cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
         return true;
     } catch (std::runtime_error e) {
         cout << e.what() << endl;
@@ -81,10 +81,13 @@ void runAllWords() {
     size_t successes = 0;
     size_t runs = 0;
     for (auto& word : words) {
+        word="write";
+        cout << word << endl;
         if (runGame(word)) {
             successes++;
         }
         runs++;
+        break;
     }
     cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;

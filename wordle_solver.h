@@ -16,5 +16,5 @@ public:
     virtual string makeSubsequentGuess() = 0;
     virtual void processResult(const WordleGuess& guess) = 0;
 protected:
-    vector<WordleResult> m_knownCorrects{LETTER_COUNT, WordleResult::BLACK};
+    vector<WordleKnown> m_knownCorrects{LETTER_COUNT, {char(), WordleResult::BLACK}};
 };

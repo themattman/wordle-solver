@@ -15,6 +15,11 @@ enum class WordleResult {
     BLACK
 };
 
+struct WordleKnown {
+    char letter;
+    WordleResult result;
+};
+
 struct WordleGuess {
     WordleGuess(std::string cGuess, std::vector<WordleResult> cResults)
         : guessStr(cGuess), results(cResults) {}

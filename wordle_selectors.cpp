@@ -8,7 +8,7 @@ using namespace std;
 
 template <typename IterType>
 string RandomSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                        const vector<WordleResult>& knowns) {
+                                        const vector<WordleKnown>& knowns) {
     advance(begin, getRandom(begin, end, rangeSize));
     return *begin;
 }
@@ -21,7 +21,7 @@ size_t RandomSelector<IterType>::getRandom(IterType begin, IterType end, size_t 
 
 template <typename IterType>
 string EnhancedRandomSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                                const vector<WordleResult>& knowns) {
+                                                const vector<WordleKnown>& knowns) {
     string selection;
     do {
         selection = RandomSelector<IterType>::select(begin, end, rangeSize, knowns);
@@ -62,7 +62,7 @@ bool EnhancedRandomSelector<IterType>::containsOneVowel(const string& word) cons
 
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                                  const vector<WordleResult>& knowns) {
+                                                  const vector<WordleKnown>& knowns) {
     //cout << "select(empty):" << rangeSize << endl;
     clearOldState();
     m_knowns = knowns;
@@ -82,10 +82,12 @@ void MostCommonLetterSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::getBestCandidate() const {
-    // cout << "getBestCand(" << m_sortedWords.size() << "):" << m_sortedWords.begin()->word << ":" << m_sortedWords.begin()->score << endl;
+    cout << "getBestCand(" << m_sortedWords.size() << "):" << m_sortedWords.begin()->word << ":" << m_sortedWords.begin()->score << endl;
     auto it = m_sortedWords.begin();
     advance(it, 1);
-    // cout << "getBestCand:" << it->word << ":" << it->score << endl;
+    if (it != m_sortedWords.end()) {
+        cout << "getBestCand:" << it->word << ":" << it->score << endl;
+    }
     return m_sortedWords.begin()->word;
     //return getWordWithMostCommonLetter(); //getMostCommonLetter());
 }
@@ -196,13 +198,29 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalBetter(unord
     for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
         size_t score = 0;
         set<char> wordLetters;
+        set<char> greenLetters;
+        for (size_t i = 0; i < m_knowns.size(); i++) {
+            if (m_knowns[i].result == WordleResult::GREEN) {
+                greenLetters.insert(m_knowns[i].letter);
+            }
+        }
         size_t i = 0;
         for (auto& c : *wordIt) {
             // cout << "letter:" << c << ":" << letterMap[c] << endl;
-            if (wordLetters.find(c) == wordLetters.end() && m_knowns[i] != WordleResult::GREEN) {
-                score += letterMap[c];
-            // } else {
-            //     cout << "not incrementing on 2nd occur of letter:" << c << endl;
+
+            // only give scores to each letter once
+            if (wordLetters.find(c) == wordLetters.end()) {
+                // only give scores to each letter that isn't already known
+                if (m_knowns[i].result != WordleResult::GREEN) {
+                    if (greenLetters.find(c) == greenLetters.end()) {
+                        score += letterMap[c];
+                    } else {
+                        //score += letterMap[c]/8;
+                        cout << "no score, letter already green:" << c << "-" << *wordIt << "newscore:" << letterMap[c]/2 << endl;
+                    }
+                }
+            } else {
+                cout << "not incrementing on 2nd occur of letter:" << c << "-" << *wordIt << endl;
             }
             wordLetters.insert(c);
             i++;

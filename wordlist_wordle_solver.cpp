@@ -126,23 +126,24 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    trimGreens(guess, createPositionVector(guess.results, WordleResult::GREEN));
+    trimGreens(guess, createPositionVector(guess, WordleResult::GREEN));
     printNumCands("green");
-    trimYellows(guess, createPositionVector(guess.results, WordleResult::YELLOW));
+    trimYellows(guess, createPositionVector(guess, WordleResult::YELLOW));
     printNumCands("yellow");
-    trimBlacks(guess, createPositionVector(guess.results, WordleResult::BLACK));
+    trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
     m_trie->printCandidates();
 }
 
-vector<size_t> TrieBasedWordleSolver::createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr) {
+vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& allPositions, WordleResult wr) {
     vector<size_t> positions;
-    for (size_t i = 0; i < allPositions.size(); i++) {
-        if (allPositions[i] == wr) {
+    for (size_t i = 0; i < allPositions.results.size(); i++) {
+        if (allPositions.results[i] == wr) {
             positions.push_back(i);
-            if (wr == WordleResult::GREEN && m_knownCorrects[i] != WordleResult::GREEN) {
-                m_knownCorrects[i] = WordleResult::GREEN;
-                // cout << "New correct letter! (" << i << ")" << endl;
+            if (wr == WordleResult::GREEN && m_knownCorrects[i].result != WordleResult::GREEN) {
+                m_knownCorrects[i].result = WordleResult::GREEN;
+                m_knownCorrects[i].letter = allPositions.guessStr[i];
+                cout << "New correct letter! (" << i << ")" << endl;
             }
         }
     }

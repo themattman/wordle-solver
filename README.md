@@ -109,6 +109,8 @@ the Checker is the "referee."
 
 [X] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
 
+[] Average remaining words is 1.9... how could it be below 2??
+
 Why is compile failing?
 What does this mean (from ctpl):
 ```

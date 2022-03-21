@@ -51,7 +51,7 @@ public:
     void processResult(const WordleGuess& guess) override;
     size_t getNumCandidates() const { return m_trie->getNumCandidates(); }
 protected:
-    vector<size_t> createPositionVector(const vector<WordleResult>& allPositions, WordleResult wr);
+    vector<size_t> createPositionVector(const WordleGuess& allPositions, WordleResult wr);
     bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;
     void printNumCands(const string& color) const;
     void trimGreens(const WordleGuess& g, const vector<size_t>& positions);

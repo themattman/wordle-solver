@@ -19,13 +19,13 @@ template <typename IterType>
 class Selector {
 public:
     Selector() { srand(time(nullptr)); }
-    virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleResult>& knowns) = 0;
+    virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) = 0;
 };
 
 template <typename IterType>
 class RandomSelector : public Selector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleResult>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
 private:
     size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
 };
@@ -33,7 +33,7 @@ private:
 template <typename IterType>
 class EnhancedRandomSelector : public RandomSelector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleResult>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -57,7 +57,7 @@ struct WordScoreComp {
 template <typename IterType>
 class MostCommonLetterSelector : public Selector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleResult>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
 private:
     string getBestCandidate() const;
     void clearOldState();
@@ -77,7 +77,7 @@ private:
     IterType m_iterEnd;
     unordered_map<char, size_t> m_frequencyMapLetter;
     unordered_map<string, size_t> m_wordScore;
-    vector<WordleResult> m_knowns;
+    vector<WordleKnown> m_knowns;
 
     unordered_map<char, size_t> m_alphabetFrequencyMapLetter;
     unordered_map<string, size_t> m_alphabetWordScore;
