@@ -53,9 +53,13 @@ the Checker is the "referee."
 
   - Primitive 5-letter dictionary from the Internet
 
-- `guess_nums.txt`
+- `guess_nums_6.txt`
 
-  - Results from current algorithm
+  - Results from current algorithm, 6 guesses allowed (default)
+
+- `guess_nums_7.txt`
+
+  - Results from current algorithm, 7 guesses allowed
 
 - `main.cpp`
 

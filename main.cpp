@@ -11,12 +11,12 @@ $ ./solver [strategy selection]
 <repeat MAX_GUESSES times>
  */
 
-#include "wordle_solver.h"
-#include "wordlist_wordle_solver.h"
 #include "wordle_checker.h"
 #include "wordle_helpers.h"
 #include "wordle_rules.h"
 #include "wordle_selectors.h"
+#include "wordle_solver.h"
+#include "wordlist_wordle_solver.h"
 
 #include <exception>
 #include <fstream>
@@ -83,6 +83,7 @@ void runAllWords() {
             successes++;
         }
         runs++;
+        //if (runs == 100) break;
     }
     cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;
@@ -91,7 +92,8 @@ void runAllWords() {
 void runDebug() {
     auto solver = new TrieBasedWordleSolver();
     auto checker = WordleChecker();
-    checker.setAnswer("haute");
+    string answer = "haute";
+    checker.setAnswer(answer);
 
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver->makeInitialGuess());
@@ -109,14 +111,19 @@ void runDebug() {
                 if (guess == CorrectWordleGuess) {
                     break;
                 }
+                if (numGuesses >= MAX_GUESSES) {
+                    cerr << "[end]res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
+                }
                 solver->processResult(guess);
             }
         }
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+        cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
         cout << "Darn!" << endl;
     } else {
+        cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
         cout << "Hell yeah!" << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
     }

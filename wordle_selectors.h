@@ -63,6 +63,8 @@ private:
     void clearOldState();
     char getMostCommonLetter() const;
     void computeFrequencyMap();
+    void computeFrequencyMapInternalIsolatedLetter(unordered_map<char, size_t>& letterMap,
+                                                   unordered_map<string, size_t>& wordScore);
     void computeFrequencyMapInternalBetter(unordered_map<char, size_t>& letterMap,
                                            unordered_map<string, size_t>& wordScore);
     void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
@@ -76,6 +78,8 @@ private:
     unordered_map<char, size_t> m_frequencyMapLetter;
     unordered_map<string, size_t> m_wordScore;
     vector<WordleKnown> m_knowns;
+
+    vector<unordered_map<char, size_t>> m_positionLetterScores;
 
     unordered_map<char, size_t> m_alphabetFrequencyMapLetter;
     unordered_map<string, size_t> m_alphabetWordScore;
