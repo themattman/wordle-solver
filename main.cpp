@@ -54,11 +54,11 @@ bool runOneGame(const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
+        cerr << "failure," << solver->getNumCandidates() << "," << numGuesses << "," << answer << endl;
         return false;
     }
 
-    cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+    cerr << "success," << solver->getNumCandidates() << "," << numGuesses << "," << endl;
     return true;
 }
 
@@ -67,12 +67,12 @@ void runAllWords() {
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
+    cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
     for (auto& word : words) {
         if (runOneGame(word)) {
             successes++;
         }
         runs++;
-        //if (runs == 100) break;
     }
     cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;

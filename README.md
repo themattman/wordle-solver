@@ -13,15 +13,16 @@ make
 - Current Mode
 ```
 $ ./solver
-res:success,words_left:1,ng:5
-res:success,words_left:1,ng:6
-res:success,words_left:1,ng:5
-res:success,words_left:1,ng:4
-res:success,words_left:1,ng:5
+result,words_left,num_guesses,answer_if_failure
+success,1,5,
+success,1,6,
+success,1,5,
+success,1,4,
+success,1,5,
 ...
-res:failure,words_left:1,ng:6,word:baker
+failure,1,6,word:baker
 ...
-res:success,words_left:6,ng:4
+success,6,4,
 2294/2315=0.9909
 done.
 ```
@@ -46,8 +47,11 @@ Wordle 3/6
 
 - Current usage
 ```
-$ ./solver 2>guess_nums_6.txt
-$ grep "success" guess_nums_6.txt | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
+$ ./solver 2>guess_nums_6.csv
+2294/2315=0.9909
+done.
+$ grep "success" guess_nums_6.csv | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
+4.20575
 ```
 
 ## Best Results
@@ -125,11 +129,11 @@ Role: Choose which word in a given list of words should be selected for the curr
 
   - Primitive 5-letter dictionary from the Internet
 
-- `guess_nums_6.txt`
+- `guess_nums_6.csv`
 
   - Results from current algorithm, 6 guesses allowed (default)
 
-- `guess_nums_7.txt`
+- `guess_nums_7.csv`
 
   - Results from current algorithm, 7 guesses allowed
 
