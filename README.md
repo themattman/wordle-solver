@@ -80,25 +80,29 @@ Currently the best combo is `TrieBasedWordleSolver` & `PositionalLetterSelector`
 
 Role: Generate list of candidate words based on dictionary and results from prior guess.
 
+- `WordleSolver`
+
+  - Abstract Base Class. Interface for `Solver`s.
+
 - `WordlistWordleSolver`
 
-  - Base Class. Interface for solvers.
-
-- `WordlistWordleSolver`
-
-  - Base Class. Adds wordlist functionality.
+  - Abstract Base Class. Adds wordlist functionality.
 
 - `PassthroughWordleSolver`
 
-  - Intended for debugging Selectors. Does no processing of results.
+  - Intended for debugging `Selector`s. Does no processing of results.
 
 - `TrieBaseWordleSolver`
 
-  - Most powerful solver. Uses a letter-based trie data structure to efficiently eliminate potential words based on results of prior guess.
+  - Most powerful `Solver`. Uses a letter-based trie data structure to efficiently eliminate potential words based on results of prior guess.
 
 ### Selectors
 
 Role: Choose which word in a given list of words should be selected for the current Wordle guess.
+
+- `Selector`
+
+  - Abstract Base Class. Interface for `Selector`s.
 
 - `RandomSelector`
 
@@ -110,7 +114,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `MostCommonLetterSelector`
 
-  - Base Class. Interface for Selectors that want to compute frequency scores over remaining candidate words.
+  - Abstract Base Class. Interface for `Selector`s that want to compute frequency scores over remaining candidate words.
 
 - `NaiveMostCommonLetterSelector`
 
@@ -161,7 +165,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `wordle_selectors.[h|cpp]`
 
-  - Selection Algorithms to feed to Solver
+  - Selection Algorithms to feed to `Solver`
 
 - `wordle_solver.h`
 
@@ -173,7 +177,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `wordlist_wordle_solver.[h|cpp]`
 
-  - More intelligent solvers that use a dictionary
+  - More intelligent `Solver`s that use a dictionary
 
 
 ## ToDo
@@ -188,7 +192,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Select strategy from cmd line
 
-- [x] Automate hundreds of rounds of Solver v Checker
+- [x] Automate hundreds of rounds of `Solver` v `Checker`
 
 - [ ] Measure success rates of various algos against whole dictionary
 
@@ -198,12 +202,12 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
-- [x] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
+- [x] Only score letters that aren't green, thread through colors (`WordleGuess`) to the `Selector`
 
 - [ ] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
 
 - [ ] Prompt user for interactive vs. run across dictionary modes
 
-- [ ] Add aggressive `easy mode` solver to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
+- [ ] Add aggressive `easy mode` `Solver` to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
 
-- [ ] Implement `hard mode` solver
+- [ ] Implement `hard mode` `Solver`
