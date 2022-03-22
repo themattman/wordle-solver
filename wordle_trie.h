@@ -3,7 +3,6 @@
 #include "wordle_selectors.h"
 #include "wordle_solver.h"
 
-#include <algorithm>
 #include <string>
 #include <set>
 #include <vector>
