@@ -1,7 +1,6 @@
 #pragma once
 
 #include "wordle_rules.h"
-#include "wordle_selectors.h"
 
 #include <iostream>
 #include <string>

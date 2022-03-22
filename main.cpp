@@ -18,7 +18,6 @@ $ ./solver [strategy selection]
 #include "wordle_solver.h"
 #include "wordlist_wordle_solver.h"
 
-#include <exception>
 #include <fstream>
 #include <iomanip>
 #include <iostream>

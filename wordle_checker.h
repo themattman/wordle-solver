@@ -28,6 +28,7 @@ public:
 private:
     void resetFrequencyMap();
     void loadDictionary(string filename="answers.txt");
+
     unordered_set<string> m_dict;
     string m_answer;
     size_t m_numGuesses;

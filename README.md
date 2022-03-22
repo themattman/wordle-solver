@@ -48,11 +48,17 @@ Number of correct games over entire dictionary.
 
 ## Overview
 
-There is a Checker and Solver. These two entities comprise the Wordle game. The Solver is the "player" while
+There is a `Checker` and `Solver`. These two entities comprise the Wordle game. The `Solver` is the "player" while
 
-the Checker is the "referee."
+the `Checker` is the "referee."
+
+Each `Solver` can be mixed and matched with any `Selector`.
+
+Currently the best combo is `TrieBasedWordleSolver` & `PositionalLetterSelector`.
 
 ### Solvers
+
+Role: Generate list of candidate words based on dictionary and results from prior guess.
 
 - `WordlistWordleSolver`
 
@@ -71,6 +77,8 @@ the Checker is the "referee."
   - Most powerful solver. Uses a letter-based trie data structure to efficiently eliminate potential words based on results of prior guess.
 
 ### Selectors
+
+Role: Choose which word in a given list of words should be selected for the current Wordle guess.
 
 - `RandomSelector`
 

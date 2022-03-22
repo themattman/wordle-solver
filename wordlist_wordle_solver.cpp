@@ -17,47 +17,6 @@
 using namespace std;
 
 
-/**
-
-Solution:
-
-
-[A]                                [M]                                [A]               [Z]               [E]
- |                                  |                                  |                 |                 |
-[a]->["abort","apart",...,"azure"] [a]->["bacon","badge",...,"badly"]
-[b]->["bacon","basis",...,"bylaw"] [b]->["aback","abase",...,"obese"]
-[d]->["daily","dingy",...,"dimes"] [c]->["acorn","acrid",...,"scuba"]
-[e]->["earns","eater",...,"enums"] [d]->["adage","adapt",...,"udder"]
- .                                  .
-[m]->["mails","mates",...,"moles"] [m]->["amass","amaze",...,"umbra"]
- .                                  .
- .                                  .
-[z]->["zebra","zings",...,"zooms"] [z]->["azure","ozone"]
-
-# GREEN
-Select row. Remove all remainders from the 1st dim.
-
-# YELLOW
-Remove row. Select all other rows for letter in others.
-
-# BLACK
-Remove row from each dimension.
-
-Removals leave structure in correct state.
-Selects for yellow need to be unioned.
-Selects for green need to be intersected.
-
-Tree
-                    (root)
-                   /  | ..  \
-                /     |   ..  \
-             /        |    ..   \
-1:          a         b     ..    z
-          / | \     / | \       / | \
-2:      b   c  z   a  e  y     e  i  o
-
- */
-
 WordlistWordleSolver::WordlistWordleSolver() : WordleSolver() {
     m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::MostCommonLetter);
     loadWordList([this](const string& word) -> void {

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "wordle_rules.h"
+#include "wordle_selectors.h"
 #include "wordle_solver.h"
 #include "wordle_trie.h"
 
 #include <functional>
-#include <iostream>
 #include <set>
 #include <string>
 #include <unordered_map>
@@ -42,6 +43,22 @@ public:
 
 //////////////////
 
+/**
+Word Trie
+                             (root)
+                            /  | ..  \
+                         /     |   ..  \
+                      /        |    ..   \
+1st letter:          a         b     ..    z
+                   / | \     / | \       / | \
+2nd letter:      b   c  z   a  e  y     e  i  o
+
+...
+
+5th letter:      ...
+
+ */
+
 class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
@@ -57,5 +74,6 @@ protected:
     void trimGreens(const WordleGuess& g, const vector<size_t>& positions);
     void trimYellows(const WordleGuess& g, const vector<size_t>& positions);
     void trimBlacks(const WordleGuess& g, const vector<size_t>& positions);
+
     WordleTrie* m_trie;
 };

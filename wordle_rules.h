@@ -1,6 +1,5 @@
 #pragma once
 
-#include <exception>
 #include <string>
 #include <vector>
 
@@ -27,8 +26,10 @@ struct WordleGuess {
         : guessStr(cGuess) {
             auto results = std::vector<WordleResult>{};
         }
+
     std::string guessStr;
     std::vector<WordleResult> results;
+
     inline bool operator==(const WordleGuess& w1) const {
         return w1.results == results;
     }
