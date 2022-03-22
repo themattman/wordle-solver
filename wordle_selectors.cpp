@@ -77,23 +77,11 @@ void MostCommonLetterSelector<IterType>::clearOldState() {
     m_frequencyMapLetter.clear();
     m_wordScore.clear();
     m_sortedWords.clear();
-    m_positionLetterScores.clear();
 }
 
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::getBestCandidate() const {
     return m_sortedWords.begin()->word;
-}
-
-template <typename IterType>
-size_t MostCommonLetterSelector<IterType>::count(char letter, const string& word) const {
-    size_t count = 0;
-    for (auto& c : word) {
-        if (c == letter) {
-            count++;
-        }
-    }
-    return count;
 }
 
 template <typename IterType>
@@ -120,11 +108,11 @@ char MostCommonLetterSelector<IterType>::getMostCommonLetter() const {
 template <typename IterType>
 void MostCommonLetterSelector<IterType>::computeFrequencyMap() {
     if (m_alphabetWordScore.size() == 0) {
-        computeFrequencyMapInternalIsolatedLetter(m_alphabetFrequencyMapLetter, m_alphabetWordScore);
+        computeFrequencyMapInternal(m_alphabetFrequencyMapLetter, m_alphabetWordScore);
         m_frequencyMapLetter = m_alphabetFrequencyMapLetter;
         m_wordScore = m_alphabetWordScore;
     } else {
-        computeFrequencyMapInternalIsolatedLetter(m_frequencyMapLetter, m_wordScore);
+        computeFrequencyMapInternal(m_frequencyMapLetter, m_wordScore);
     }
     sortWordsByFrequency();
 }
@@ -140,8 +128,76 @@ void MostCommonLetterSelector<IterType>::sortWordsByFrequency() {
 }
 
 template <typename IterType>
-void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLetter(unordered_map<char, size_t>& unused_letterMap,
-                                                                                   unordered_map<string, size_t>& wordScore) {
+void NaiveMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                                                          unordered_map<string, size_t>& wordScore) {
+    // Compute letter scores
+    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+        for (auto& c : *wordIt) {
+            if (letterMap.find(c) == letterMap.end()) {
+                letterMap[c] = 0;
+            }
+            letterMap[c]++;
+        }
+    }
+
+    // Compute word scores
+    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+        size_t score = 0;
+        set<char> wordLetters;
+        for (auto& c : *wordIt) {
+            if (wordLetters.find(c) == wordLetters.end()) {
+                wordLetters.insert(c);
+                score += letterMap[c];
+            }
+        }
+        wordScore.insert({*wordIt, score});
+    }
+}
+
+template <typename IterType>
+void ImprovedMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                                                             unordered_map<string, size_t>& wordScore) {
+    // Compute letter scores
+    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+        for (auto& c : *wordIt) {
+            if (letterMap.find(c) == letterMap.end()) {
+                letterMap[c] = 0;
+            }
+            letterMap[c]++;
+        }
+    }
+
+    // Compute word scores
+    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+        size_t score = 0;
+        set<char> wordLetters;
+        set<char> greenLetters;
+        for (size_t i = 0; i < m_knowns.size(); i++) {
+            if (m_knowns[i].result == WordleResult::GREEN) {
+                greenLetters.insert(m_knowns[i].letter);
+            }
+        }
+        size_t i = 0;
+        for (auto& c : *wordIt) {
+            // only give scores to each letter once
+            if (wordLetters.find(c) == wordLetters.end()) {
+                // only give scores to each letter that isn't already known
+                if (m_knowns[i].result != WordleResult::GREEN) {
+                    if (greenLetters.find(c) == greenLetters.end()) {
+                        score += letterMap[c];
+                    }
+                }
+            }
+            wordLetters.insert(c);
+            i++;
+        }
+        wordScore.insert({*wordIt, score});
+    }
+}
+
+template <typename IterType>
+void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
+                                                                     unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
@@ -190,69 +246,7 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLett
 }
 
 template <typename IterType>
-void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalBetter(unordered_map<char, size_t>& letterMap,
-                                                                           unordered_map<string, size_t>& wordScore) {
-    // Compute letter scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
-        for (auto& c : *wordIt) {
-            if (letterMap.find(c) == letterMap.end()) {
-                letterMap[c] = 0;
-            }
-            letterMap[c]++;
-        }
-    }
-
-    // Compute word scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
-        size_t score = 0;
-        set<char> wordLetters;
-        set<char> greenLetters;
-        for (size_t i = 0; i < m_knowns.size(); i++) {
-            if (m_knowns[i].result == WordleResult::GREEN) {
-                greenLetters.insert(m_knowns[i].letter);
-            }
-        }
-        size_t i = 0;
-        for (auto& c : *wordIt) {
-            // only give scores to each letter once
-            if (wordLetters.find(c) == wordLetters.end()) {
-                // only give scores to each letter that isn't already known
-                if (m_knowns[i].result != WordleResult::GREEN) {
-                    if (greenLetters.find(c) == greenLetters.end()) {
-                        score += letterMap[c];
-                    }
-                }
-            }
-            wordLetters.insert(c);
-            i++;
-        }
-        wordScore.insert({*wordIt, score});
-    }
-}
-
-template <typename IterType>
-void MostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                                                     unordered_map<string, size_t>& wordScore) {
-    // Compute letter scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
-        for (auto& c : *wordIt) {
-            if (letterMap.find(c) == letterMap.end()) {
-                letterMap[c] = 0;
-            }
-            letterMap[c]++;
-        }
-    }
-
-    // Compute word scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
-        size_t score = 0;
-        set<char> wordLetters;
-        for (auto& c : *wordIt) {
-            if (wordLetters.find(c) == wordLetters.end()) {
-                wordLetters.insert(c);
-                score += letterMap[c];
-            }
-        }
-        wordScore.insert({*wordIt, score});
-    }
+void PositionalLetterSelector<IterType>::clearOldState() {
+    MostCommonLetterSelector<IterType>::clearOldState();
+    m_positionLetterScores.clear();
 }

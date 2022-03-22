@@ -28,14 +28,6 @@ public:
         return stringToWordleGuess(output, input);
     }
 
-    static size_t getSizeOfDictionary(const string& filename=DICTIONARY_FILENAME) {
-        auto filein = ifstream(filename);
-        size_t sz = 0;
-        string word;
-        while (std::getline(filein, word)) { sz++; }
-        return sz;
-    }
-
     static vector<string> getDictionary(const string& filename=DICTIONARY_FILENAME) {
         auto filein = ifstream(filename);
         vector<string> words;

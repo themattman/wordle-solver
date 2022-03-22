@@ -36,15 +36,61 @@ $ cut -d':' -f2 guess_nums.txt | awk 's+=$1{print s/NR}' | tail -n 1   # Average
 
 ## Best Results
 
-As you can see in `guess_nums.txt`, my current best algorithm wins within 6 guesses 98.1% of the time over the dictionary.
+Number of correct games over entire dictionary.
 
-With 7 guesses allowed, this goes up to only 11 failures (i.e. 99.52% success)
+- `v1.0`: 98.14%
+
+- `v2.0`: 99.09%
 
 ## Overview
 
 There is a Checker and Solver. These two entities comprise the Wordle game. The Solver is the "player" while
 
 the Checker is the "referee."
+
+### Solvers
+
+- `WordlistWordleSolver`
+
+  - Base Class. Interface for solvers.
+
+- `WordlistWordleSolver`
+
+  - Base Class. Adds wordlist functionality.
+
+- `PassthroughWordleSolver`
+
+  - Intended for debugging Selectors. Does no processing of results.
+
+- `TrieBaseWordleSolver`
+
+  - Most powerful solver. Uses a letter-based trie data structure to efficiently eliminate potential words based on results of prior guess.
+
+### Selectors
+
+- `RandomSelector`
+
+  - From an iterable list of candidate words, chooses candidate randomly.
+
+- `EnhancedRandomSelector`
+
+  - Randomly choose candidate words that contain more than one vowel and do not contain double letters.
+
+- `MostCommonLetterSelector`
+
+  - Base Class. Interface for Selectors that want to compute frequency scores over remaining candidate words.
+
+- `NaiveMostCommonLetterSelector`
+
+  - Basic approach to computing score based on most common letters in all remaining words.
+
+- `ImprovedMostCommonLetterSelector`
+
+  - Improved approach that doesn't score letters that show up multiple times (they're less common) AND letters that are already green (no effect, but it stands to reason).
+
+- `PositionalLetterMostCommonLetterSelector`
+
+  - Computes which letter is most common in each position. Scores each candidate word based on this and selects best candidate.
 
 
 ## Files

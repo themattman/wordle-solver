@@ -29,7 +29,8 @@ $ ./solver [strategy selection]
 using namespace std;
 
 
-bool runGame(const string& answer) {
+// Runs one iteration of the Wordle game with automated solver & checker.
+bool runOneGame(const string& answer) {
     auto solver = new TrieBasedWordleSolver();
     auto checker = WordleChecker();
     checker.setAnswer(answer);
@@ -62,13 +63,13 @@ bool runGame(const string& answer) {
     return true;
 }
 
-
+// Runs automated solver across entire dictionary.
 void runAllWords() {
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
     for (auto& word : words) {
-        if (runGame(word)) {
+        if (runOneGame(word)) {
             successes++;
         }
         runs++;
@@ -78,10 +79,11 @@ void runAllWords() {
     cout << "done." << endl;
 }
 
-void runDebug() {
+// Run one iteration of solver against `answer`.
+// Useful for debugging solver & selector.
+void runDebug(const string& answer) {
     auto solver = new TrieBasedWordleSolver();
     auto checker = WordleChecker();
-    string answer = "haute";
     checker.setAnswer(answer);
 
     size_t numGuesses = 0;
@@ -118,9 +120,38 @@ void runDebug() {
     }
 }
 
+// Allow user to act as the checker by entering 'B', 'Y', 'G' for each letter.
+// Could be used to augment user's ability to solve a Wordle IRL.
+int interactiveMode() {
+    auto solver = TrieBasedWordleSolver();
+    size_t numGuesses = 1;
+    WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
+    if (wg != CorrectWordleGuess) {
+        solver.processResult(wg);
+        for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
+            wg = Helpers::promptUser(solver.makeSubsequentGuess(), numGuesses);
+            if (wg == CorrectWordleGuess) {
+                break;
+            }
+            solver.processResult(wg);
+        }
+    }
+
+    if (numGuesses >= MAX_GUESSES && wg != CorrectWordleGuess) {
+        cout << "Darn!" << endl;
+    } else {
+        cout << "Hell yeah!" << endl;
+        cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
+    }
+
+    return 0;
+}
+
 int main() {
-    runAllWords();
-    // runDebug();
+    // Which mode would you like to run?
+    // runAllWords();
+    // runDebug("haute");
+    // interactiveMode();
 
     return 0;
 }

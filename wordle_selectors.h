@@ -54,45 +54,63 @@ struct WordScoreComp {
     }
 };
 
+/////////////////
+
 template <typename IterType>
 class MostCommonLetterSelector : public Selector<IterType> {
 public:
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
-private:
+protected:
     string getBestCandidate() const;
     void clearOldState();
     char getMostCommonLetter() const;
     void computeFrequencyMap();
-    void computeFrequencyMapInternalIsolatedLetter(unordered_map<char, size_t>& letterMap,
-                                                   unordered_map<string, size_t>& wordScore);
-    void computeFrequencyMapInternalBetter(unordered_map<char, size_t>& letterMap,
-                                           unordered_map<string, size_t>& wordScore);
-    void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                      unordered_map<string, size_t>& wordScore);
     void sortWordsByFrequency();
-    size_t count(char letter, const string& word) const;
+    virtual void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                             unordered_map<string, size_t>& wordScore) = 0;
 
-    bool m_uninitialized{true};
     IterType m_iterBegin;
     IterType m_iterEnd;
     unordered_map<char, size_t> m_frequencyMapLetter;
     unordered_map<string, size_t> m_wordScore;
     vector<WordleKnown> m_knowns;
-
-    vector<unordered_map<char, size_t>> m_positionLetterScores;
-
     unordered_map<char, size_t> m_alphabetFrequencyMapLetter;
     unordered_map<string, size_t> m_alphabetWordScore;
     set<WordScore, WordScoreComp> m_sortedWords{};
 };
 
+template <typename IterType>
+class NaiveMostCommonLetterSelector : public MostCommonLetterSelector<IterType> {
+protected:
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                     unordered_map<string, size_t>& wordScore) override;
+};
+
+template <typename IterType>
+class ImprovedMostCommonLetterSelector : public MostCommonLetterSelector<IterType> {
+protected:
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                     unordered_map<string, size_t>& wordScore) override;
+};
+
+template <typename IterType>
+class PositionalLetterSelector : public MostCommonLetterSelector<IterType> {
+protected:
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
+                                     unordered_map<string, size_t>& wordScore) override;
+    void clearOldState();
+
+    vector<unordered_map<char, size_t>> m_positionLetterScores;
+};
 
 //////////
 
 enum class SelectorType {
     Random,
     EnhancedRandom,
-    MostCommonLetter
+    NaiveMostCommonLetter,
+    ImprovedMostCommonLetter,
+    PositionalLetter,
 };
 
 template <typename IterType>
@@ -103,8 +121,12 @@ struct SelectorFactory {
             return new RandomSelector<IterType>();
         case SelectorType::EnhancedRandom:
             return new EnhancedRandomSelector<IterType>();
-        case SelectorType::MostCommonLetter:
-            return new MostCommonLetterSelector<IterType>();
+        case SelectorType::NaiveMostCommonLetter:
+            return new NaiveMostCommonLetterSelector<IterType>();
+        case SelectorType::ImprovedMostCommonLetter:
+            return new ImprovedMostCommonLetterSelector<IterType>();
+        case SelectorType::PositionalLetter:
+            return new PositionalLetterSelector<IterType>();
         }
         if (DEBUG) {
             cerr << "Error: [selector] invalid selectorName" << endl;
@@ -116,8 +138,13 @@ struct SelectorFactory {
 // Explicity Instantiation to keep linker happy, TODO: why?
 template class RandomSelector<SetIterator>;
 template class EnhancedRandomSelector<SetIterator>;
-template class MostCommonLetterSelector<SetIterator>;
+template class NaiveMostCommonLetterSelector<SetIterator>;
+template class ImprovedMostCommonLetterSelector<SetIterator>;
+template class PositionalLetterSelector<SetIterator>;
 
 template class RandomSelector<ForwardIterator>;
 template class EnhancedRandomSelector<ForwardIterator>;
 template class MostCommonLetterSelector<ForwardIterator>;
+template class NaiveMostCommonLetterSelector<ForwardIterator>;
+template class ImprovedMostCommonLetterSelector<ForwardIterator>;
+template class PositionalLetterSelector<ForwardIterator>;
