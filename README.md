@@ -10,7 +10,23 @@ make
 
 ## How to Use
 
-- Original Interactive Mode (not operable currently)
+- Current Mode
+```
+$ ./solver
+res:success,words_left:1,ng:5
+res:success,words_left:1,ng:6
+res:success,words_left:1,ng:5
+res:success,words_left:1,ng:4
+res:success,words_left:1,ng:5
+...
+res:failure,words_left:1,ng:6,word:baker
+...
+res:success,words_left:6,ng:4
+2294/2315=0.9909
+done.
+```
+
+- Original Interactive Mode (see comments in `main.cpp` to enable)
 ```
 $ ./solver
 Size of wordlist: 2315
@@ -48,9 +64,7 @@ Number of correct games over entire dictionary.
 
 ## Overview
 
-There is a `Checker` and `Solver`. These two entities comprise the Wordle game. The `Solver` is the "player" while
-
-the `Checker` is the "referee."
+There is a `Checker` and `Solver`. These two entities comprise the Wordle game. The `Solver` is the "player" while the `Checker` is the "referee."
 
 Each `Solver` can be mixed and matched with any `Selector`.
 
@@ -162,28 +176,28 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [x] More complex strategies with letter distributions from the dictionary
 
-- [] Better dictionary
+- [ ] Better dictionary
 
 - [x] Support changing rules of game to more letters, more guesses, etc. [Works! Tested 7 guesses]
 
-- [] Select strategy from cmd line
+- [ ] Select strategy from cmd line
 
 - [x] Automate hundreds of rounds of Solver v Checker
 
-- [-] Measure success rates of various algos against whole dictionary
+- [ ] Measure success rates of various algos against whole dictionary
 
-- [-] Define richer exceptions and catch them in main to help in debugging
+- [ ] Define richer exceptions and catch them in main to help in debugging
 
-- [] Thread each parallel execution (Clang Mac doesn't support threading :( )
+- [ ] Thread each parallel execution (Clang Mac doesn't support threading :( )
 
-- [] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
+- [ ] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
 - [x] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
 
-- [] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
+- [ ] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
 
-- [] Prompt user for interactive vs. run across dictionary modes
+- [ ] Prompt user for interactive vs. run across dictionary modes
 
-- [] Add aggressive `easy mode` solver to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
+- [ ] Add aggressive `easy mode` solver to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
 
-- [] Implement `hard mode` solver
+- [ ] Implement `hard mode` solver
