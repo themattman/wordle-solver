@@ -9,6 +9,7 @@
 
 using namespace std;
 
+
 class WordleTrie;
 
 class WordleTrieNode {
@@ -57,7 +58,6 @@ private:
     void removeAllChildren(WordleTrieNode& node);
     void addAllChildren(WordleTrieNode& node, vector<string>& letterCandidates);
     void promoteLetter();
-
     WordleTrieNode* getChild(size_t letterPosition, char letter);
 
     WordleTrieNode* m_root;

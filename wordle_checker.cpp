@@ -7,41 +7,34 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
+
 bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
     if (m_answer.size() != LETTER_COUNT) {
-        if (DEBUG) {
-            cerr << "Error: [checker] answer not correct size" << endl;
-        }
+        if (DEBUG) cerr << "Error: [checker] answer not correct size" << endl;
         throw;
     }
 
     if (wg.results.size() > 0) {
-        if (DEBUG) {
-            cerr << "Error: [checker] no results to check" << endl;
-        }
+        if (DEBUG) cerr << "Error: [checker] no results to check" << endl;
         throw;
     }
 
     if (m_dict.size() == 0) {
-        if (DEBUG) {
-            cerr << "Error: [checker] empty dictionary" << endl;
-        }
+        if (DEBUG) cerr << "Error: [checker] empty dictionary" << endl;
         throw;
     }
 
     if (m_dict.find(wg.guessStr) == m_dict.end()) {
-        if (DEBUG) {
-            cerr << "Not in dictionary. Try again." << endl;
-        }
+        if (DEBUG) cerr << "Not in dictionary. Try again." << endl;
         return false;
     }
 
     auto result = vector<WordleResult>(LETTER_COUNT, WordleResult::BLACK);
-
     resetFrequencyMap();
-    if (DEBUG) {
-        cout << "      ";
-    }
+    if (DEBUG) cout << "      ";
+
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
             m_frequencyMap[wg.guessStr[i]]--;
@@ -77,6 +70,7 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
             break;
         }
     }
+
     if (DEBUG) cout << endl;
 
     outNumGuesses = ++m_numGuesses;
@@ -89,6 +83,7 @@ void WordleChecker::resetFrequencyMap() {
         if (m_frequencyMap.find(m_answer[i]) == m_frequencyMap.end()) {
             m_frequencyMap[m_answer[i]] = 0;
         }
+
         m_frequencyMap[m_answer[i]]++;
     }
 }
@@ -99,9 +94,8 @@ bool WordleChecker::setAnswer(string answer) {
     }
 
     m_answer = answer;
-    if (DEBUG) {
-        cerr << "Answer set to: [" << answer << "]" << endl;
-    }
+    if (DEBUG) cerr << "Answer set to: [" << answer << "]" << endl;
+
     return true;
 }
 
@@ -114,7 +108,7 @@ void WordleChecker::setRandomAnswer() {
 }
 
 void WordleChecker::loadDictionary(string filename) {
-    auto filein = ifstream("answers.txt");
+    auto filein = ifstream(filename);
     string word;
     while (std::getline(filein, word))
     {

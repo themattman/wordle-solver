@@ -6,6 +6,7 @@
 
 using namespace std;
 
+
 template <typename IterType>
 string RandomSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
                                         const vector<WordleKnown>& knowns) {
@@ -96,9 +97,7 @@ char MostCommonLetterSelector<IterType>::getMostCommonLetter() const {
     }
 
     if (!mostCommon) {
-        if (DEBUG) {
-            cerr << "Error: [selector] no most common letter" << endl;
-        }
+        if (DEBUG) cerr << "Error: [selector] no most common letter" << endl;
         throw;
     }
 

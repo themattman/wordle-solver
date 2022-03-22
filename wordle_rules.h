@@ -4,6 +4,7 @@
 #include <vector>
 
 #define DEBUG false
+#define DICTIONARY_FILENAME "answers.txt"
 
 static const size_t MAX_GUESSES  = 6;
 static const size_t LETTER_COUNT = 5;
@@ -25,17 +26,16 @@ struct WordleGuess {
     WordleGuess(std::string cGuess)
         : guessStr(cGuess) {
             auto results = std::vector<WordleResult>{};
-        }
-
-    std::string guessStr;
-    std::vector<WordleResult> results;
-
+    }
     inline bool operator==(const WordleGuess& w1) const {
         return w1.results == results;
     }
     inline bool operator!=(const WordleGuess& w1) const {
         return w1.results != results;
     }
+
+    std::string guessStr;
+    std::vector<WordleResult> results;
 };
 
 static auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,

@@ -6,8 +6,6 @@
 #include <unordered_map>
 #include <unordered_set>
 
-using namespace std;
-
 
 class WordleChecker {
 public:
@@ -23,14 +21,14 @@ public:
       * true:  operation was success, answer is set
       * false: input isn't valid
       */
-    bool setAnswer(string answer);
+    bool setAnswer(std::string answer);
     void setRandomAnswer();
 private:
     void resetFrequencyMap();
-    void loadDictionary(string filename="answers.txt");
+    void loadDictionary(std::string filename=DICTIONARY_FILENAME);
 
-    unordered_set<string> m_dict;
-    string m_answer;
+    std::unordered_set<std::string> m_dict;
+    std::string m_answer;
     size_t m_numGuesses;
-    unordered_map<char, size_t> m_frequencyMap;
+    std::unordered_map<char, size_t> m_frequencyMap;
 };

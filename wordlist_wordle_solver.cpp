@@ -37,16 +37,15 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         m_letterMaps.push_back(unordered_map<char, vector<string>>{});
     }
+
     // src: https://raw.githubusercontent.com/printfn/wordle-dict/main/answers.txt
-    auto filein = ifstream("answers.txt");
+    auto filein = ifstream(DICTIONARY_FILENAME);
     string word;
-    while (std::getline(filein, word))
-    {
+    while (std::getline(filein, word)) {
         eachLineCallback(word);
     }
-    if (DEBUG) {
-        cout << "Size of wordlist: " << m_wordlist.size() << endl;
-    }
+
+    if (DEBUG) cout << "Size of wordlist: " << m_wordlist.size() << endl;
 }
 
 /////////////////////
@@ -63,17 +62,13 @@ string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
         string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects);
         if (candidateWord.size() == 0) {
-            if (DEBUG) {
-                cerr << "Error: [solver] empty word" << endl;
-            }
+            if (DEBUG) cerr << "Error: [solver] empty word" << endl;
             throw;
         }
         return candidateWord;
     }
 
-    if (DEBUG) {
-        cerr << "Error: [solver] no more candidates" << endl;
-    }
+    if (DEBUG) cerr << "Error: [solver] no more candidates" << endl;
     throw;
 }
 
@@ -82,9 +77,7 @@ string TrieBasedWordleSolver::makeSubsequentGuess() {
 }
 
 void TrieBasedWordleSolver::printNumCands(const string& color) const {
-    if (DEBUG) {
-        cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
-    }
+    if (DEBUG) cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
 }
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
@@ -105,12 +98,11 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& al
             if (wr == WordleResult::GREEN && m_knownCorrects[i].result != WordleResult::GREEN) {
                 m_knownCorrects[i].result = WordleResult::GREEN;
                 m_knownCorrects[i].letter = allPositions.guessStr[i];
-                if (DEBUG) {
-                    cout << "New correct letter! (" << i << ")" << endl;
-                }
+                if (DEBUG) cout << "New correct letter! (" << i << ")" << endl;
             }
         }
     }
+
     return positions;
 }
 
@@ -152,5 +144,6 @@ bool TrieBasedWordleSolver::isAnotherOccurrenceNotBlack(size_t position, const W
             }
         }
     }
+
     return false;
 }

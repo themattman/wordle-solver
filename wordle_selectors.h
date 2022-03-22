@@ -127,9 +127,9 @@ struct SelectorFactory {
         case SelectorType::PositionalLetter:
             return new PositionalLetterSelector<IterType>();
         }
-        if (DEBUG) {
-            cerr << "Error: [selector] invalid selectorName" << endl;
-        }
+
+        if (DEBUG) cerr << "Error: [selector] invalid selectorType" << endl;
+
         throw;
     }
 };

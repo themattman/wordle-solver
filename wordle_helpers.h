@@ -1,5 +1,6 @@
 #pragma once
 
+#include "wordle_rules.h"
 #include "wordle_solver.h"
 
 #include <fstream>
@@ -7,9 +8,8 @@
 #include <string>
 #include <vector>
 
-#define DICTIONARY_FILENAME "answers.txt"
-
 using namespace std;
+
 
 inline size_t countOccurs(char letter, const string& word) {
     return std::count(word.begin(), word.end(), letter);
