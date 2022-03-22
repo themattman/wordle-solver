@@ -201,18 +201,12 @@ void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_m
     // Compute letter scores
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
-        size_t biggestScore = 0;
-        char biggestLetter = '0';
         for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
             char c = (*wordIt)[i];
             if (letterMap.find(c) == letterMap.end()) {
                 letterMap[c] = 0;
             }
             letterMap[c]++;
-            if (letterMap[c] > biggestScore) {
-                biggestScore = letterMap[c];
-                biggestLetter = c;
-            }
         }
         m_positionLetterScores.push_back(letterMap);
     }

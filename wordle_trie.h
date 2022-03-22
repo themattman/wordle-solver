@@ -25,8 +25,8 @@ private:
     friend WordleTrie;
     WordleTrie* m_wordleTrie;
     WordleTrieNode* m_parent;
-    bool m_isLeaf;
     string m_prefix;
+    bool m_isLeaf;
 };
 
 class WordleTrie {
@@ -44,7 +44,6 @@ public:
     }
     string getCandidate(Selector<SetIterator>* selector, const vector<WordleKnown>& knowns);
     size_t getNumCandidates() const { return m_candidates.size(); }
-    void printCandidates();
 private:
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);
