@@ -2316,3 +2316,7 @@ success,2,5,
 success,15,4,
 2282/2315=0.9857
 done.
+
+real	0m18.768s
+user	0m17.029s
+sys	0m1.063s

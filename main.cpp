@@ -28,35 +28,36 @@ using namespace std;
 
 
 // Runs one iteration of the Wordle game with automated solver & checker.
-bool runOneGame(WordleSolver* solver, const string& answer) {
+bool runOneGame(const string& answer) {
+    auto solver = TrieBasedWordleSolver();
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
     size_t numGuesses = 0;
-    auto guess = WordleGuess(solver->makeInitialGuess());
+    auto guess = WordleGuess(solver.makeInitialGuess());
     bool result = checker.check(guess, numGuesses);
     if (guess != CorrectWordleGuess) {
         if (result) {
-            solver->processResult(guess);
+            solver.processResult(guess);
         }
         while (numGuesses < MAX_GUESSES) {
-            guess = WordleGuess(solver->makeSubsequentGuess());
+            guess = WordleGuess(solver.makeSubsequentGuess());
             result = checker.check(guess, numGuesses);
             if (result) {
                 if (guess == CorrectWordleGuess) {
                     break;
                 }
-                solver->processResult(guess);
+                solver.processResult(guess);
             }
         }
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "failure," << solver->getNumCandidates() << "," << numGuesses << "," << answer << endl;
+        cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
         return false;
     }
 
-    cerr << "success," << solver->getNumCandidates() << "," << numGuesses << "," << endl;
+    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
     return true;
 }
 
@@ -99,7 +100,7 @@ void runDebug(WordleSolver* solver, const string& answer) {
                     break;
                 }
                 if (numGuesses >= MAX_GUESSES) {
-                    cerr << "[end]result:failure,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+                    cerr << "[end]result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
                 }
                 solver->processResult(guess);
             }
@@ -107,9 +108,9 @@ void runDebug(WordleSolver* solver, const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "result:failure,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+        cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
     } else {
-        cerr << "result:success,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
+        cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
     }
 }
@@ -118,15 +119,15 @@ void runDebug(WordleSolver* solver, const string& answer) {
 // Could be used to augment user's ability to solve a Wordle IRL.
 int interactiveMode(WordleSolver* solver) {
     size_t numGuesses = 1;
-    WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
+    WordleGuess wg = Helpers::promptUser(solver->makeInitialGuess(), numGuesses);
     if (wg != CorrectWordleGuess) {
-        solver.processResult(wg);
+        solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUser(solver.makeSubsequentGuess(), numGuesses);
+            wg = Helpers::promptUser(solver->makeSubsequentGuess(), numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
-            solver.processResult(wg);
+            solver->processResult(wg);
         }
     }
 
@@ -142,12 +143,12 @@ int interactiveMode(WordleSolver* solver) {
 
 int main() {
     // Choose `Solver` HERE!!
-    auto solver = TrieBasedWordleSolver();
+    //auto solver = new TrieBasedWordleSolver();
 
     // Which mode would you like to run?
-    // runAllWords(solver);
+    runAllWords();
     // runDebug(solver, "haute");
-    interactiveMode(solver);
+    // interactiveMode(solver);
 
     return 0;
 }
