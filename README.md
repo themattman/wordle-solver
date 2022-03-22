@@ -46,17 +46,14 @@ done.
 - Original Interactive Mode (see comments in `main.cpp` to enable)
 ```
 $ ./solver
-Size of wordlist: 2315
-candidateWord not accepted:aback
-candidateWord accepted:rainy
-Guess #1: reach
-> BBBYG # user input
-Guess #2: ponds
-> BYBBB # user input
-Guess #3: cloth
-> GGGGG # user input
-Hell yeah!
-Wordle 3/6
+Guess #1: sling
+> GBGBB
+Guess #2: shiny
+> GGGBB
+Guess #3: shirk
+> GGGGG
+Success!
+Wordle 3/7
 ```
 
 ### Test solver against all words in dictionary

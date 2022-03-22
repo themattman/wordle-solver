@@ -5,10 +5,9 @@
  */
 
 /*
-$ ./solver [strategy selection]
-1. Echo best guess
-2. Checker checks the guess
-<repeat MAX_GUESSES times>
+Where To Edit Strategies:
+Solver:   in main()
+Selector: in the respective `WordleSolver` constructor. Currently all locations in `wordlist_wordle_solver.cpp`.
  */
 
 #include "wordle_checker.h"
@@ -29,8 +28,7 @@ using namespace std;
 
 
 // Runs one iteration of the Wordle game with automated solver & checker.
-bool runOneGame(const string& answer) {
-    auto solver = new TrieBasedWordleSolver();
+bool runOneGame(WordleSolver* solver, const string& answer) {
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -80,8 +78,7 @@ void runAllWords() {
 
 // Run one iteration of solver against `answer`.
 // Useful for debugging solver & selector.
-void runDebug(const string& answer) {
-    auto solver = new TrieBasedWordleSolver();
+void runDebug(WordleSolver* solver, const string& answer) {
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -119,8 +116,7 @@ void runDebug(const string& answer) {
 
 // Allow user to act as the checker by entering 'B', 'Y', 'G' for each letter.
 // Could be used to augment user's ability to solve a Wordle IRL.
-int interactiveMode() {
-    auto solver = TrieBasedWordleSolver();
+int interactiveMode(WordleSolver* solver) {
     size_t numGuesses = 1;
     WordleGuess wg = Helpers::promptUser(solver.makeInitialGuess(), numGuesses);
     if (wg != CorrectWordleGuess) {
@@ -135,9 +131,9 @@ int interactiveMode() {
     }
 
     if (numGuesses >= MAX_GUESSES && wg != CorrectWordleGuess) {
-        cout << "Darn!" << endl;
+        cout << "Failure!" << endl;
     } else {
-        cout << "Hell yeah!" << endl;
+        cout << "Success!" << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
     }
 
@@ -145,10 +141,13 @@ int interactiveMode() {
 }
 
 int main() {
+    // Choose `Solver` HERE!!
+    auto solver = TrieBasedWordleSolver();
+
     // Which mode would you like to run?
-    runAllWords();
-    // runDebug("haute");
-    // interactiveMode();
+    // runAllWords(solver);
+    // runDebug(solver, "haute");
+    interactiveMode(solver);
 
     return 0;
 }
