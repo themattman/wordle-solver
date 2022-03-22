@@ -20,7 +20,7 @@ success,1,5,
 success,1,4,
 success,1,5,
 ...
-failure,1,6,word:baker
+failure,1,6,baker
 ...
 success,6,4,
 2294/2315=0.9909

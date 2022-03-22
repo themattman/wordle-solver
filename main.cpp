@@ -102,7 +102,7 @@ void runDebug(const string& answer) {
                     break;
                 }
                 if (numGuesses >= MAX_GUESSES) {
-                    cerr << "[end]res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
+                    cerr << "[end]result:failure,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
                 }
                 solver->processResult(guess);
             }
@@ -110,11 +110,9 @@ void runDebug(const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
-        cout << "Darn!" << endl;
+        cerr << "result:failure,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
     } else {
-        cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
-        cout << "Hell yeah!" << endl;
+        cerr << "result:success,words_left:" << solver->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
     }
 }
