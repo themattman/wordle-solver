@@ -61,14 +61,15 @@ Wordle 3/7
 - Current usage
 ```
 $ time ./solver 2>guess_nums_6.csv
-2294/2315=0.9909
+2282/2315=0.9857
 done.
 
-real    2m32.135s
-user    2m28.669s
-sys     0m2.506s
+real    0m18.768s
+user    0m17.029s
+sys     0m1.063s
+
 $ grep "success" guess_nums_6.csv | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
-4.20575
+4.26687
 ```
 
 ## Best Results
@@ -79,9 +80,9 @@ Number of correct games over entire dictionary.
 
   - Average guesses on success: ??
 
-- `v2.0`: 99.09%
+- `v2.0`: 98.57%
 
-  - Average guesses on success: 4.20575
+  - Average guesses on success: 4.26687
 
 ## Overview
 
@@ -160,7 +161,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `main.cpp`
 
-  - main() lives here
+  - `main()` lives here
 
 - `wordle_checker.[h|cpp]`
 
@@ -184,7 +185,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `wordle_solver.h`
 
-  - Base class/interface for the Solver
+  - Abstract Base class/interface for the `Solver`
 
 - `wordle_trie.[h|cpp]`
 
@@ -196,17 +197,9 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 ## ToDo
 
-- [x] Get basic strategy working
+- [ ] Better/Additional dictionary
 
-- [x] More complex strategies with letter distributions from the dictionary
-
-- [ ] Better dictionary
-
-- [x] Support changing rules of game to more letters, more guesses, etc. [Works! Tested 7 guesses]
-
-- [ ] Select strategy from cmd line
-
-- [x] Automate hundreds of rounds of `Solver` v `Checker`
+- [ ] Select strategy & mode from cmd line
 
 - [ ] Measure success rates of various algos against whole dictionary
 
@@ -216,15 +209,11 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
-- [x] Only score letters that aren't green, thread through colors (`WordleGuess`) to the `Selector`
-
-- [ ] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
-
-- [ ] Prompt user for interactive vs. run across dictionary modes
-
 - [ ] Add aggressive `easy mode` `Solver` to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
 
 - [ ] Implement `hard mode` `Solver`
+
+- [ ] Replaces several size checks with NUM_LETTERS to consolidate understanding of what is tied to this global
 
 ## Discussion
 
