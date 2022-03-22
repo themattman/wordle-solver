@@ -146,7 +146,7 @@ int interactiveMode() {
 
 int main() {
     // Which mode would you like to run?
-    // runAllWords();
+    runAllWords();
     // runDebug("haute");
     // interactiveMode();
 

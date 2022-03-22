@@ -131,7 +131,7 @@ template <typename IterType>
 void NaiveMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                                                           unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         for (auto& c : *wordIt) {
             if (letterMap.find(c) == letterMap.end()) {
                 letterMap[c] = 0;
@@ -141,7 +141,7 @@ void NaiveMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unorde
     }
 
     // Compute word scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         size_t score = 0;
         set<char> wordLetters;
         for (auto& c : *wordIt) {
@@ -158,7 +158,7 @@ template <typename IterType>
 void ImprovedMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                                                              unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         for (auto& c : *wordIt) {
             if (letterMap.find(c) == letterMap.end()) {
                 letterMap[c] = 0;
@@ -168,13 +168,13 @@ void ImprovedMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(uno
     }
 
     // Compute word scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         size_t score = 0;
         set<char> wordLetters;
         set<char> greenLetters;
-        for (size_t i = 0; i < m_knowns.size(); i++) {
-            if (m_knowns[i].result == WordleResult::GREEN) {
-                greenLetters.insert(m_knowns[i].letter);
+        for (size_t i = 0; i < this->m_knowns.size(); i++) {
+            if (this->m_knowns[i].result == WordleResult::GREEN) {
+                greenLetters.insert(this->m_knowns[i].letter);
             }
         }
         size_t i = 0;
@@ -182,7 +182,7 @@ void ImprovedMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(uno
             // only give scores to each letter once
             if (wordLetters.find(c) == wordLetters.end()) {
                 // only give scores to each letter that isn't already known
-                if (m_knowns[i].result != WordleResult::GREEN) {
+                if (this->m_knowns[i].result != WordleResult::GREEN) {
                     if (greenLetters.find(c) == greenLetters.end()) {
                         score += letterMap[c];
                     }
@@ -203,7 +203,7 @@ void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_m
         auto letterMap = unordered_map<char, size_t>();
         size_t biggestScore = 0;
         char biggestLetter = '0';
-        for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+        for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
             char c = (*wordIt)[i];
             if (letterMap.find(c) == letterMap.end()) {
                 letterMap[c] = 0;
@@ -218,13 +218,13 @@ void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_m
     }
 
     // Compute word scores
-    for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         size_t score = 0;
         set<char> wordLetters;
         set<char> greenLetters;
-        for (size_t i = 0; i < m_knowns.size(); i++) {
-            if (m_knowns[i].result == WordleResult::GREEN) {
-                greenLetters.insert(m_knowns[i].letter);
+        for (size_t i = 0; i < this->m_knowns.size(); i++) {
+            if (this->m_knowns[i].result == WordleResult::GREEN) {
+                greenLetters.insert(this->m_knowns[i].letter);
             }
         }
         size_t i = 0;
@@ -232,7 +232,7 @@ void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_m
             // only give scores to each letter once
             if (wordLetters.find(c) == wordLetters.end()) {
                 // only give scores to each letter that isn't already known
-                if (m_knowns[i].result != WordleResult::GREEN) {
+                if (this->m_knowns[i].result != WordleResult::GREEN) {
                     if (greenLetters.find(c) == greenLetters.end()) {
                         score += m_positionLetterScores[i][c];
                     }

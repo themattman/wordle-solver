@@ -49,9 +49,13 @@ Wordle 3/6
 
 - Current usage
 ```
-$ ./solver 2>guess_nums_6.csv
+$ time ./solver 2>guess_nums_6.csv
 2294/2315=0.9909
 done.
+
+real    2m32.135s
+user    2m28.669s
+sys     0m2.506s
 $ grep "success" guess_nums_6.csv | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
 4.20575
 ```
