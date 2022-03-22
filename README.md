@@ -30,8 +30,8 @@ Wordle 3/6
 
 - Current usage
 ```
-$ ./solver 2>guess_nums.txt
-$ cut -d':' -f2 guess_nums.txt | awk 's+=$1{print s/NR}' | tail -n 1   # Average number of guesses
+$ ./solver 2>guess_nums_6.txt
+$ grep "success" guess_nums_6.txt | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
 ```
 
 ## Best Results
@@ -40,7 +40,11 @@ Number of correct games over entire dictionary.
 
 - `v1.0`: 98.14%
 
+  - Average guesses on success: ??
+
 - `v2.0`: 99.09%
+
+  - Average guesses on success: 4.20575
 
 ## Overview
 
@@ -88,7 +92,7 @@ the Checker is the "referee."
 
   - Improved approach that doesn't score letters that show up multiple times (they're less common) AND letters that are already green (no effect, but it stands to reason).
 
-- `PositionalLetterMostCommonLetterSelector`
+- `PositionalLetterSelector`
 
   - Computes which letter is most common in each position. Scores each candidate word based on this and selects best candidate.
 
@@ -146,34 +150,32 @@ the Checker is the "referee."
 
 ## ToDo
 
-[X] Get basic strategy working
+- [x] Get basic strategy working
 
-[X] More complex strategies with letter distributions from the dictionary
+- [x] More complex strategies with letter distributions from the dictionary
 
-[] Better dictionary
+- [] Better dictionary
 
-[X] Support changing rules of game to more letters, more guesses, etc. [Works! Tested 7 guesses]
+- [x] Support changing rules of game to more letters, more guesses, etc. [Works! Tested 7 guesses]
 
-[] Select strategy from cmd line
+- [] Select strategy from cmd line
 
-[X] Automate hundreds of rounds of Solver v Checker
+- [x] Automate hundreds of rounds of Solver v Checker
 
-[-] Measure success rates of various algos against whole dictionary
+- [-] Measure success rates of various algos against whole dictionary
 
-[-] Define richer exceptions and catch them in main to help in debugging
+- [-] Define richer exceptions and catch them in main to help in debugging
 
-[] Thread each parallel execution (Clang Mac doesn't support threading :( )
+- [] Thread each parallel execution (Clang Mac doesn't support threading :( )
 
-[] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
+- [] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
-[X] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
+- [x] Only score letters that aren't green, thread through colors (`WordleGuess`) to the selector
 
-[] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
+- [] Average remaining words is 1.9... how could it be below 2?? Because this is printed after a final processing step. TODO: Print numCands prior to this final step...
 
-[] Prompt user for interactive vs. run across dictionary modes
+- [] Prompt user for interactive vs. run across dictionary modes
 
-Why is compile failing?
-What does this mean (from ctpl):
-```
-auto push(F && f, Rest&&... rest) ->std::future<decltype(f(0, rest...))> {
-```
+- [] Add aggressive `easy mode` solver to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
+
+- [] Implement `hard mode` solver
