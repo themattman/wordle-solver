@@ -2,6 +2,8 @@
 
 Weekend project to come up with automated strategies to solve Wordle
 
+Note: Doesn't compile at the moment.
+
 ## Setup
 ```
 cmake .

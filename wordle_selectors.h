@@ -2,6 +2,7 @@
 
 #include "wordle_rules.h"
 
+#include <iostream>
 #include <iterator>
 #include <set>
 #include <string>
