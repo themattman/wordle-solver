@@ -104,14 +104,18 @@ string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
         string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects);
         if (candidateWord.size() == 0) {
-            cout << "empty word" << endl;
+            if (DEBUG) {
+                cerr << "Error: [solver] empty word" << endl;
+            }
             throw;
         }
         return candidateWord;
     }
 
-    cout << "no more candidates" << endl;
-    throw WordleNoMoreCandidatesException("no more candidates");
+    if (DEBUG) {
+        cerr << "Error: [solver] no more candidates" << endl;
+    }
+    throw;
 }
 
 string TrieBasedWordleSolver::makeSubsequentGuess() {

@@ -59,6 +59,9 @@ private:
                 wr.push_back(WordleResult::BLACK);
                 break;
             default:
+                if (DEBUG) {
+                    cerr << "Error: [helpers] invalid wordle answer" << endl;
+                }
                 throw;
             }
         }

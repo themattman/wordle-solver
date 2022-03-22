@@ -9,20 +9,29 @@
 
 bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
     if (m_answer.size() != LETTER_COUNT) {
+        if (DEBUG) {
+            cerr << "Error: [checker] answer not correct size" << endl;
+        }
         throw;
     }
 
     if (wg.results.size() > 0) {
+        if (DEBUG) {
+            cerr << "Error: [checker] no results to check" << endl;
+        }
         throw;
     }
 
     if (m_dict.size() == 0) {
+        if (DEBUG) {
+            cerr << "Error: [checker] empty dictionary" << endl;
+        }
         throw;
     }
 
     if (m_dict.find(wg.guessStr) == m_dict.end()) {
         if (DEBUG) {
-            cout << "Not in dictionary. Try again." << endl;
+            cerr << "Not in dictionary. Try again." << endl;
         }
         return false;
     }

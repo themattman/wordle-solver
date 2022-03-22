@@ -30,47 +30,36 @@ using namespace std;
 
 
 bool runGame(const string& answer) {
-    try {
-        auto solver = new TrieBasedWordleSolver();
-        auto checker = WordleChecker();
-        checker.setAnswer(answer);
+    auto solver = new TrieBasedWordleSolver();
+    auto checker = WordleChecker();
+    checker.setAnswer(answer);
 
-        size_t numGuesses = 0;
-        auto guess = WordleGuess(solver->makeInitialGuess());
-        bool result = checker.check(guess, numGuesses);
-        if (guess != CorrectWordleGuess) {
+    size_t numGuesses = 0;
+    auto guess = WordleGuess(solver->makeInitialGuess());
+    bool result = checker.check(guess, numGuesses);
+    if (guess != CorrectWordleGuess) {
+        if (result) {
+            solver->processResult(guess);
+        }
+        while (numGuesses < MAX_GUESSES) {
+            guess = WordleGuess(solver->makeSubsequentGuess());
+            result = checker.check(guess, numGuesses);
             if (result) {
+                if (guess == CorrectWordleGuess) {
+                    break;
+                }
                 solver->processResult(guess);
             }
-            while (numGuesses < MAX_GUESSES) {
-                guess = WordleGuess(solver->makeSubsequentGuess());
-                result = checker.check(guess, numGuesses);
-                if (result) {
-                    if (guess == CorrectWordleGuess) {
-                        break;
-                    }
-                    solver->processResult(guess);
-                }
-            }
         }
+    }
 
-        if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-            cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
-            return false;
-        }
-
-        cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
-        return true;
-    } catch (std::runtime_error e) {
-        cout << e.what() << endl;
-        return false;
-    } catch (WordleNoMoreCandidatesException e) {
-        cout << e.what() << endl;
-        return false;
-    } catch (...) {
-        cout << "caught generic" << endl;
+    if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
+        cerr << "res:failure,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << ",word:" << answer << endl;
         return false;
     }
+
+    cerr << "res:success,words_left:" << solver->getNumCandidates() << ",ng:" << numGuesses << endl;
+    return true;
 }
 
 

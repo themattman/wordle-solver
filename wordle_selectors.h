@@ -105,8 +105,10 @@ struct SelectorFactory {
             return new EnhancedRandomSelector<IterType>();
         case SelectorType::MostCommonLetter:
             return new MostCommonLetterSelector<IterType>();
-            }
-        cerr << "Error: bad selectorName" << endl;
+        }
+        if (DEBUG) {
+            cerr << "Error: [selector] invalid selectorName" << endl;
+        }
         throw;
     }
 };

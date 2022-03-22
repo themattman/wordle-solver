@@ -82,17 +82,6 @@ void MostCommonLetterSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 string MostCommonLetterSelector<IterType>::getBestCandidate() const {
-    //cout << "getBestCand(" << m_sortedWords.size() << "):" << m_sortedWords.begin()->word << ":" << m_sortedWords.begin()->score << endl;
-    auto it = m_sortedWords.begin();
-    //cout << "getBestCand:" << it->word << ":" << it->score << endl;
-    size_t bestScore = it->score;
-    advance(it, 1);
-    if (it != m_sortedWords.end()) {
-        //cout << "getBestCand():" << it->word << ":" << it->score << endl;
-        if (bestScore == it->score) {
-            cout << "Tie!" << endl;
-        }
-    }
     return m_sortedWords.begin()->word;
 }
 
@@ -110,7 +99,7 @@ size_t MostCommonLetterSelector<IterType>::count(char letter, const string& word
 template <typename IterType>
 char MostCommonLetterSelector<IterType>::getMostCommonLetter() const {
     size_t highest = 0;
-    char mostCommon;
+    char mostCommon = '0';
     for (auto it = m_frequencyMapLetter.begin(); it != m_frequencyMapLetter.end(); it++) {
         if (it->second > highest) {
             highest = it->second;
@@ -119,6 +108,9 @@ char MostCommonLetterSelector<IterType>::getMostCommonLetter() const {
     }
 
     if (!mostCommon) {
+        if (DEBUG) {
+            cerr << "Error: [selector] no most common letter" << endl;
+        }
         throw;
     }
 
@@ -151,7 +143,6 @@ template <typename IterType>
 void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLetter(unordered_map<char, size_t>& unused_letterMap,
                                                                                    unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
-    //cout << "scores>:";
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
         size_t biggestScore = 0;
@@ -166,12 +157,9 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLett
                 biggestScore = letterMap[c];
                 biggestLetter = c;
             }
-            // cout << c << "|" << *wordIt << "|" << letterMap[c] << endl;
         }
-        //cout << biggestLetter;
         m_positionLetterScores.push_back(letterMap);
     }
-    //cout << endl;
 
     // Compute word scores
     for (auto wordIt = m_iterBegin; wordIt != m_iterEnd; wordIt++) {
@@ -185,14 +173,11 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLett
         }
         size_t i = 0;
         for (auto& c : *wordIt) {
-            // cout << "letter:" << c << ":" << letterMap[c] << endl;
-
             // only give scores to each letter once
             if (wordLetters.find(c) == wordLetters.end()) {
                 // only give scores to each letter that isn't already known
                 if (m_knowns[i].result != WordleResult::GREEN) {
                     if (greenLetters.find(c) == greenLetters.end()) {
-                        // cout << "lscore[" << c << "]=" << m_positionLetterScores[i][c] << endl;
                         score += m_positionLetterScores[i][c];
                     }
                 }
@@ -200,14 +185,8 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalIsolatedLett
             wordLetters.insert(c);
             i++;
         }
-        // cout << "word:" << *wordIt << ":" << score << endl;
         wordScore.insert({*wordIt, score});
     }
-
-    // cout << "~~letterMap~~" << endl;
-    // for (auto it = letterMap.begin(); it != letterMap.end(); it++) {
-    //     cout << it->first << ":" << it->second << endl;
-    // }
 }
 
 template <typename IterType>
@@ -235,34 +214,20 @@ void MostCommonLetterSelector<IterType>::computeFrequencyMapInternalBetter(unord
         }
         size_t i = 0;
         for (auto& c : *wordIt) {
-            // cout << "letter:" << c << ":" << letterMap[c] << endl;
-
             // only give scores to each letter once
             if (wordLetters.find(c) == wordLetters.end()) {
                 // only give scores to each letter that isn't already known
                 if (m_knowns[i].result != WordleResult::GREEN) {
                     if (greenLetters.find(c) == greenLetters.end()) {
                         score += letterMap[c];
-                    // } else {
-                    //     //score += letterMap[c]/8;
-                    //     //cout << "no score, letter already green:" << c << "-" << *wordIt << "newscore:" << letterMap[c
-                        // ]/2 << endl;
                     }
                 }
-            // } else {
-                // cout << "not incrementing on 2nd occur of letter:" << c << "-" << *wordIt << endl;
             }
             wordLetters.insert(c);
             i++;
         }
-        //cout << "word:" << *wordIt << ":" << score << endl;
         wordScore.insert({*wordIt, score});
     }
-
-    // cout << "~~letterMap~~" << endl;
-    // for (auto it = letterMap.begin(); it != letterMap.end(); it++) {
-    //     cout << it->first << ":" << it->second << endl;
-    // }
 }
 
 template <typename IterType>
