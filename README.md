@@ -2,12 +2,26 @@
 
 Weekend project to come up with automated strategies to solve Wordle
 
-Note: Doesn't compile at the moment.
-
 ## Setup
 ```
-cmake .
-make
+$ cmake .
+$ time make
+[ 10%] Building CXX object CMakeFiles/solver.dir/wordle_selectors.cpp.o
+[ 20%] Building CXX object CMakeFiles/solver.dir/wordlist_wordle_solver.cpp.o
+[ 30%] Building CXX object CMakeFiles/solver.dir/wordle_trie.cpp.o
+[ 40%] Building CXX object CMakeFiles/solver.dir/wordle_checker.cpp.o
+[ 50%] Building CXX object CMakeFiles/solver.dir/main.cpp.o
+[ 60%] Linking CXX executable solver
+[ 60%] Built target solver
+[ 70%] Building CXX object CMakeFiles/test_solver.dir/wordle_checker_test.cpp.o
+[ 80%] Building CXX object CMakeFiles/test_solver.dir/wordle_checker.cpp.o
+[ 90%] Building CXX object CMakeFiles/test_solver.dir/wordle_selectors.cpp.o
+[100%] Linking CXX executable test_solver
+[100%] Built target test_solver
+
+real    0m9.000s
+user    0m8.131s
+sys     0m0.674s
 ```
 
 ## How to Use
@@ -182,7 +196,6 @@ Role: Choose which word in a given list of words should be selected for the curr
 - `wordlist_wordle_solver.[h|cpp]`
 
   - More intelligent `Solver`s that use a dictionary
-
 
 ## ToDo
 
