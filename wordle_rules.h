@@ -4,6 +4,8 @@
 #include <vector>
 
 #define DEBUG false
+#define DEBUG_UNICODE true
+#define LIGHT_MODE false
 #define DICTIONARY_FILENAME "answers.txt"
 
 static const size_t MAX_GUESSES  = 6;

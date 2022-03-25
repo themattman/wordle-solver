@@ -59,19 +59,25 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
         case WordleResult::GREEN:
             wg.results.push_back(WordleResult::GREEN);
             if (DEBUG) cout << "G";
+            if (DEBUG_UNICODE) cout << "\360\237\237\251";
             break;
         case WordleResult::YELLOW:
             wg.results.push_back(WordleResult::YELLOW);
             if (DEBUG) cout << "Y";
+            if (DEBUG_UNICODE) cout << "\360\237\237\250";
             break;
         case WordleResult::BLACK:
             wg.results.push_back(WordleResult::BLACK);
             if (DEBUG) cout << "B";
+            if (DEBUG_UNICODE) {
+                if (LIGHT_MODE) cout << "\342\254\234";
+                else cout << "\342\254\233";
+            }
             break;
         }
     }
 
-    if (DEBUG) cout << endl;
+    if (DEBUG || DEBUG_UNICODE) cout << endl;
 
     outNumGuesses = ++m_numGuesses;
     return true;

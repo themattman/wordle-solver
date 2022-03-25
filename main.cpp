@@ -22,6 +22,7 @@ Selector: in the respective `WordleSolver` constructor. Currently all locations 
 #include <iostream>
 #include <random>
 #include <string>
+#include <thread>
 #include <vector>
 
 using namespace std;
@@ -61,6 +62,26 @@ bool runOneGame(const string& answer) {
     return true;
 }
 
+// Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
+void runAllWordsMultiThreaded() {
+    vector<string> words = Helpers::getDictionary();
+    cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
+
+    for (size_t count = 0; count < words.size(); count++) {
+        vector<thread*> threads(std::thread::hardware_concurrency());
+        for (size_t i = 0; i <  threads.size(); i++) {
+            threads.push_back(new thread(runOneGame, words[count]));
+            count++;
+        }
+        for (size_t i = 0; i < threads.size(); i++) {
+            threads[i]->join();
+            delete threads[i];
+        }
+    }
+
+    cout << "done." << endl;
+}
+
 // Runs automated solver across entire dictionary.
 void runAllWords() {
     vector<string> words = Helpers::getDictionary();
@@ -85,22 +106,22 @@ void runDebug(WordleSolver* solver, const string& answer) {
 
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver->makeInitialGuess());
-    cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
     bool result = checker.check(guess, numGuesses);
+    if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
     if (guess != CorrectWordleGuess) {
         if (result) {
             solver->processResult(guess);
         }
         while (numGuesses < MAX_GUESSES) {
             guess = WordleGuess(solver->makeSubsequentGuess());
-            cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
             result = checker.check(guess, numGuesses);
+            if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
             if (result) {
                 if (guess == CorrectWordleGuess) {
                     break;
                 }
                 if (numGuesses >= MAX_GUESSES) {
-                    cerr << "[end]result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+                    if (DEBUG) cerr << "[end]result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
                 }
                 solver->processResult(guess);
             }
@@ -108,10 +129,10 @@ void runDebug(WordleSolver* solver, const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+        if (DEBUG) cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
     } else {
-        cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
+        if (DEBUG) cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
     }
 }
 
@@ -143,11 +164,11 @@ int interactiveMode(WordleSolver* solver) {
 
 int main() {
     // Choose `Solver` HERE!!
-    //auto solver = new TrieBasedWordleSolver();
+    auto solver = new TrieBasedWordleSolver();
 
     // Which mode would you like to run?
-    runAllWords();
-    // runDebug(solver, "haute");
+    // runAllWords();
+    runDebug(solver, "haute");
     // interactiveMode(solver);
 
     return 0;

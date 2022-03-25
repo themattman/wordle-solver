@@ -232,3 +232,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 - [Wordle-Solver - solves 99.7% of common five-letter English words](https://news.ycombinator.com/item?id=30052677) [(github)](https://github.com/jason-chao/wordle-solver)
 
 - [Wordle-solving state of the art: all optimality results so far](https://news.ycombinator.com/item?id=30093313) https://www.poirrier.ca/notes/wordle-optimal/
+
+- https://botfights.ai/game/wordle
+
+- https://codereview.stackexchange.com/questions/32817/multithreading-c-loop
