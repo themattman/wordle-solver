@@ -56,6 +56,16 @@ Success!
 Wordle 3/7
 ```
 
+
+- Debug Mode (`#define DEBUG_UNICODE=true`)
+```
+$ ./solver
+⬛⬛🟨🟩🟩
+⬛⬛⬛🟩🟩
+🟩🟩🟩🟩🟩
+Wordle 3/6
+```
+
 ### Test solver against all words in dictionary
 
 - Current usage
