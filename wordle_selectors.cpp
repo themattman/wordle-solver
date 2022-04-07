@@ -112,14 +112,14 @@ bool MostCommonLetterSelector<IterType>::containsAllHints(const string& word) co
 
 template <typename IterType>
 void MostCommonLetterSelector<IterType>::printCandidates() const {
-    cout << "Remaining Candidates:" << endl;
+    cout << "Remaining Candidates: (" << m_sortedWords.size() << ")" << endl;
     size_t i = 0;
     for (auto it = m_sortedWords.begin(); it != m_sortedWords.end(); it++) {
         cout << " " << it->word << ":" << it->score << endl;
         i++;
 
-        if (i == 50) {
-            cout << "... (" << (m_sortedWords.size()-50) << ") skipped" << endl;
+        if (i == PRINT_GUESSES_SIZE) {
+            cout << "... (" << (m_sortedWords.size() - PRINT_GUESSES_SIZE) << ") skipped" << endl;
             break;
         }
     }

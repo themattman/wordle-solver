@@ -4,10 +4,11 @@
 #include <vector>
 
 #define DEBUG false
-#define DEBUG_UNICODE true
-#define PRINT_GUESSES true
+#define DEBUG_UNICODE false
+#define PRINT_GUESSES false
+#define PRINT_GUESSES_SIZE 20
 #define LIGHT_MODE false
-#define CREATE_SCORES_FILE false
+#define CREATE_SCORES_FILE true
 #define DICTIONARY_FILENAME "answers.txt"
 #define DICTIONARY_SCORES_FILENAME "scores.txt"
 

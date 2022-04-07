@@ -27,7 +27,7 @@ void WordleTrie::insertAtNode(string prefix, string remainingWord, WordleTrieNod
 
     WordleTrieNode* nextNode;
     if (!letterExists(remainingWord[0], node, &nextNode)) {
-        node->children.push_back(WordleTrieNode(remainingWord[0], nullptr, prefix, remainingWord.size() == 1));
+        node->children.push_back(WordleTrieNode(remainingWord[0], nullptr, node, prefix, remainingWord.size() == 1));
         nextNode = &node->children.back();
     }
     insertAtNode(prefix+remainingWord[0], remainingWord.substr(1, remainingWord.size()-1), nextNode);
@@ -92,12 +92,6 @@ void WordleTrie::removeLetterAtLevel(char letter, WordleTrieNode& node) {
     }
 }
 
-void WordleTrie::addAllOfLetterToSolution(char letter) {
-    vector<string> letterCandidates;
-    addAllOfLetterToSolution(letter, *m_root, letterCandidates);
-    m_workingSets.push_back(letterCandidates);
-}
-
 void WordleTrie::addAllOfLetterToSolution(char letter, WordleTrieNode& node, vector<string>& letterCandidates) {
     if (node.val == letter) {
         addAllChildren(node, letterCandidates);
@@ -148,4 +142,34 @@ void WordleTrie::removeAllChildren(WordleTrieNode& node) {
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
         removeAllChildren(*it);
     }
+}
+
+void WordleTrie::removeWordsWithoutLetter(char letter) {
+    removeWordsWithoutLetterAtLevel(0, letter, *m_root);
+}
+
+void WordleTrie::removeWordsWithoutLetterAtLevel(size_t curDepth, char letter, WordleTrieNode& node) {
+    if (node.m_isLeaf && node.val != letter) {
+        removeWord(node);
+    }
+
+    for (size_t i = 0; i < node.children.size(); i++) {
+        if (node.children[i].val != letter) {
+            removeWordsWithoutLetterAtLevel(curDepth + 1, letter, node.children[i]);
+        }
+    }
+}
+
+/**
+ * Input: leaf node (i.e. a word)
+ * Removes word from candidate list and (**future work**) then propagates the removal in the Trie
+ *  by removing all parent nodes that have no children. Shrinks the trie appropriately.
+ */
+void WordleTrie::removeWord(WordleTrieNode& node) {
+    if (!node.m_isLeaf) {
+        if (DEBUG) cerr << "Error: [trie] removing non-leaf node" << endl;
+        throw;
+    }
+
+    removeFromCandidates(&node);
 }

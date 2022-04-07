@@ -54,12 +54,12 @@ bool runOneGame(const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        //cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
+        cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
         cerr << answer << endl;
         return false;
     }
 
-    //cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
+    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
     return true;
 }
 
@@ -166,13 +166,14 @@ int interactiveMode(WordleSolver* solver) {
 
 int main() {
     // Choose `Solver` HERE!!
-    auto solver = new TrieBasedWordleSolver();
+    //auto solver = new TrieBasedWordleSolver();
 
     // Which mode would you like to run?
-    //runAllWords();
+    runAllWords();
     //runDebug(solver, "jewel");
     //runDebug(solver, "shave");
-    interactiveMode(solver);
+    //runDebug(solver, "comma");
+    //interactiveMode(solver);
 
     return 0;
 }

@@ -84,7 +84,7 @@ user    0m17.029s
 sys     0m1.063s
 
 $ grep "success" guess_nums_6.csv | cut -d',' -f3 | cut -d':' -f2 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
-4.26687
+3.72113
 ```
 
 ## Best Results
@@ -98,6 +98,10 @@ Number of correct games over entire dictionary.
 - `v2.0`: 98.57%
 
   - Average guesses on success: 4.26687
+
+- `v3.0`: 99.83%
+
+  - Average guesses on success: 3.72113
 
 ## Overview
 
