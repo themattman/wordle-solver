@@ -18,13 +18,15 @@ template <typename IterType>
 class Selector {
 public:
     Selector() { srand(time(nullptr)); }
-    virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) = 0;
+    virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) = 0;
+protected:
+    size_t m_guessNum{0};
 };
 
 template <typename IterType>
 class RandomSelector : public Selector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 private:
     size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
 };
@@ -32,7 +34,7 @@ private:
 template <typename IterType>
 class EnhancedRandomSelector : public RandomSelector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -42,8 +44,9 @@ private:
 ///////////////
 
 struct WordScore {
-    WordScore() : word(), score(0) {}
+    WordScore() : word(), lowestLetterScore(0), score(0) {}
     string word;
+    size_t lowestLetterScore;
     size_t score;
 };
 
@@ -58,13 +61,15 @@ struct WordScoreComp {
 template <typename IterType>
 class MostCommonLetterSelector : public Selector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 protected:
+    bool containsAllHints(const string& word) const;
     string getBestCandidate() const;
     void clearOldState();
     char getMostCommonLetter() const;
     void computeFrequencyMap();
     void sortWordsByFrequency();
+    void printCandidates() const;
     virtual void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                              unordered_map<string, size_t>& wordScore) = 0;
 
@@ -99,6 +104,7 @@ protected:
                                      unordered_map<string, size_t>& wordScore) override;
     void clearOldState();
 
+    bool m_initialGuess{true};
     vector<unordered_map<char, size_t>> m_positionLetterScores;
 };
 

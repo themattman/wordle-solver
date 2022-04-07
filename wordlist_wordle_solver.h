@@ -35,9 +35,9 @@ class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
     string makeInitialGuess() override {
-        return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects);
+        return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, 0);
     }
-    string makeSubsequentGuess() override { return makeInitialGuess(); }
+    string makeSubsequentGuess(size_t guessNum) override { return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, guessNum); }
     void processResult(const WordleGuess& guess) override {}
 };
 
@@ -64,7 +64,7 @@ public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
     TrieBasedWordleSolver();
     string makeInitialGuess() override;
-    string makeSubsequentGuess() override;
+    string makeSubsequentGuess(size_t guessNum) override;
     void processResult(const WordleGuess& guess) override;
     size_t getNumCandidates() const { return m_trie->getNumCandidates(); }
 protected:

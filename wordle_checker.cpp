@@ -12,28 +12,28 @@ using namespace std;
 
 bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
     if (m_answer.size() != LETTER_COUNT) {
-        if (DEBUG) cerr << "Error: [checker] answer not correct size" << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "Error: [checker] answer not correct size" << endl;
         throw;
     }
 
     if (wg.results.size() > 0) {
-        if (DEBUG) cerr << "Error: [checker] no results to check" << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "Error: [checker] no results to check" << endl;
         throw;
     }
 
     if (m_dict.size() == 0) {
-        if (DEBUG) cerr << "Error: [checker] empty dictionary" << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "Error: [checker] empty dictionary" << endl;
         throw;
     }
 
     if (m_dict.find(wg.guessStr) == m_dict.end()) {
-        if (DEBUG) cerr << "Not in dictionary. Try again." << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "Not in dictionary. Try again." << endl;
         return false;
     }
 
     auto result = vector<WordleResult>(LETTER_COUNT, WordleResult::BLACK);
     resetFrequencyMap();
-    if (DEBUG) cout << "      ";
+    if (DEBUG && !DEBUG_UNICODE) cout << "      ";
 
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         if (wg.guessStr[i] == m_answer[i] && m_frequencyMap[wg.guessStr[i]] != 0) {
@@ -58,17 +58,17 @@ bool WordleChecker::check(WordleGuess& wg, size_t& outNumGuesses) {
         switch(r) {
         case WordleResult::GREEN:
             wg.results.push_back(WordleResult::GREEN);
-            if (DEBUG) cout << "G";
+            if (DEBUG && !DEBUG_UNICODE) cout << "G";
             if (DEBUG_UNICODE) cout << "\360\237\237\251";
             break;
         case WordleResult::YELLOW:
             wg.results.push_back(WordleResult::YELLOW);
-            if (DEBUG) cout << "Y";
+            if (DEBUG && !DEBUG_UNICODE) cout << "Y";
             if (DEBUG_UNICODE) cout << "\360\237\237\250";
             break;
         case WordleResult::BLACK:
             wg.results.push_back(WordleResult::BLACK);
-            if (DEBUG) cout << "B";
+            if (DEBUG && !DEBUG_UNICODE) cout << "B";
             if (DEBUG_UNICODE) {
                 if (LIGHT_MODE) cout << "\342\254\234";
                 else cout << "\342\254\233";

@@ -7,8 +7,8 @@
 using namespace std;
 
 
-string WordleTrie::getCandidate(Selector<SetIterator>* selector, const vector<WordleKnown>& knowns) {
-    return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns);
+string WordleTrie::getCandidate(Selector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum) {
+    return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns, guessNum);
 }
 
 bool WordleTrie::insert(string word) {

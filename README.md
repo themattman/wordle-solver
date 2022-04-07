@@ -66,6 +66,11 @@ $ ./solver
 Wordle 3/6
 ```
 
+- View Scoring
+```
+$ sort -hk 2 -t'=' scores.txt > sorted_scores.txt
+```
+
 ### Test solver against all words in dictionary
 
 - Current usage
@@ -225,6 +230,16 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Replaces several size checks with NUM_LETTERS to consolidate understanding of what is tied to this global
 
+- [ ] Raw pointers -> smart pointers
+
+- [ ] Track lowest score of letter in word, sort on this somehow in getBestCandidate. Don't pick words with low lowest letter scores even if their score is the highest.
+
+- [ ] Is it hard mode already???? How to optimize with easy mode?
+
+- [ ] Wordle Cheat Mode, allow user to select a non-top choice and let algo run with that instead of the auto chosen word
+
+- [ ] Make Selectors Composable (scoring, then selection should be done at another layer)
+
 ## Discussion
 
 - [Best Wordle guessing strategy](https://news.ycombinator.com/item?id=29928263) https://slc.is/archive/best-wordle-strategy-explore-or-exploit/
@@ -236,3 +251,16 @@ Role: Choose which word in a given list of words should be selected for the curr
 - https://botfights.ai/game/wordle
 
 - https://codereview.stackexchange.com/questions/32817/multithreading-c-loop
+
+- https://unicode-table.com/en/2B1B/
+
+# Notes
+
+Guess #1: slate
+> BBYBB
+Remaining Candidates:
+ crony:1255
+ briny:1252
+ fairy:1222
+ 
+> Fairy should be top

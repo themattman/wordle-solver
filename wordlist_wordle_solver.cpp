@@ -60,7 +60,7 @@ TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
 
 string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects);
+        string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects, 0);
         if (candidateWord.size() == 0) {
             if (DEBUG) cerr << "Error: [solver] empty word" << endl;
             throw;
@@ -72,8 +72,18 @@ string TrieBasedWordleSolver::makeInitialGuess() {
     throw;
 }
 
-string TrieBasedWordleSolver::makeSubsequentGuess() {
-    return makeInitialGuess();
+string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess) {
+    if (m_trie->getNumCandidates() > 0) {
+        string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects, numGuess);
+        if (candidateWord.size() == 0) {
+            if (DEBUG) cerr << "Error: [solver] empty word" << endl;
+            throw;
+        }
+        return candidateWord;
+    }
+
+    if (DEBUG) cerr << "Error: [solver] no more candidates" << endl;
+    throw;
 }
 
 void TrieBasedWordleSolver::printNumCands(const string& color) const {

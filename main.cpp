@@ -42,7 +42,7 @@ bool runOneGame(const string& answer) {
             solver.processResult(guess);
         }
         while (numGuesses < MAX_GUESSES) {
-            guess = WordleGuess(solver.makeSubsequentGuess());
+            guess = WordleGuess(solver.makeSubsequentGuess(numGuesses));
             result = checker.check(guess, numGuesses);
             if (result) {
                 if (guess == CorrectWordleGuess) {
@@ -54,11 +54,12 @@ bool runOneGame(const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
+        //cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
+        cerr << answer << endl;
         return false;
     }
 
-    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
+    //cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
     return true;
 }
 
@@ -92,6 +93,7 @@ void runAllWords() {
         if (runOneGame(word)) {
             successes++;
         }
+        g_num_runs++;
         runs++;
     }
     cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
@@ -107,13 +109,13 @@ void runDebug(WordleSolver* solver, const string& answer) {
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver->makeInitialGuess());
     bool result = checker.check(guess, numGuesses);
-    if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
+    if (DEBUG || DEBUG_UNICODE) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
     if (guess != CorrectWordleGuess) {
         if (result) {
             solver->processResult(guess);
         }
         while (numGuesses < MAX_GUESSES) {
-            guess = WordleGuess(solver->makeSubsequentGuess());
+            guess = WordleGuess(solver->makeSubsequentGuess(numGuesses));
             result = checker.check(guess, numGuesses);
             if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
             if (result) {
@@ -129,7 +131,7 @@ void runDebug(WordleSolver* solver, const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        if (DEBUG) cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
     } else {
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
         if (DEBUG) cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
@@ -144,7 +146,7 @@ int interactiveMode(WordleSolver* solver) {
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUser(solver->makeSubsequentGuess(), numGuesses);
+            wg = Helpers::promptUser(solver->makeSubsequentGuess(numGuesses), numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
@@ -167,9 +169,10 @@ int main() {
     auto solver = new TrieBasedWordleSolver();
 
     // Which mode would you like to run?
-    // runAllWords();
-    runDebug(solver, "haute");
-    // interactiveMode(solver);
+    //runAllWords();
+    //runDebug(solver, "jewel");
+    //runDebug(solver, "shave");
+    interactiveMode(solver);
 
     return 0;
 }

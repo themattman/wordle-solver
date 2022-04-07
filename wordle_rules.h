@@ -5,9 +5,13 @@
 
 #define DEBUG false
 #define DEBUG_UNICODE true
+#define PRINT_GUESSES true
 #define LIGHT_MODE false
+#define CREATE_SCORES_FILE false
 #define DICTIONARY_FILENAME "answers.txt"
+#define DICTIONARY_SCORES_FILENAME "scores.txt"
 
+static size_t g_num_runs = 0;
 static const size_t MAX_GUESSES  = 6;
 static const size_t LETTER_COUNT = 5;
 
