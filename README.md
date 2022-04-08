@@ -268,3 +268,8 @@ Remaining Candidates:
  fairy:1222
  
 > Fairy should be top
+
+221 words that are knocked down to 221 after "slate"
+247 words that are knocked down to 247 after "sauce"
+292 "slice"
+ "shale"

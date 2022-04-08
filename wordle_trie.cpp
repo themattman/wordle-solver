@@ -29,6 +29,7 @@ void WordleTrie::insertAtNode(string prefix, string remainingWord, WordleTrieNod
     if (!letterExists(remainingWord[0], node, &nextNode)) {
         node->children.push_back(WordleTrieNode(remainingWord[0], nullptr, node, prefix, remainingWord.size() == 1));
         nextNode = &node->children.back();
+        //cout << "nextNode: p:" << nextNode->m_parent->val << " " << nextNode->val << endl;
     }
     insertAtNode(prefix+remainingWord[0], remainingWord.substr(1, remainingWord.size()-1), nextNode);
 }
@@ -145,6 +146,7 @@ void WordleTrie::removeAllChildren(WordleTrieNode& node) {
 }
 
 void WordleTrie::removeWordsWithoutLetter(char letter) {
+    // cout << "Removing:" << letter << endl;
     removeWordsWithoutLetterAtLevel(0, letter, *m_root);
 }
 
@@ -162,7 +164,7 @@ void WordleTrie::removeWordsWithoutLetterAtLevel(size_t curDepth, char letter, W
 
 /**
  * Input: leaf node (i.e. a word)
- * Removes word from candidate list and (**future work**) then propagates the removal in the Trie
+ * Removes word from candidate list and then propagates the removal in the Trie
  *  by removing all parent nodes that have no children. Shrinks the trie appropriately.
  */
 void WordleTrie::removeWord(WordleTrieNode& node) {
@@ -171,5 +173,35 @@ void WordleTrie::removeWord(WordleTrieNode& node) {
         throw;
     }
 
+    // cout << "Removing: " << node.m_prefix << node.val << endl;
     removeFromCandidates(&node);
+    // removeWordFixup(node);
 }
+
+// void WordleTrie::removeWordFixup(WordleTrieNode& node) {
+//     if (node.children.empty()) {
+//         auto& pchildren = node.m_parent->children;
+//         for (auto it = node.children.begin(); it != node.children.end(); it++) {
+//             cout << "nc:" << it->val << endl;
+//         }
+//         for (auto it = pchildren.begin(); it != pchildren.end(); it++) {
+//             cout << "c:" << it->val << endl;
+//         }
+//         cout << "p:" << node.m_parent->val << endl;
+//         cout << "n:" << node.val << endl;
+//         auto node_in_parent_it = find(pchildren.begin(), pchildren.end(), node);
+//         if (node_in_parent_it != pchildren.end()) {
+//             pchildren.erase(node_in_parent_it);
+//             removeWordFixup(*(node.m_parent));
+//         } else {
+//             cout << "p:" << node.m_parent->val
+//                  << " pp:" << node.m_parent->m_parent->val
+//                  << " ppp:" << node.m_parent->m_parent->m_parent->val
+//                  << " pppp:" << node.m_parent->m_parent->m_parent->m_parent->val
+//                  << " ppppp:" << node.m_parent->m_parent->m_parent->m_parent->m_parent->val
+//                  << endl;
+//             if (DEBUG) cerr << "Error: [trie] child & parent out of sync" << endl;
+//             throw;
+//         }
+//     }
+// }

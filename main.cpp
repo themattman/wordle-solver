@@ -46,6 +46,9 @@ bool runOneGame(const string& answer) {
             result = checker.check(guess, numGuesses);
             if (result) {
                 if (guess == CorrectWordleGuess) {
+                    for (size_t i = numGuesses; i < MAX_GUESSES; i++) {
+                        cerr << 1 << ",";
+                    }
                     break;
                 }
                 solver.processResult(guess);
@@ -55,18 +58,18 @@ bool runOneGame(const string& answer) {
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
         cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
-        cerr << answer << endl;
+        //cerr << answer << endl;
         return false;
     }
 
-    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << endl;
+    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
     return true;
 }
 
 // Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
 void runAllWordsMultiThreaded() {
     vector<string> words = Helpers::getDictionary();
-    cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
+    cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
 
     for (size_t count = 0; count < words.size(); count++) {
         vector<thread*> threads(std::thread::hardware_concurrency());
@@ -88,7 +91,8 @@ void runAllWords() {
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
-    cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
+    cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
+    //cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
     for (auto& word : words) {
         if (runOneGame(word)) {
             successes++;
@@ -172,7 +176,21 @@ int main() {
     runAllWords();
     //runDebug(solver, "jewel");
     //runDebug(solver, "shave");
-    //runDebug(solver, "comma");
+
+    // runDebug(solver, "catch");
+    // cout << "Remaining Cand" << endl;
+
+    // solver = new TrieBasedWordleSolver();
+    // runDebug(solver, "graze");
+
+    // solver = new TrieBasedWordleSolver();
+    // cout << "Remaining Cand" << endl;
+    // runDebug(solver, "hound");
+
+    // solver = new TrieBasedWordleSolver();
+    // cout << "Remaining Cand" << endl;
+    // runDebug(solver, "taunt");
+
     //interactiveMode(solver);
 
     return 0;

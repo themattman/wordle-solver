@@ -60,11 +60,12 @@ TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
 
 string TrieBasedWordleSolver::makeInitialGuess() {
     if (m_trie->getNumCandidates() > 0) {
-        string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects, 0);
+        string candidateWord = "slice"; //m_trie->getCandidate(m_selector, m_knownCorrects, 0);
         if (candidateWord.size() == 0) {
             if (DEBUG) cerr << "Error: [solver] empty word" << endl;
             throw;
         }
+        cerr << m_trie->getNumCandidates() << ",";
         return candidateWord;
     }
 
@@ -79,6 +80,7 @@ string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess) {
             if (DEBUG) cerr << "Error: [solver] empty word" << endl;
             throw;
         }
+        cerr << m_trie->getNumCandidates() << ",";
         return candidateWord;
     }
 

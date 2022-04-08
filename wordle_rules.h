@@ -6,9 +6,9 @@
 #define DEBUG false
 #define DEBUG_UNICODE false
 #define PRINT_GUESSES false
-#define PRINT_GUESSES_SIZE 20
+#define PRINT_GUESSES_SIZE 10
 #define LIGHT_MODE false
-#define CREATE_SCORES_FILE true
+#define CREATE_SCORES_FILE false
 #define DICTIONARY_FILENAME "answers.txt"
 #define DICTIONARY_SCORES_FILENAME "scores.txt"
 
