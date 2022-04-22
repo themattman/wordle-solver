@@ -100,6 +100,9 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     printNumCands("yellow");
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
+#if PRINT_GUESSES == true
+        m_trie->getCandidate(m_selector, m_knownCorrects, 1);
+#endif
 }
 
 vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& allPositions, WordleResult wr) {

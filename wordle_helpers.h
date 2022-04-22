@@ -3,6 +3,7 @@
 #include "wordle_rules.h"
 #include "wordle_solver.h"
 
+#include <ctype.h>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -17,15 +18,26 @@ inline size_t countOccurs(char letter, const string& word) {
 
 class Helpers {
 public:
-    static WordleGuess promptUser(const string& output, size_t guessNumber) {
+    static WordleGuess promptUserToCheckGuess(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
 
-        string input = collectUserInput(/*isRepeat=*/false);
-        while(!isUserInputValid(input)) {
-            input = collectUserInput(/*isRepeat=*/true);
+        string input = collectUserInput(/*isRepeat=*/false, /*isCheckingGuess=*/true);
+        while(!isUserInputValidAnswer(input)) {
+            input = collectUserInput(/*isRepeat=*/true, /*isCheckingGuess=*/true);
         }
 
         return stringToWordleGuess(output, input);
+    }
+
+    static string promptUserToMakeGuess(size_t guessNumber) {
+        cout << "Guess #" << guessNumber << endl;
+
+        string input = collectUserInput(/*isRepeat=*/false, /*isCheckingGuess=*/false);
+        while(!isUserInputValidGuess(input)) {
+            input = collectUserInput(/*isRepeat=*/true, /*isCheckingGuess=*/false);
+        }
+
+        return input;
     }
 
     static vector<string> getDictionary(const string& filename=DICTIONARY_FILENAME) {
@@ -61,17 +73,33 @@ private:
         return WordleGuess(guess, wr);
     }
 
-    static string collectUserInput(bool isRepeat) {
+    static string collectUserInput(bool isRepeat, bool isCheckingGuess) {
         if (isRepeat) {
             cout << "Invalid response. Try again." << endl;
         }
-        cout << "> ";
+
+        string prompt = (isCheckingGuess) ? "checking" : "guessing";
+        cout << prompt << "> ";
         string userInput;
         cin >> userInput;
         return userInput;
     }
 
-    static bool isUserInputValid(const string& userInput) {
+    static bool isUserInputValidGuess(const string& userInput) {
+        if (userInput.size() != LETTER_COUNT) {
+            return false;
+        }
+
+        for (auto& s : userInput) {
+            if (!(islower(s) && isalpha(s))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    static bool isUserInputValidAnswer(const string& userInput) {
         if (userInput.size() != LETTER_COUNT) {
             return false;
         }

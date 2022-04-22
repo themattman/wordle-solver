@@ -143,14 +143,45 @@ void runDebug(WordleSolver* solver, const string& answer) {
 }
 
 // Allow user to act as the checker by entering 'B', 'Y', 'G' for each letter.
-// Could be used to augment user's ability to solve a Wordle IRL.
 int interactiveMode(WordleSolver* solver) {
     size_t numGuesses = 1;
-    WordleGuess wg = Helpers::promptUser(solver->makeInitialGuess(), numGuesses);
+    WordleGuess wg = Helpers::promptUserToCheckGuess(solver->makeInitialGuess(), numGuesses);
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUser(solver->makeSubsequentGuess(numGuesses), numGuesses);
+            wg = Helpers::promptUserToCheckGuess(solver->makeSubsequentGuess(numGuesses), numGuesses);
+            if (wg == CorrectWordleGuess) {
+                break;
+            }
+            solver->processResult(wg);
+        }
+    }
+
+    if (numGuesses >= MAX_GUESSES && wg != CorrectWordleGuess) {
+        cout << "Failure!" << endl;
+    } else {
+        cout << "Success!" << endl;
+        cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
+    }
+
+    return 0;
+}
+
+// User provides guesses, then provides hints from the oracle
+// Augments IRL game play #sorrynotsorry
+int cheatMode(WordleSolver* solver) {
+    #define DEBUG true
+    #define PRINT_GUESSES true
+    #define PRINT_GUESSES_SIZE 10
+
+    size_t numGuesses = 1;
+    string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
+    WordleGuess wg = Helpers::promptUserToCheckGuess(userGuess, numGuesses);
+    if (wg != CorrectWordleGuess) {
+        solver->processResult(wg);
+        for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
+            userGuess = Helpers::promptUserToMakeGuess(numGuesses);
+            wg = Helpers::promptUserToCheckGuess(userGuess, numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
@@ -170,10 +201,10 @@ int interactiveMode(WordleSolver* solver) {
 
 int main() {
     // Choose `Solver` HERE!!
-    //auto solver = new TrieBasedWordleSolver();
+    auto solver = new TrieBasedWordleSolver();
 
     // Which mode would you like to run?
-    runAllWords();
+    // runAllWords();
     //runDebug(solver, "jewel");
     //runDebug(solver, "shave");
 
@@ -192,6 +223,7 @@ int main() {
     // runDebug(solver, "taunt");
 
     //interactiveMode(solver);
+    cheatMode(solver);
 
     return 0;
 }
