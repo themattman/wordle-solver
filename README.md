@@ -1,6 +1,8 @@
 # Wordle Solver
 
-Weekend project to come up with automated strategies to solve Wordle
+Weekend project to come up with automated strategies to solve Wordle.
+
+High water mark of my solver: `99.83%` success rate, `3.72113` average guesses.
 
 ## Setup
 ```
@@ -216,11 +218,11 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 ## ToDo
 
-- [ ] Better/Additional dictionary
+- [ ] Better/Additional dictionary - i.e. include allowed guesses dict
 
 - [ ] Select strategy & mode from cmd line
 
-- [ ] Measure success rates of various algos against whole dictionary
+- [X] Measure success rates of various algos against whole dictionary
 
 - [ ] Define richer exceptions and catch them in main to help in debugging
 
@@ -230,27 +232,29 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Add aggressive `easy mode` `Solver` to knock out many letters with words not in remaining set. Likely to lead to 100% accuracy + lower average guesses.
 
-- [ ] Implement `hard mode` `Solver`
+- [X] Implement `hard mode` `Solver`
 
-- [ ] Replaces several size checks with NUM_LETTERS to consolidate understanding of what is tied to this global
+- [ ] Implement `hard mode` verifier
+
+- [ ] Replace several size checks with NUM_LETTERS to consolidate understanding of what is tied to this global
 
 - [ ] Raw pointers -> smart pointers
 
 - [ ] Track lowest score of letter in word, sort on this somehow in getBestCandidate. Don't pick words with low lowest letter scores even if their score is the highest.
 
-- [ ] Is it hard mode already???? How to optimize with easy mode?
+- [ ] How to optimize with easy (non-hard) mode guessing?
 
-- [ ] Wordle Cheat Mode, allow user to select a non-top choice and let algo run with that instead of the auto chosen word
+- [X] Wordle Cheat Mode, allow user to select a non-top choice and let algo run with that instead of the auto chosen word
 
 - [ ] Make Selectors Composable (scoring, then selection should be done at another layer)
 
 ## Discussion
 
-- [Best Wordle guessing strategy](https://news.ycombinator.com/item?id=29928263) https://slc.is/archive/best-wordle-strategy-explore-or-exploit/
+- [Best Wordle guessing strategy(HN)](https://news.ycombinator.com/item?id=29928263) https://slc.is/archive/best-wordle-strategy-explore-or-exploit/
 
-- [Wordle-Solver - solves 99.7% of common five-letter English words](https://news.ycombinator.com/item?id=30052677) [(github)](https://github.com/jason-chao/wordle-solver)
+- [Wordle-Solver - solves 99.7% of common five-letter English words(HN)](https://news.ycombinator.com/item?id=30052677) [(github)](https://github.com/jason-chao/wordle-solver)
 
-- [Wordle-solving state of the art: all optimality results so far](https://news.ycombinator.com/item?id=30093313) https://www.poirrier.ca/notes/wordle-optimal/
+- [Wordle-solving state of the art: all optimality results so far(HN)](https://news.ycombinator.com/item?id=30093313) https://www.poirrier.ca/notes/wordle-optimal/
 
 - https://botfights.ai/game/wordle
 
@@ -258,18 +262,4 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - https://unicode-table.com/en/2B1B/
 
-# Notes
-
-Guess #1: slate
-> BBYBB
-Remaining Candidates:
- crony:1255
- briny:1252
- fairy:1222
- 
-> Fairy should be top
-
-221 words that are knocked down to 221 after "slate"
-247 words that are knocked down to 247 after "sauce"
-292 "slice"
- "shale"
+- [Solving Wordle using information theory(YouTube)](https://www.youtube.com/watch?v=v68zYyaEmEA)
