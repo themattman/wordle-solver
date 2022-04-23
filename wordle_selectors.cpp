@@ -246,7 +246,7 @@ void ImprovedMostCommonLetterSelector<IterType>::computeFrequencyMapInternal(uno
 template <typename IterType>
 void PositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
                                                                      unordered_map<string, size_t>& wordScore) {
-    // Compute letter scores
+    // Compute positional letter scores
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
         for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
@@ -314,4 +314,79 @@ template <typename IterType>
 void PositionalLetterSelector<IterType>::clearOldState() {
     MostCommonLetterSelector<IterType>::clearOldState();
     m_positionLetterScores.clear();
+}
+
+template <typename IterType>
+void FrequencyAndPositionalLetterSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
+                                                                                 unordered_map<string, size_t>& wordScore) {
+    // Compute positional letter scores
+    for (size_t i = 0; i < LETTER_COUNT; i++) {
+        auto letterMap = unordered_map<char, size_t>();
+        for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
+            char c = (*wordIt)[i];
+            if (letterMap.find(c) == letterMap.end()) {
+                letterMap[c] = 0;
+            }
+            letterMap[c]++;
+        }
+        m_positionLetterScores.push_back(letterMap);
+    }
+
+    // Compute letter scores
+    for (size_t i = 0; i < LETTER_COUNT; i++) {
+        for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
+            char c = (*wordIt)[i];
+            if (m_fullLetterMap.find(c) == m_fullLetterMap.end()) {
+                m_fullLetterMap[c] = 0;
+            }
+            m_fullLetterMap[c]++;
+        }
+    }
+
+    // Compute word scores & write to file
+#if CREATE_SCORES_FILE == true
+    ofstream file_stream;
+    if (m_initialGuess && g_num_runs == 0) {
+        file_stream.open(DICTIONARY_SCORES_FILENAME);
+    }
+#endif
+    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
+        size_t score = 0;
+        set<char> wordLetters;
+        set<char> greenLetters;
+        for (size_t i = 0; i < this->m_knowns.size(); i++) {
+            if (this->m_knowns[i].result == WordleResult::GREEN) {
+                greenLetters.insert(this->m_knowns[i].letter);
+            }
+        }
+        size_t i = 0;
+#if CREATE_SCORES_FILE == true
+        if (m_initialGuess && g_num_runs == 0) {
+            file_stream << *wordIt << ":";
+        }
+#endif
+        for (auto& c : *wordIt) {
+            // only give scores to each letter once
+            if ((wordLetters.find(c) == wordLetters.end() && this->m_guessNum < 6) || this->m_guessNum >= 6) {
+                if (greenLetters.find(c) == greenLetters.end()) {
+                    score += (m_positionLetterScores[i][c] + m_fullLetterMap[c]);
+                }
+            }
+#if CREATE_SCORES_FILE == true
+            if (m_initialGuess && g_num_runs == 0) {
+                file_stream << (m_positionLetterScores[i][c] + m_fullLetterMap[c]) << ",";
+            }
+#endif
+            wordLetters.insert(c);
+            i++;
+        }
+#if CREATE_SCORES_FILE == true
+        if (m_initialGuess && g_num_runs == 0) {
+            file_stream << " = " << score << endl;
+        }
+#endif
+        wordScore.insert({*wordIt, score});
+    }
+
+    m_initialGuess = false;
 }

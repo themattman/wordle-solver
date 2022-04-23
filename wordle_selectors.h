@@ -108,6 +108,16 @@ protected:
     vector<unordered_map<char, size_t>> m_positionLetterScores;
 };
 
+template <typename IterType>
+class FrequencyAndPositionalLetterSelector : public PositionalLetterSelector<IterType> {
+protected:
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
+                                     unordered_map<string, size_t>& wordScore) override;
+    bool m_initialGuess{true};
+    vector<unordered_map<char, size_t>> m_positionLetterScores;
+    unordered_map<char, size_t> m_fullLetterMap;
+};
+
 //////////
 
 enum class SelectorType {
@@ -116,6 +126,7 @@ enum class SelectorType {
     NaiveMostCommonLetter,
     ImprovedMostCommonLetter,
     PositionalLetter,
+    FrequencyAndPositionalLetter,
 };
 
 template <typename IterType>
@@ -132,6 +143,8 @@ struct SelectorFactory {
             return new ImprovedMostCommonLetterSelector<IterType>();
         case SelectorType::PositionalLetter:
             return new PositionalLetterSelector<IterType>();
+        case SelectorType::FrequencyAndPositionalLetter:
+            return new FrequencyAndPositionalLetterSelector<IterType>();
         }
 
         if (DEBUG) cerr << "Error: [selector] invalid selectorType" << endl;
@@ -146,6 +159,7 @@ template class EnhancedRandomSelector<SetIterator>;
 template class NaiveMostCommonLetterSelector<SetIterator>;
 template class ImprovedMostCommonLetterSelector<SetIterator>;
 template class PositionalLetterSelector<SetIterator>;
+template class FrequencyAndPositionalLetterSelector<SetIterator>;
 
 template class RandomSelector<ForwardIterator>;
 template class EnhancedRandomSelector<ForwardIterator>;
@@ -153,3 +167,4 @@ template class MostCommonLetterSelector<ForwardIterator>;
 template class NaiveMostCommonLetterSelector<ForwardIterator>;
 template class ImprovedMostCommonLetterSelector<ForwardIterator>;
 template class PositionalLetterSelector<ForwardIterator>;
+template class FrequencyAndPositionalLetterSelector<ForwardIterator>;

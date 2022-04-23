@@ -18,7 +18,7 @@ using namespace std;
 
 
 WordlistWordleSolver::WordlistWordleSolver() : WordleSolver() {
-    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::PositionalLetter); // Choose `Selector` HERE!!
+    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::FrequencyAndPositionalLetter); // Choose `Selector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -51,7 +51,7 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 /////////////////////
 
 TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
-    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::PositionalLetter); // Choose `Selector` HERE!!
+    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::FrequencyAndPositionalLetter); // Choose `Selector` HERE!!
     m_trie = new WordleTrie();
     loadWordList([this](const string& line){
         m_trie->insert(line);
