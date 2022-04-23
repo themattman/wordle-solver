@@ -89,7 +89,18 @@ string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess) {
 }
 
 void TrieBasedWordleSolver::printNumCands(const string& color) const {
-    if (DEBUG) cout << "numCandidates [" << color << "] done:" << m_trie->getNumCandidates() << endl;
+    if (DEBUG) {
+        string color_code;
+        string end_color_code = "\033[0m";
+        if (color == "green") {
+            color_code = "\033[0;32m";
+        } else if (color == "yellow") {
+            color_code = "\033[0;33m";
+        } else if (color == "black") {
+            color_code = "\033[0;30m";
+        }
+        cout << "numCandidates [" << color_code << color << end_color_code << "] done:" << m_trie->getNumCandidates() << endl;
+    }
 }
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
@@ -101,7 +112,7 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
 #if PRINT_GUESSES == true
-        m_trie->getCandidate(m_selector, m_knownCorrects, 1);
+        m_trie->printCandidates();
 #endif
 }
 
@@ -113,7 +124,6 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& al
             if (wr == WordleResult::GREEN && m_knownCorrects[i].result != WordleResult::GREEN) {
                 m_knownCorrects[i].result = WordleResult::GREEN;
                 m_knownCorrects[i].letter = allPositions.guessStr[i];
-                if (DEBUG) cout << "New correct letter! (" << i << ")" << endl;
             }
         }
     }

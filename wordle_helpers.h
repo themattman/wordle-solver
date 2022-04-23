@@ -52,14 +52,14 @@ private:
         vector<WordleResult> wr;
 
         for (auto& s : str) {
-            switch(s) {
-            case 'G':
+            switch(tolower(s)) {
+            case 'g':
                 wr.push_back(WordleResult::GREEN);
                 break;
-            case 'Y':
+            case 'y':
                 wr.push_back(WordleResult::YELLOW);
                 break;
-            case 'B':
+            case 'b':
                 wr.push_back(WordleResult::BLACK);
                 break;
             default:
@@ -85,13 +85,14 @@ private:
         return userInput;
     }
 
-    static bool isUserInputValidGuess(const string& userInput) {
+    static bool isUserInputValidGuess(string& userInput) {
         if (userInput.size() != LETTER_COUNT) {
             return false;
         }
 
-        for (auto& s : userInput) {
-            if (!(islower(s) && isalpha(s))) {
+        for (size_t i = 0; i < userInput.size(); i++) {
+            userInput[i] = tolower(userInput[i]);
+            if (!isalpha(userInput[i])) {
                 return false;
             }
         }
@@ -104,8 +105,9 @@ private:
             return false;
         }
 
-        for (auto& s : userInput) {
-            if (!(s == 'G' || s == 'Y' || s == 'B')) {
+        for (auto& s_any_case : userInput) {
+            char s = tolower(s_any_case);
+            if (!(s == 'g' || s == 'y' || s == 'b')) {
                 return false;
             }
         }

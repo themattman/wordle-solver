@@ -45,6 +45,7 @@ public:
     }
     string getCandidate(Selector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum);
     size_t getNumCandidates() const { return m_candidates.size(); }
+    void printCandidates() const;
 private:
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);
@@ -62,7 +63,7 @@ private:
     void removeWordsWithoutLetter(char letter);
     void removeWordsWithoutLetterAtLevel(size_t curDepth, char letter, WordleTrieNode& node);
     void removeWord(WordleTrieNode& node);
-    WordleTrieNode* getChild(size_t letterPosition, char letter);
+    WordleTrieNode* getChild(size_t letterPosition, char letter); // TODO: unused
 
     WordleTrieNode* m_root;
     set<string> m_candidates;

@@ -11,6 +11,22 @@ string WordleTrie::getCandidate(Selector<SetIterator>* selector, const vector<Wo
     return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns, guessNum);
 }
 
+void WordleTrie::printCandidates() const {
+    cout << "Candidates: (Showing "
+         << ((m_candidates.size() > PRINT_GUESSES_SIZE) ? PRINT_GUESSES_SIZE : m_candidates.size())
+         << ")" << endl;
+
+    size_t i = 0;
+    for (auto& cand : m_candidates) {
+        if (i == PRINT_GUESSES_SIZE) {
+            cout << "... (Skipping " << (m_candidates.size()-PRINT_GUESSES_SIZE) << ")" << endl;
+            break;
+        }
+        cout << " " << cand << endl;
+        i++;
+    }
+}
+
 bool WordleTrie::insert(string word) {
     if (word.size() != LETTER_COUNT) {
         return false;
