@@ -2,7 +2,7 @@
 
 Weekend project to come up with automated strategies to solve Wordle.
 
-High water mark of my solver: `99.83%` success rate, `3.72113` average guesses.
+High water mark of my solver: `99.83%` success rate, `3.66696` average guesses.
 
 ## Setup
 ```
@@ -31,16 +31,14 @@ sys     0m0.674s
 - Current Mode
 ```
 $ ./solver
-result,words_left,num_guesses,answer_if_failure
-success,1,5,
-success,1,6,
-success,1,5,
-success,1,4,
-success,1,5,
+guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer
+2315,48,4,3,2,1,success,1,6,aback
+2315,6,2,1,1,1,success,1,4,abase
+2315,6,3,2,1,1,success,2,4,abate
+2315,61,1,1,1,1,success,1,3,abbey
+2315,51,4,1,1,1,success,1,4,abbot
+2315,136,15,2,1,1,success,1,5,abhor
 ...
-failure,1,6,baker
-...
-success,6,4,
 2294/2315=0.9909
 done.
 ```
@@ -78,7 +76,7 @@ $ sort -hk 2 -t'=' scores.txt > sorted_scores.txt
 - Current usage
 ```
 $ time ./solver 2>guess_nums_6.csv
-2282/2315=0.9857
+2294/2315=0.9909
 done.
 
 real    0m18.768s
@@ -169,12 +167,19 @@ Role: Choose which word in a given list of words should be selected for the curr
 
   - Computes which letter is most common in each position. Scores each candidate word based on this and selects best candidate.
 
+- `FrequencyAndPositionalLetterSelector`
+
+  - Blend of overall scoring (frequency) and positional letter scoring
 
 ## Files
 
 - `answers.txt`
 
   - Primitive 5-letter dictionary from the Internet
+
+- `answers_extended.txt`
+
+  - All allowed guesses, larger dictionary than `answers.txt`
 
 - `guess_nums_6.csv`
 
@@ -252,6 +257,10 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Make Selectors Composable (scoring, then selection should be done at another layer)
 
+- [ ] Add wordle unicode decoder
+
+- [ ] Add arg parsing OR multiple binaries
+
 ## Discussion
 
 - [Best Wordle guessing strategy(HN)](https://news.ycombinator.com/item?id=29928263) https://slc.is/archive/best-wordle-strategy-explore-or-exploit/
@@ -267,3 +276,4 @@ Role: Choose which word in a given list of words should be selected for the curr
 - https://unicode-table.com/en/2B1B/
 
 - [Solving Wordle using information theory(YouTube)](https://www.youtube.com/watch?v=v68zYyaEmEA)
+

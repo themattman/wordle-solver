@@ -39,6 +39,7 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
     }
 
     // src: https://raw.githubusercontent.com/printfn/wordle-dict/main/answers.txt
+    // src: https://raw.githubusercontent.com/AllValley/WordleDictionary/main/wordle_complete_dictionary.txt
     auto filein = ifstream(DICTIONARY_FILENAME);
     string word;
     while (std::getline(filein, word)) {
