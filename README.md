@@ -28,9 +28,12 @@ sys     0m0.674s
 
 ## How to Use
 
-- Current Mode
+- Solve Entire Dictionary
 ```
-$ ./solver
+$ ./solver --mode all
+Wordle Solver v4
+mode:all
+
 guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer
 2315,48,4,3,2,1,success,1,6,aback
 2315,6,2,1,1,1,success,1,4,abase
@@ -46,6 +49,9 @@ done.
 - Original Interactive Mode
 ```
 $ ./solver --mode interactive
+Wordle Solver v4
+mode:interactive
+
 Guess #1: sling
 > GBGBB
 Guess #2: shiny
@@ -59,7 +65,10 @@ Wordle 3/7
 
 - Debug Mode (`#define DEBUG_UNICODE=true` for pretty print)
 ```
-$ ./solver --mode debug
+$ ./solver --mode debug --word brain
+Wordle Solver v4
+mode:debug
+
 ⬛⬛🟨🟩🟩
 ⬛⬛⬛🟩🟩
 🟩🟩🟩🟩🟩
@@ -76,6 +85,9 @@ $ sort -hk 2 -t'=' scores.txt > sorted_scores.txt
 - Current usage
 ```
 $ time ./solver --mode all 2>guess_nums_6.csv
+Wordle Solver v4
+mode:all
+
 2294/2315=0.9909
 done.
 
@@ -90,12 +102,15 @@ $ grep "success" guess_nums_6.csv | cut -d',' -f9 | awk 's+=$1{print s/NR}' | ta
 - Fastest (Work in Progress)
 ```
 $ time ./solver --mode all --multi 2>guess_nums_6.csv
-XXXX/2315=X.XXXX
+Wordle Solver v4
+mode:all
+multi-threaded
+
 done.
 
-real    0mXXs
-user    0mXXs
-sys     0mXXs
+real    0m3.050s
+user    0m18.391s
+sys     0m1.671s
 
 $ grep "success" guess_nums_6.csv | cut -d',' -f9 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
 X.XXXXX

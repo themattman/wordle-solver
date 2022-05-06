@@ -283,23 +283,28 @@ int main(int argc, char* argv[]) {
         }
         auto solver = createWordleSolver(solverType);
         auto solverMode = vm["mode"].as<string>();
-        cout << "mode:" << solverMode << endl << endl;
+        cout << "mode:" << solverMode << endl;
 
         if (solverMode == "all") {
             if (vm.count("multi")) {
+                cout << "multi-threaded" << endl << endl;
                 runAllWordsMultiThreaded(solverType);
             } else {
+                cout << endl;
                 runAllWords(solverType);
             }
         } else if ("cheat") {
+            cout << endl;
             cheatMode(move(solver));
         } else if ("debug") {
             if (!vm.count("word")) {
                 cerr << "debug mode requires a 'word' as a solution" << endl;
                 printUsage();
             }
+            cout << endl;
             runDebug(move(solver), vm["word"].as<string>());
         } else if ("interactive") {
+            cout << endl;
             interactiveMode(move(solver));
         } else {
             cerr << "mode [" << solverMode << "] not recognized" << endl;
