@@ -17,7 +17,7 @@
 using namespace std;
 
 
-WordlistWordleSolver::WordlistWordleSolver() : WordleSolver() {
+WordlistWordleSolver::WordlistWordleSolver() : WordleSolverImpl() {
     m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::FrequencyAndPositionalLetter); // Choose `Selector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
@@ -113,7 +113,7 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
 #if PRINT_GUESSES == true
-        m_trie->printCandidates();
+    m_trie->printCandidates();
 #endif
 }
 

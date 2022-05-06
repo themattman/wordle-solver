@@ -14,10 +14,11 @@
 using namespace std;
 
 
-class WordlistWordleSolver : public WordleSolver {
+class WordlistWordleSolver : public WordleSolverImpl {
 public:
-    using WordleSolver::WordleSolver;
+    using WordleSolverImpl::WordleSolverImpl;
     WordlistWordleSolver();
+    size_t getNumCandidates() const override { return m_wordlist.size(); }
 protected:
     void loadWordList(function<void(string)> eachLineCallbackActor);
 
@@ -66,7 +67,7 @@ public:
     string makeInitialGuess() override;
     string makeSubsequentGuess(size_t guessNum) override;
     void processResult(const WordleGuess& guess) override;
-    size_t getNumCandidates() const { return m_trie->getNumCandidates(); }
+    size_t getNumCandidates() const override { return m_trie->getNumCandidates(); }
 protected:
     vector<size_t> createPositionVector(const WordleGuess& allPositions, WordleResult wr);
     bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;

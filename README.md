@@ -43,9 +43,9 @@ guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,w
 done.
 ```
 
-- Original Interactive Mode (see comments in `main.cpp` to enable)
+- Original Interactive Mode
 ```
-$ ./solver
+$ ./solver --mode interactive
 Guess #1: sling
 > GBGBB
 Guess #2: shiny
@@ -57,9 +57,9 @@ Wordle 3/7
 ```
 
 
-- Debug Mode (`#define DEBUG_UNICODE=true`)
+- Debug Mode (`#define DEBUG_UNICODE=true` for pretty print)
 ```
-$ ./solver
+$ ./solver --mode debug
 ⬛⬛🟨🟩🟩
 ⬛⬛⬛🟩🟩
 🟩🟩🟩🟩🟩
@@ -75,7 +75,7 @@ $ sort -hk 2 -t'=' scores.txt > sorted_scores.txt
 
 - Current usage
 ```
-$ time ./solver 2>guess_nums_6.csv
+$ time ./solver --mode all 2>guess_nums_6.csv
 2294/2315=0.9909
 done.
 
@@ -85,6 +85,20 @@ sys     0m1.063s
 
 $ grep "success" guess_nums_6.csv | cut -d',' -f9 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
 3.72113
+```
+
+- Fastest (Work in Progress)
+```
+$ time ./solver --mode all --multi 2>guess_nums_6.csv
+XXXX/2315=X.XXXX
+done.
+
+real    0mXXs
+user    0mXXs
+sys     0mXXs
+
+$ grep "success" guess_nums_6.csv | cut -d',' -f9 | awk 's+=$1{print s/NR}' | tail -n 1  # Average number of guesses
+X.XXXXX
 ```
 
 ## Best Results

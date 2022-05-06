@@ -3,14 +3,15 @@
 #include <string>
 #include <vector>
 
+#define VERSION 4.0
 #define DEBUG false
 #define DEBUG_UNICODE false
 #define PRINT_GUESSES false
 #define PRINT_GUESSES_SIZE 10
 #define LIGHT_MODE false
-#define CREATE_SCORES_FILE false
 #define DICTIONARY_FILENAME "answers.txt"
-#define DICTIONARY_SCORES_FILENAME "scores.txt"
+#define CREATE_SCORES_FILE false
+#define DICTIONARY_SCORES_FILENAME "scores_new.txt"
 
 static size_t g_num_runs = 0;
 static const size_t MAX_GUESSES  = 6;
@@ -45,8 +46,10 @@ struct WordleGuess {
     std::vector<WordleResult> results;
 };
 
-static auto CorrectWordleGuess = WordleGuess("", {WordleResult::GREEN,
-                                                  WordleResult::GREEN,
-                                                  WordleResult::GREEN,
-                                                  WordleResult::GREEN,
-                                                  WordleResult::GREEN});
+static auto CorrectWordleResult = std::vector<WordleResult>{WordleResult::GREEN,
+                                                            WordleResult::GREEN,
+                                                            WordleResult::GREEN,
+                                                            WordleResult::GREEN,
+                                                            WordleResult::GREEN};
+
+static auto CorrectWordleGuess = WordleGuess("", CorrectWordleResult);

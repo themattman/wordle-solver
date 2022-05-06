@@ -21,28 +21,59 @@ Selector: in the respective `WordleSolver` constructor. Currently all locations 
 #include <iomanip>
 #include <iostream>
 #include <random>
+#include <stdlib.h>
 #include <string>
 #include <thread>
 #include <vector>
 
+#include <boost/program_options.hpp>
+#include <boost/program_options/variables_map.hpp>
+
 using namespace std;
+
+namespace po = boost::program_options;
+
+
+void printUsage() {
+    cerr << "Usage: solver [-h/--help] --mode mode [-t/--multi] --word word" << endl << endl;
+    cerr << "Options:" << endl;
+    cerr << " -h,--help   : produce help message" << endl;
+    cerr << " -s,--solver : choose between: trie(default),wordlist" << endl;
+    cerr << " -m,--mode   : choose between: all,debug,interactive,cheat" << endl;
+    cerr << " -t,--mult   : multi-threaded (assumes --mode all" << endl;
+    cerr << " -w,--word   : answer word for certain modes" << endl;
+    exit(1);
+}
+
+unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
+    unique_ptr<WordleSolverImpl> solverPtr;
+    if (solverType == "trie") {
+        solverPtr = make_unique<TrieBasedWordleSolver>();
+    } else if (solverType == "wordlist") {
+        solverPtr = make_unique<WordlistWordleSolver>();
+    } else {
+        printUsage();
+    }
+    return solverPtr;
+}
+
 
 
 // Runs one iteration of the Wordle game with automated solver & checker.
-bool runOneGame(const string& answer) {
-    auto solver = TrieBasedWordleSolver();
+bool runOneGame(const string& solverType, const string& answer) {
+    auto solver = createWordleSolver(solverType);
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
     size_t numGuesses = 0;
-    auto guess = WordleGuess(solver.makeInitialGuess());
+    auto guess = WordleGuess(solver->makeInitialGuess());
     bool result = checker.check(guess, numGuesses);
     if (guess != CorrectWordleGuess) {
         if (result) {
-            solver.processResult(guess);
+            solver->processResult(guess);
         }
         while (numGuesses < MAX_GUESSES) {
-            guess = WordleGuess(solver.makeSubsequentGuess(numGuesses));
+            guess = WordleGuess(solver->makeSubsequentGuess(numGuesses));
             result = checker.check(guess, numGuesses);
             if (result) {
                 if (guess == CorrectWordleGuess) {
@@ -51,50 +82,60 @@ bool runOneGame(const string& answer) {
                     }
                     break;
                 }
-                solver.processResult(guess);
+                solver->processResult(guess);
             }
         }
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        cerr << "failure," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
+        cerr << "failure," << solver->getNumCandidates() << "," << numGuesses << "," << answer << endl;
         //cerr << answer << endl;
         return false;
     }
 
-    cerr << "success," << solver.getNumCandidates() << "," << numGuesses << "," << answer << endl;
+    cerr << "success," << solver->getNumCandidates() << "," << numGuesses << "," << answer << endl;
     return true;
 }
 
 // Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
-void runAllWordsMultiThreaded() {
+void runAllWordsMultiThreaded(const string& solverType) {
+    #undef DEBUG
+    #define DEBUG false
+    #undef PRINT_GUESSES
+    #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
 
     for (size_t count = 0; count < words.size(); count++) {
-        vector<thread*> threads(std::thread::hardware_concurrency());
+        vector<thread> threads(std::thread::hardware_concurrency());
         for (size_t i = 0; i <  threads.size(); i++) {
-            threads.push_back(new thread(runOneGame, words[count]));
+            //threads.push_back(move(thread(&runOneGame, words[count])));
+            threads.emplace_back(thread(&runOneGame, solverType, words[count]));
+            // threads.at(i) = thread(runOneGame, words[count]);
             count++;
         }
-        for (size_t i = 0; i < threads.size(); i++) {
-            threads[i]->join();
-            delete threads[i];
-        }
+        // for (size_t i = 0; i < threads.size(); i++) {
+        //     //threads[i]->join();
+        //     //delete threads[i];
+        // }
     }
 
     cout << "done." << endl;
 }
 
 // Runs automated solver across entire dictionary.
-void runAllWords() {
+void runAllWords(const string& solverType) {
+    #undef DEBUG
+    #define DEBUG false
+    #undef PRINT_GUESSES
+    #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
     //cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
     for (auto& word : words) {
-        if (runOneGame(word)) {
+        if (runOneGame(solverType, word)) {
             successes++;
         }
         g_num_runs++;
@@ -106,7 +147,13 @@ void runAllWords() {
 
 // Run one iteration of solver against `answer`.
 // Useful for debugging solver & selector.
-void runDebug(WordleSolver* solver, const string& answer) {
+void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
+    #undef DEBUG
+    #define DEBUG true
+    #undef DEBUG_UNICODE
+    #define DEBUG_UNICODE true
+    #undef PRINT_GUESSES
+    #define PRINT_GUESSES true
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -127,7 +174,7 @@ void runDebug(WordleSolver* solver, const string& answer) {
                     break;
                 }
                 if (numGuesses >= MAX_GUESSES) {
-                    if (DEBUG) cerr << "[end]result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+                    if (DEBUG) cerr << "[end]result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver.get())->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
                 }
                 solver->processResult(guess);
             }
@@ -135,15 +182,15 @@ void runDebug(WordleSolver* solver, const string& answer) {
     }
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
-        if (DEBUG || DEBUG_UNICODE) cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
+        if (DEBUG || DEBUG_UNICODE) cerr << "result:failure,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver.get())->getNumCandidates() << ",num_guesses:" << numGuesses << ",answer:" << answer << endl;
     } else {
         cout << "Wordle " << numGuesses << "/" << MAX_GUESSES << endl;
-        if (DEBUG) cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver)->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
+        if (DEBUG) cerr << "result:success,words_left:" << dynamic_cast<TrieBasedWordleSolver*>(solver.get())->getNumCandidates() << ",num_guesses:" << numGuesses << endl;
     }
 }
 
 // Allow user to act as the checker by entering 'B', 'Y', 'G' for each letter.
-int interactiveMode(WordleSolver* solver) {
+int interactiveMode(unique_ptr<WordleSolverImpl> solver) {
     size_t numGuesses = 1;
     WordleGuess wg = Helpers::promptUserToCheckGuess(solver->makeInitialGuess(), numGuesses);
     if (wg != CorrectWordleGuess) {
@@ -169,9 +216,12 @@ int interactiveMode(WordleSolver* solver) {
 
 // User provides guesses, then provides hints from the oracle
 // Augments IRL game play #sorrynotsorry
-int cheatMode(WordleSolver* solver) {
+int cheatMode(unique_ptr<WordleSolverImpl> solver) {
+    #undef DEBUG
     #define DEBUG true
+    #undef PRINT_GUESSES
     #define PRINT_GUESSES true
+    #undef PRINT_GUESSES_SIZE
     #define PRINT_GUESSES_SIZE 10
 
     size_t numGuesses = 1;
@@ -199,31 +249,63 @@ int cheatMode(WordleSolver* solver) {
     return 0;
 }
 
-int main() {
-    // Choose `Solver` HERE!!
-    auto solver = new TrieBasedWordleSolver();
+int main(int argc, char* argv[]) {
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("help,h", "produce help message")
+        ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
+        // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
+        ("mode,m", po::value<string>(), "choose between: all,debug,interactive,cheat")
+        ("multi,t", "multi-threaded (assumes --mode all")
+        ("word,w", po::value<string>(), "answer word for certain modes")
+        ;
 
-    // Which mode would you like to run?
-    // runAllWords();
-    //runDebug(solver, "jewel");
-    //runDebug(solver, "shave");
+    po::variables_map vm;
+    po::store(po::parse_command_line(/*argc=*/argc, /*argv=*/argv, /*options_desc=*/desc), vm);
+    po::notify(vm);
+    if (vm.count("help")) {
+        printUsage();
+    }
 
-    // runDebug(solver, "catch");
-    // cout << "Remaining Cand" << endl;
+    // TODO: Not supported yet, because this is baked into the solvers.
+    //       Need to provide mechanism to pass this through.
+    // auto selector =
+    // if (vm.count("selector")) {
+    // }
 
-    // solver = new TrieBasedWordleSolver();
-    // runDebug(solver, "graze");
+    if (vm.count("mode")) {
+        cout << "Wordle Solver v" << VERSION << endl;
+        string solverType = "trie";
+        if (vm.count("solver")) {
+            solverType = vm["solver"].as<string>();
+        }
+        auto solver = createWordleSolver(solverType);
+        auto solverMode = vm["mode"].as<string>();
+        cout << "mode:" << solverMode << endl << endl;
 
-    // solver = new TrieBasedWordleSolver();
-    // cout << "Remaining Cand" << endl;
-    // runDebug(solver, "hound");
-
-    // solver = new TrieBasedWordleSolver();
-    // cout << "Remaining Cand" << endl;
-    // runDebug(solver, "taunt");
-
-    //interactiveMode(solver);
-    cheatMode(solver);
+        if (solverMode == "all") {
+            if (vm.count("multi")) {
+                runAllWordsMultiThreaded(solverType);
+            } else {
+                runAllWords(solverType);
+            }
+        } else if ("cheat") {
+            cheatMode(move(solver));
+        } else if ("debug") {
+            if (!vm.count("word")) {
+                cerr << "debug mode requires a 'word' as a solution" << endl;
+                printUsage();
+            }
+            runDebug(move(solver), vm["word"].as<string>());
+        } else if ("interactive") {
+            interactiveMode(move(solver));
+        } else {
+            cerr << "mode [" << solverMode << "] not recognized" << endl;
+            printUsage();
+        }
+    } else {
+        printUsage();
+    }
 
     return 0;
 }
