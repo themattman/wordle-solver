@@ -18,6 +18,7 @@ Selector: in the respective `WordleSolver` constructor. Currently all locations 
 #include "wordlist_wordle_solver.h"
 
 #include <fstream>
+#include <future>
 #include <iomanip>
 #include <iostream>
 #include <random>
@@ -103,24 +104,22 @@ void runAllWordsMultiThreaded(const string& solverType) {
     #undef PRINT_GUESSES
     #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
+    size_t successes = 0;
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
     // TODO: Synchronized cout access of multiple threads
 
+    auto threads = vector<future<bool>>();
     for (size_t count = 0; count < words.size(); count++) {
-        size_t num_threads = std::thread::hardware_concurrency();
-        auto threads = vector<thread>();
-        for (size_t i = 0; i < num_threads && count < words.size(); i++) {
-            threads.emplace_back(thread(&runOneGame, solverType, words[count]));
-            count++;
-        }
+        threads.push_back(async(launch::async, runOneGame, solverType, words[count]));
+    }
 
-        for (size_t i = 0; i < threads.size(); i++) {
-            if (threads[i].joinable()) {
-                threads[i].join();
-            }
+    for (size_t i = 0; i < threads.size(); i++) {
+        if (threads[i].valid()) {
+            successes = threads[i].get() ? successes+1 : successes;
         }
     }
 
+    cout << successes << "/" << words.size() << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(words.size())) << endl;
     cout << "done." << endl;
 }
 
