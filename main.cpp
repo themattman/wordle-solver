@@ -89,7 +89,6 @@ bool runOneGame(const string& solverType, const string& answer) {
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
         cerr << "failure," << solver->getNumCandidates() << "," << numGuesses << "," << answer << endl;
-        //cerr << answer << endl;
         return false;
     }
 
@@ -105,19 +104,21 @@ void runAllWordsMultiThreaded(const string& solverType) {
     #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
+    // TODO: Synchronized cout access of multiple threads
 
     for (size_t count = 0; count < words.size(); count++) {
-        vector<thread> threads(std::thread::hardware_concurrency());
-        for (size_t i = 0; i <  threads.size(); i++) {
-            //threads.push_back(move(thread(&runOneGame, words[count])));
+        size_t num_threads = std::thread::hardware_concurrency();
+        auto threads = vector<thread>();
+        for (size_t i = 0; i < num_threads && count < words.size(); i++) {
             threads.emplace_back(thread(&runOneGame, solverType, words[count]));
-            // threads.at(i) = thread(runOneGame, words[count]);
             count++;
         }
-        // for (size_t i = 0; i < threads.size(); i++) {
-        //     //threads[i]->join();
-        //     //delete threads[i];
-        // }
+
+        for (size_t i = 0; i < threads.size(); i++) {
+            if (threads[i].joinable()) {
+                threads[i].join();
+            }
+        }
     }
 
     cout << "done." << endl;
@@ -133,7 +134,7 @@ void runAllWords(const string& solverType) {
     size_t successes = 0;
     size_t runs = 0;
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
-    //cerr << "result,words_left,num_guesses,answer_if_failure" << endl;
+
     for (auto& word : words) {
         if (runOneGame(solverType, word)) {
             successes++;
@@ -141,6 +142,7 @@ void runAllWords(const string& solverType) {
         g_num_runs++;
         runs++;
     }
+
     cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;
 }
