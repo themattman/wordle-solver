@@ -288,7 +288,11 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Add wordle unicode decoder
 
-- [ ] Add arg parsing OR multiple binaries
+- [X] Add arg parsing OR multiple binaries
+
+- [ ] Check guess against guess dict
+
+- [ ] Support one output buffer per game, will help unlock multi-threaded game
 
 ## Discussion
 

@@ -369,12 +369,12 @@ void FrequencyAndPositionalLetterSelector<IterType>::computeFrequencyMapInternal
             // only give scores to each letter once
             if ((wordLetters.find(c) == wordLetters.end() && this->m_guessNum < 6) || this->m_guessNum >= 6) {
                 if (greenLetters.find(c) == greenLetters.end()) {
-                    score += (m_positionLetterScores[i][c] + m_fullLetterMap[c]);
+                    score += (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]);
                 }
             }
 #if CREATE_SCORES_FILE == true
             if (m_initialGuess && g_num_runs == 0) {
-                file_stream << (m_positionLetterScores[i][c] + m_fullLetterMap[c]) << ",";
+                file_stream << (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]) << ",";
             }
 #endif
             wordLetters.insert(c);

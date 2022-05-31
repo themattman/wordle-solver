@@ -3,6 +3,7 @@
 #include "wordle_rules.h"
 #include "wordle_solver.h"
 
+#include <algorithm>
 #include <ctype.h>
 #include <fstream>
 #include <iostream>
@@ -21,22 +22,46 @@ public:
     static WordleGuess promptUserToCheckGuess(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
 
-        string input = collectUserInput(/*isRepeat=*/false, /*isCheckingGuess=*/true);
+        string input = collectUserInput(/*isRepeat=*/false, "checking");
         while(!isUserInputValidAnswer(input)) {
-            input = collectUserInput(/*isRepeat=*/true, /*isCheckingGuess=*/true);
+            input = collectUserInput(/*isRepeat=*/true, "checking");
         }
 
         return stringToWordleGuess(output, input);
     }
 
+    static WordleGuess promptUserToProvideGuess(size_t guessNumber) {
+        cout << "Guess #" << guessNumber << ": " << endl;
+
+        string input = collectUserInput(/*isRepeat=*/false, "checking");
+        while(!isUserInputValidAnswer(input)) {
+            input = collectUserInput(/*isRepeat=*/true, "checking");
+        }
+
+        return stringToWordleGuess("", input);
+    }
+
     static string promptUserToMakeGuess(size_t guessNumber) {
         cout << "Guess #" << guessNumber << endl;
 
-        string input = collectUserInput(/*isRepeat=*/false, /*isCheckingGuess=*/false);
+        string input = collectUserInput(/*isRepeat=*/false, "guessing");
         while(!isUserInputValidGuess(input)) {
-            input = collectUserInput(/*isRepeat=*/true, /*isCheckingGuess=*/false);
+            input = collectUserInput(/*isRepeat=*/true, "guessing");
         }
 
+        return input;
+    }
+
+    static string promptUserForSolution() {
+        auto words = getDictionary();
+        cout << "Enter Solution:" << endl;
+
+        string input = collectUserInput(/*isRepeat=*/false, "solution");
+        while(!isUserInputValidGuess(input)) {
+            input = collectUserInput(/*isRepeat=*/true, "solution");
+        }
+
+        cout << "Solution received:" << input << endl;
         return input;
     }
 
@@ -73,17 +98,21 @@ private:
         return WordleGuess(guess, wr);
     }
 
-    static string collectUserInput(bool isRepeat, bool isCheckingGuess) {
+    static string collectUserInput(bool isRepeat, string promptString) {
         if (isRepeat) {
             cout << "Invalid response. Try again." << endl;
         }
 
-        string prompt = (isCheckingGuess) ? "checking" : "guessing";
-        cout << prompt << "> ";
+        cout << promptString << "> ";
         string userInput;
         cin >> userInput;
         return userInput;
     }
+
+    static bool isUserInputInDictionary(string& userInput, const vector<string>& dict) {
+        return find(dict.begin(), dict.end(), userInput) != dict.end();
+    }
+
 
     static bool isUserInputValidGuess(string& userInput) {
         if (userInput.size() != LETTER_COUNT) {

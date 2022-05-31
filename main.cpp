@@ -58,8 +58,6 @@ unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
     return solverPtr;
 }
 
-
-
 // Runs one iteration of the Wordle game with automated solver & checker.
 bool runOneGame(const string& solverType, const string& answer) {
     auto solver = createWordleSolver(solverType);
@@ -107,6 +105,7 @@ void runAllWordsMultiThreaded(const string& solverType) {
     size_t successes = 0;
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
     // TODO: Synchronized cout access of multiple threads
+    // Each runOneGame needs to shove output into a buffer/vector, then print out together at end
 
     auto threads = vector<future<bool>>();
     for (size_t count = 0; count < words.size(); count++) {
@@ -225,6 +224,13 @@ int cheatMode(unique_ptr<WordleSolverImpl> solver) {
     #undef PRINT_GUESSES_SIZE
     #define PRINT_GUESSES_SIZE 10
 
+    // Decls:
+    // wordle_trie.cpp:14 WordleTrie::printCandidates(), no scores
+    // wordle_selectors.cpp:114 MostCommonLetterSelector<>::printCandidates(), scores
+    // Callers:
+    // wordlist_wordle_solver.cpp:116 TrieBasedWordleSolver::processResult() -> trie, no scores
+    // wordle_selectors.cpp:75 MostCommonLetterSelector<>::select() -> mcl, scores
+
     size_t numGuesses = 1;
     string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
     WordleGuess wg = Helpers::promptUserToCheckGuess(userGuess, numGuesses);
@@ -257,12 +263,18 @@ int main(int argc, char* argv[]) {
         ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
         // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
         ("mode,m", po::value<string>(), "choose between: all,debug,interactive,cheat")
-        ("multi,t", "multi-threaded (assumes --mode all")
+        ("multi,t", "multi-threaded (assumes --mode all)")
         ("word,w", po::value<string>(), "answer word for certain modes")
         ;
 
     po::variables_map vm;
-    po::store(po::parse_command_line(/*argc=*/argc, /*argv=*/argv, /*options_desc=*/desc), vm);
+    try {
+        po::store(po::parse_command_line(/*argc=*/argc, /*argv=*/argv, /*options_desc=*/desc), vm);
+    } catch (const std::exception& e) {
+        cout << "Exception Error: " << e.what() << endl;
+        return 3;
+    }
+
     po::notify(vm);
     if (vm.count("help")) {
         printUsage();
@@ -292,17 +304,24 @@ int main(int argc, char* argv[]) {
                 cout << endl;
                 runAllWords(solverType);
             }
-        } else if ("cheat") {
+        } else if (solverMode == "one") {
+            if (!vm.count("word")) {
+                cerr << "'one' mode requires a 'word' as a solution" << endl;
+                printUsage();
+            }
+            cout << endl;
+            cout << "TODO: pass unicode in as an option" << endl;
+        } else if (solverMode == "cheat") {
             cout << endl;
             cheatMode(move(solver));
-        } else if ("debug") {
+        } else if (solverMode == "debug") {
             if (!vm.count("word")) {
-                cerr << "debug mode requires a 'word' as a solution" << endl;
+                cerr << "'debug' mode requires a 'word' as a solution" << endl;
                 printUsage();
             }
             cout << endl;
             runDebug(move(solver), vm["word"].as<string>());
-        } else if ("interactive") {
+        } else if (solverMode == "interactive") {
             cout << endl;
             interactiveMode(move(solver));
         } else {
