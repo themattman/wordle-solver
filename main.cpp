@@ -41,7 +41,7 @@ void printUsage() {
     cerr << " -h,--help   : produce help message" << endl;
     cerr << " -s,--solver : choose between: trie(default),wordlist" << endl;
     cerr << " -m,--mode   : choose between: all,debug,interactive,cheat" << endl;
-    cerr << " -t,--mult   : multi-threaded (assumes --mode all" << endl;
+    cerr << " -t,--multi  : multi-threaded (assumes --mode all)" << endl;
     cerr << " -w,--word   : answer word for certain modes" << endl;
     exit(1);
 }

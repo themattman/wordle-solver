@@ -98,7 +98,7 @@ private:
         return WordleGuess(guess, wr);
     }
 
-    static string collectUserInput(bool isRepeat, string promptString) {
+    static string collectUserInput(bool isRepeat, const string& promptString) {
         if (isRepeat) {
             cout << "Invalid response. Try again." << endl;
         }
@@ -109,7 +109,7 @@ private:
         return userInput;
     }
 
-    static bool isUserInputInDictionary(string& userInput, const vector<string>& dict) {
+    static bool isUserInputInDictionary(const string& userInput, const vector<string>& dict) {
         return find(dict.begin(), dict.end(), userInput) != dict.end();
     }
 
@@ -129,7 +129,7 @@ private:
         return true;
     }
 
-    static bool isUserInputValidAnswer(const string& userInput) {
+    static bool isUserInputValidAnswer(const string& userInput, const vector<string>& dict = {}) {
         if (userInput.size() != LETTER_COUNT) {
             return false;
         }
@@ -141,6 +141,14 @@ private:
             }
         }
 
-        return true;
+        if (dict.size() > 0) {
+            bool isWord = isUserInputInDictionary(userInput, dict);
+            if (!isWord) {
+                cerr << "Error: Not in word list." << endl;
+            }
+            return isWord;
+        } else {
+            return true;
+        }
     }
 };
