@@ -13,7 +13,7 @@ Selector: in the respective `WordleSolver` constructor. Currently all locations 
 #include "wordle_checker.h"
 #include "wordle_helpers.h"
 #include "wordle_rules.h"
-#include "wordle_selectors.h"
+#include "wordle_selector.h"
 #include "wordle_solver.h"
 #include "wordlist_wordle_solver.h"
 

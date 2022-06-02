@@ -1,0 +1,112 @@
+#include "wordle_selectors.h"
+
+#include <string>
+
+using namespace std;
+
+// TODO: begin & end
+string RandomSelector::select(iterator begin, iterator end) {
+    return *(begin + getRandom(begin, end));
+}
+
+size_t RandomSelector::getRandom(iterator begin, iterator end) {
+    srand(time(NULL));
+    size_t numElements = end-begin;
+    return rand() % numElements;
+}
+
+string EnhancedRandomSelector::select(iterator begin, iterator end) {
+    string selection;
+    do {
+        selection = RandomSelector::select(begin, end);
+    } while (containsDoubleLetter(selection) && containsOneVowel(selection));
+    return selection;
+}
+
+bool EnhancedRandomSelector::containsDoubleLetter(const string& word) {
+    for (size_t i = 0; i < word.size(); i++) {
+        for (size_t j = i+1; j < word.size(); j++) {
+            if (word[i] == word[j]) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+bool EnhancedRandomSelector::isVowel(char letter) {
+    return (letter == 'a' || letter == 'e' || letter == 'i' || letter == 'o' || letter == 'u' || letter == 'y');
+}
+
+bool EnhancedRandomSelector::containsOneVowel(const string& word) {
+    size_t numVowels = 0;
+
+    for (auto& letter : word) {
+        numVowels = isVowel(letter) ? numVowels+1 : numVowels;
+    }
+
+    return numVowels <= 1;
+}
+
+////////////////
+
+string MostCommonLetterSelector::select(iterator begin, iterator end) {
+    m_iterBegin = begin;
+    m_iterEnd = end;
+    computeFrequencyMap();
+    return getBestCandidate();
+}
+
+string MostCommonLetterSelector::getBestCandidate() {
+    return getWordWithMostCommonLetter(getMostCommonLetter());
+}
+
+string MostCommonLetterSelector::getWordWithMostCommonLetter(char letter) {
+    size_t mostCommonLetterCount = 0;
+    string wordWithMostCommonLetter;
+    for (auto it = m_iterBegin; it != m_iterEnd; it++) {
+        size_t letterCount = count(letter, *it);
+        if (letterCount > mostCommonLetterCount) {
+            mostCommonLetterCount = letterCount;
+            wordWithMostCommonLetter = *it;
+        }
+    }
+    return wordWithMostCommonLetter;
+}
+
+size_t MostCommonLetterSelector::count(char letter, const string& word) {
+    size_t count = 0;
+    for (auto& c : word) {
+        if (c == letter) {
+            count++;
+        }
+    }
+    return count;
+}
+
+char MostCommonLetterSelector::getMostCommonLetter() {
+    size_t highest = 0;
+    char mostCommon;
+    for (auto it = m_frequencyMap.begin(); it != m_frequencyMap.end(); it++) {
+        if (it->second > highest) {
+            highest = it->second;
+            mostCommon = it->first
+        }
+    }
+
+    if (!mostCommon) {
+        throw;
+    }
+
+    return mostCommon;
+}
+
+void MostCommonLetterSelector::computeFrequencyMap() {
+    for (auto& c : ) {
+        if (m_frequencyMap.find(c) != m_frequencyMap.end()) {
+            m_frequencyMap[c] = 0;
+        }
+        m_frequencyMap[c]++;
+    }
+}

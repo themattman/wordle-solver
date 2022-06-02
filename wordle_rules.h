@@ -4,10 +4,10 @@
 #include <vector>
 
 #define VERSION 4.0
-#define DEBUG false
-#define DEBUG_UNICODE false
-#define PRINT_GUESSES false
-#define PRINT_GUESSES_SIZE 10
+#define DEBUG true
+#define DEBUG_UNICODE true
+#define PRINT_GUESSES true
+#define PRINT_GUESSES_SIZE 20
 #define LIGHT_MODE false
 #define DICTIONARY_FILENAME "answers.txt"
 #define CREATE_SCORES_FILE false

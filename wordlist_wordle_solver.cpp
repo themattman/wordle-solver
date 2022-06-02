@@ -1,7 +1,7 @@
 #include "wordlist_wordle_solver.h"
 #include "wordle_helpers.h"
 #include "wordle_rules.h"
-#include "wordle_selectors.h"
+#include "wordle_selector.h"
 #include "wordle_solver.h"
 
 #include <algorithm>
@@ -18,7 +18,7 @@ using namespace std;
 
 
 WordlistWordleSolver::WordlistWordleSolver() : WordleSolverImpl() {
-    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::FrequencyAndPositionalLetter); // Choose `Selector` HERE!!
+    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -52,7 +52,7 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 /////////////////////
 
 TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
-    m_selector = SelectorFactory<SetIterator>::makeSelector(SelectorType::FrequencyAndPositionalLetter); // Choose `Selector` HERE!!
+    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
     m_trie = new WordleTrie();
     loadWordList([this](const string& line){
         m_trie->insert(line);

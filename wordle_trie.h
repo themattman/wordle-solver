@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wordle_selectors.h"
+#include "wordle_selector.h"
 #include "wordle_solver.h"
 
 #include <string>
@@ -43,7 +43,7 @@ public:
     void fixupBlack(size_t letterPosition, char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(Selector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum);
+    string getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum);
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates() const;
 private:

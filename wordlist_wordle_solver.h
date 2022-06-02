@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wordle_rules.h"
-#include "wordle_selectors.h"
+#include "wordle_selector.h"
 #include "wordle_solver.h"
 #include "wordle_trie.h"
 
@@ -22,7 +22,7 @@ public:
 protected:
     void loadWordList(function<void(string)> eachLineCallbackActor);
 
-    Selector<SetIterator>* m_selector;
+    WordleSelector<SetIterator>* m_selector;
     vector<string> m_wordlist;
     set<string> m_wordSet;
     vector<

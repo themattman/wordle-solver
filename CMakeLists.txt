@@ -12,8 +12,8 @@ find_library(LIB_LOCATION
     NAMES boost_program_options
     HINTS "${BOOST_BASE_DIR}/lib")
 
-add_executable(solver wordle_selectors.cpp wordlist_wordle_solver.cpp wordle_trie.cpp wordle_checker.cpp main.cpp)
+add_executable(solver wordle_selector.cpp wordlist_wordle_solver.cpp wordle_trie.cpp wordle_checker.cpp main.cpp)
 target_link_libraries(solver ${LIB_LOCATION})
 
-#add_executable(test_solver wordle_checker_test.cpp wordle_checker.cpp wordle_selectors.cpp)
+#add_executable(test_solver wordle_checker_test.cpp wordle_checker.cpp wordle_selector.cpp)
 #add_executable(decoder wordle_decoder.cpp)

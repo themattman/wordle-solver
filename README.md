@@ -142,7 +142,7 @@ There is a `Checker` and `Solver`. These two entities comprise the Wordle game. 
 
 Each `Solver` can be mixed and matched with any `Selector`.
 
-Currently the best combo is `TrieBasedWordleSolver` & `PositionalLetterSelector`.
+Currently the best combo is `TrieBasedWordleSolver` & `PositionalLetterWordleSelector`.
 
 ### Solvers
 
@@ -168,35 +168,35 @@ Role: Generate list of candidate words based on dictionary and results from prio
 
 Role: Choose which word in a given list of words should be selected for the current Wordle guess.
 
-- `Selector`
+- `WordleSelector`
 
   - Abstract Base Class. Interface for `Selector`s.
 
-- `RandomSelector`
+- `RandomWordleSelector`
 
   - From an iterable list of candidate words, chooses candidate randomly.
 
-- `EnhancedRandomSelector`
+- `EnhancedRandomWordleSelector`
 
   - Randomly choose candidate words that contain more than one vowel and do not contain double letters.
 
-- `MostCommonLetterSelector`
+- `MostCommonLetterWordleSelector`
 
   - Abstract Base Class. Interface for `Selector`s that want to compute frequency scores over remaining candidate words.
 
-- `NaiveMostCommonLetterSelector`
+- `NaiveMostCommonLetterWordleSelector`
 
   - Basic approach to computing score based on most common letters in all remaining words.
 
-- `ImprovedMostCommonLetterSelector`
+- `ImprovedMostCommonLetterWordleSelector`
 
   - Improved approach that doesn't score letters that show up multiple times (they're less common) AND letters that are already green (no effect, but it stands to reason).
 
-- `PositionalLetterSelector`
+- `PositionalLetterWordleSelector`
 
   - Computes which letter is most common in each position. Scores each candidate word based on this and selects best candidate.
 
-- `FrequencyAndPositionalLetterSelector`
+- `FrequencyAndPositionalLetterWordleSelector`
 
   - Blend of overall scoring (frequency) and positional letter scoring
 
@@ -294,6 +294,8 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Support one output buffer per game, will help unlock multi-threaded game
 
+  - writing to the buffer is segfaulting, try small example
+
 ## Discussion
 
 - [Best Wordle guessing strategy(HN)](https://news.ycombinator.com/item?id=29928263) https://slc.is/archive/best-wordle-strategy-explore-or-exploit/
@@ -310,3 +312,20 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [Solving Wordle using information theory(YouTube)](https://www.youtube.com/watch?v=v68zYyaEmEA)
 
+## Diagram
+
+```
+     WordleSolver
+         ^
+         |
+   WordleSolverImpl
+         ^
+         |
+  WordlistWordleSolver  --------------------------------->  WordleSelector
+         ^                                                       ^
+         |                                                       |
+PassthroughWordleSolver                             PositionalLetterWordleSolver
+         ^                                                       ^
+         |                                                       |
+TrieBasedWordleSolver -----> WordleTrie       FrequencyAndPositionalLetterWordleSelector
+```
