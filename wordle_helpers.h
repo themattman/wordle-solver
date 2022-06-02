@@ -53,7 +53,6 @@ public:
     }
 
     static string promptUserForSolution() {
-        auto words = getDictionary();
         cout << "Enter Solution:" << endl;
 
         string input = collectUserInput(/*isRepeat=*/false, "solution");
@@ -71,6 +70,14 @@ public:
         string word;
         while (std::getline(filein, word)) { words.push_back(word); }
         return words;
+    }
+
+    static bool isWordInDictionary(const string& word, const vector<string>& dict) {
+        return find(dict.begin(), dict.end(), word) != dict.end();
+    }
+
+    static bool isWordInDictionary(const string& word) {
+        return isWordInDictionary(word, getDictionary());
     }
 private:
     static WordleGuess stringToWordleGuess(const string& guess, const string& str) {
@@ -109,11 +116,6 @@ private:
         return userInput;
     }
 
-    static bool isUserInputInDictionary(const string& userInput, const vector<string>& dict) {
-        return find(dict.begin(), dict.end(), userInput) != dict.end();
-    }
-
-
     static bool isUserInputValidGuess(string& userInput) {
         if (userInput.size() != LETTER_COUNT) {
             return false;
@@ -142,7 +144,7 @@ private:
         }
 
         if (dict.size() > 0) {
-            bool isWord = isUserInputInDictionary(userInput, dict);
+            bool isWord = isWordInDictionary(userInput, dict);
             if (!isWord) {
                 cerr << "Error: Not in word list." << endl;
             }

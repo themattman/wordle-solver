@@ -40,7 +40,7 @@ void printUsage() {
     cerr << "Options:" << endl;
     cerr << " -h,--help   : produce help message" << endl;
     cerr << " -s,--solver : choose between: trie(default),wordlist" << endl;
-    cerr << " -m,--mode   : choose between: all,debug,interactive,cheat" << endl;
+    cerr << " -m,--mode   : choose between: all,cheat,debug,interactive,one" << endl;
     cerr << " -t,--multi  : multi-threaded (assumes --mode all)" << endl;
     cerr << " -w,--word   : answer word for certain modes" << endl;
     exit(1);
@@ -97,10 +97,6 @@ bool runOneGame(const string& solverType, const string& answer) {
 
 // Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
 void runAllWordsMultiThreaded(const string& solverType) {
-    #undef DEBUG
-    #define DEBUG false
-    #undef PRINT_GUESSES
-    #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     cerr << "guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer" << endl;
@@ -124,10 +120,6 @@ void runAllWordsMultiThreaded(const string& solverType) {
 
 // Runs automated solver across entire dictionary.
 void runAllWords(const string& solverType) {
-    #undef DEBUG
-    #define DEBUG false
-    #undef PRINT_GUESSES
-    #define PRINT_GUESSES false
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
@@ -148,12 +140,6 @@ void runAllWords(const string& solverType) {
 // Run one iteration of solver against `answer`.
 // Useful for debugging solver & selector.
 void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
-    #undef DEBUG
-    #define DEBUG true
-    #undef DEBUG_UNICODE
-    #define DEBUG_UNICODE true
-    #undef PRINT_GUESSES
-    #define PRINT_GUESSES true
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -217,13 +203,6 @@ int interactiveMode(unique_ptr<WordleSolverImpl> solver) {
 // User provides guesses, then provides hints from the oracle
 // Augments IRL game play #sorrynotsorry
 int cheatMode(unique_ptr<WordleSolverImpl> solver) {
-    #undef DEBUG
-    #define DEBUG true
-    #undef PRINT_GUESSES
-    #define PRINT_GUESSES true
-    #undef PRINT_GUESSES_SIZE
-    #define PRINT_GUESSES_SIZE 10
-
     // Decls:
     // wordle_trie.cpp:14 WordleTrie::printCandidates(), no scores
     // wordle_selectors.cpp:114 MostCommonLetterSelector<>::printCandidates(), scores
@@ -262,7 +241,7 @@ int main(int argc, char* argv[]) {
         ("help,h", "produce help message")
         ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
         // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
-        ("mode,m", po::value<string>(), "choose between: all,debug,interactive,cheat")
+        ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one")
         ("multi,t", "multi-threaded (assumes --mode all)")
         ("word,w", po::value<string>(), "answer word for certain modes")
         ;
@@ -309,8 +288,13 @@ int main(int argc, char* argv[]) {
                 cerr << "'one' mode requires a 'word' as a solution" << endl;
                 printUsage();
             }
+            if (!Helpers::isWordInDictionary(vm["word"].as<string>())) {
+                cerr << "Error: [" << vm["word"].as<string>() << "] not in the wordlist" << endl;
+                return 1;
+            }
             cout << endl;
             cout << "TODO: pass unicode in as an option" << endl;
+            runOneGame(solverType, vm["word"].as<string>());
         } else if (solverMode == "cheat") {
             cout << endl;
             cheatMode(move(solver));
@@ -318,6 +302,10 @@ int main(int argc, char* argv[]) {
             if (!vm.count("word")) {
                 cerr << "'debug' mode requires a 'word' as a solution" << endl;
                 printUsage();
+            }
+            if (!Helpers::isWordInDictionary(vm["word"].as<string>())) {
+                cerr << "Error: [" << vm["word"].as<string>() << "] not in the wordlist" << endl;
+                return 1;
             }
             cout << endl;
             runDebug(move(solver), vm["word"].as<string>());
