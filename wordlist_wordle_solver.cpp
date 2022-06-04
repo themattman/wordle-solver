@@ -59,33 +59,33 @@ TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
     });
 }
 
-string TrieBasedWordleSolver::makeInitialGuess() {
+string TrieBasedWordleSolver::makeInitialGuess(buf_ptr wb, size_t idx) {
     if (m_trie->getNumCandidates() > 0) {
         string candidateWord = "slice"; //m_trie->getCandidate(m_selector, m_knownCorrects, 0);
         if (candidateWord.size() == 0) {
-            if (DEBUG) cerr << "Error: [solver] empty word" << endl;
+            if (DEBUG) wb->write("Error: [solver] empty word", idx, /*newline=*/true);
             throw;
         }
-        cerr << m_trie->getNumCandidates() << ",";
+        wb->write(to_string(m_trie->getNumCandidates()) + ",", idx);
         return candidateWord;
     }
 
-    if (DEBUG) cerr << "Error: [solver] no more candidates" << endl;
+    if (DEBUG) wb->write("Error: [solver] no more candidates", idx, /*newline=*/true);
     throw;
 }
 
-string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess) {
+string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) {
     if (m_trie->getNumCandidates() > 0) {
         string candidateWord = m_trie->getCandidate(m_selector, m_knownCorrects, numGuess);
         if (candidateWord.size() == 0) {
-            if (DEBUG) cerr << "Error: [solver] empty word" << endl;
+            if (DEBUG) wb->write("Error: [solver] empty word", idx, /*newline=*/true);
             throw;
         }
-        cerr << m_trie->getNumCandidates() << ",";
+        wb->write(to_string(m_trie->getNumCandidates()) + ",", idx);
         return candidateWord;
     }
 
-    if (DEBUG) cerr << "Error: [solver] no more candidates" << endl;
+    if (DEBUG) wb->write("Error: [solver] no more candidates", idx, /*newline=*/true);
     throw;
 }
 

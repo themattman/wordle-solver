@@ -12,7 +12,7 @@
 #include <vector>
 
 using namespace std;
-
+using buf_ptr = shared_ptr<WordleBuffer>;
 
 class WordlistWordleSolver : public WordleSolverImpl {
 public:
@@ -35,10 +35,10 @@ protected:
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
-    string makeInitialGuess() override {
+    string makeInitialGuess(buf_ptr wb, size_t idx) override {
         return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, 0);
     }
-    string makeSubsequentGuess(size_t guessNum) override { return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, guessNum); }
+    string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override { return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, guessNum); }
     void processResult(const WordleGuess& guess) override {}
 };
 
@@ -64,8 +64,8 @@ class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
     TrieBasedWordleSolver();
-    string makeInitialGuess() override;
-    string makeSubsequentGuess(size_t guessNum) override;
+    string makeInitialGuess(buf_ptr wb, size_t idx) override;
+    string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override;
     void processResult(const WordleGuess& guess) override;
     size_t getNumCandidates() const override { return m_trie->getNumCandidates(); }
 protected:

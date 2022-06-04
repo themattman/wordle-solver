@@ -1,7 +1,16 @@
 cmake_minimum_required (VERSION 2.6)
 project(wordle-solver)
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set(CMAKE_CXX_FLAGS "-std=c++20 -Werror -Wall -O3 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "-std=c++20 -Werror -Wall -stdlib=libc++")
+
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-O3")
+
+# Configure different types of builds:
+# $ cmake -DCMAKE_BUILD_TYPE=Release .
+# $ cmake -DCMAKE_BUILD_TYPE=Debug .
+#
+# $ make
 
 # Boost support for program_options (argument parsing)
 #  - Linux: $ apt-get install boost

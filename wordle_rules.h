@@ -13,7 +13,7 @@
 #define CREATE_SCORES_FILE false
 #define DICTIONARY_SCORES_FILENAME "scores_new.txt"
 
-static size_t g_num_runs = 0;
+static size_t g_num_runs = 0; // TODO: remove, not implemented in multi-threaded
 static const size_t MAX_GUESSES  = 6;
 static const size_t LETTER_COUNT = 5;
 

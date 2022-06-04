@@ -2,35 +2,32 @@
 
 Weekend project to come up with automated strategies to solve Wordle.
 
-High water mark of my solver: `99.83%` success rate, `3.66696` average guesses.
+High water mark of my solver:
+
+Solves dictionary with `99.83%` success rate, `3.66696` average guesses in under 3 seconds.
 
 ## Setup
 ```
-$ cmake .
+$ cmake -DCMAKE_BUILD_TYPE=Release .
 $ time make
-[ 10%] Building CXX object CMakeFiles/solver.dir/wordle_selectors.cpp.o
-[ 20%] Building CXX object CMakeFiles/solver.dir/wordlist_wordle_solver.cpp.o
-[ 30%] Building CXX object CMakeFiles/solver.dir/wordle_trie.cpp.o
-[ 40%] Building CXX object CMakeFiles/solver.dir/wordle_checker.cpp.o
-[ 50%] Building CXX object CMakeFiles/solver.dir/main.cpp.o
-[ 60%] Linking CXX executable solver
-[ 60%] Built target solver
-[ 70%] Building CXX object CMakeFiles/test_solver.dir/wordle_checker_test.cpp.o
-[ 80%] Building CXX object CMakeFiles/test_solver.dir/wordle_checker.cpp.o
-[ 90%] Building CXX object CMakeFiles/test_solver.dir/wordle_selectors.cpp.o
-[100%] Linking CXX executable test_solver
-[100%] Built target test_solver
+[ 16%] Building CXX object CMakeFiles/solver.dir/wordle_selector.cpp.o
+[ 33%] Building CXX object CMakeFiles/solver.dir/wordlist_wordle_solver.cpp.o
+[ 50%] Building CXX object CMakeFiles/solver.dir/wordle_trie.cpp.o
+[ 66%] Building CXX object CMakeFiles/solver.dir/wordle_checker.cpp.o
+[ 83%] Building CXX object CMakeFiles/solver.dir/main.cpp.o
+[100%] Linking CXX executable solver
+[100%] Built target solver
 
-real    0m9.000s
-user    0m8.131s
-sys     0m0.674s
+real	0m9.517s
+user	0m8.867s
+sys 	0m0.521s
 ```
 
 ## How to Use
 
 - Solve Entire Dictionary
 ```
-$ ./solver --mode all
+$ time ./solver --mode all
 Wordle Solver v4
 mode:all
 
@@ -44,6 +41,32 @@ guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,w
 ...
 2294/2315=0.9909
 done.
+
+real	0m11.157s
+user	0m10.390s
+sys 	0m0.698s
+```
+
+- Solve Entire Dictionary, Fast
+```
+$ time ./solver --mode all --multi
+Wordle Solver v4
+mode:all
+
+guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer
+2315,48,4,3,2,1,success,1,6,aback
+2315,6,2,1,1,1,success,1,4,abase
+2315,6,3,2,1,1,success,2,4,abate
+2315,61,1,1,1,1,success,1,3,abbey
+2315,51,4,1,1,1,success,1,4,abbot
+2315,136,15,2,1,1,success,1,5,abhor
+...
+2294/2315=0.9909
+done.
+
+real	0m2.577s
+user	0m19.079s
+sys 	0m1.619s
 ```
 
 - Original Interactive Mode
@@ -312,7 +335,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [Solving Wordle using information theory(YouTube)](https://www.youtube.com/watch?v=v68zYyaEmEA)
 
-## Diagram
+## Class Diagram
 
 ```
      WordleSolver
@@ -328,4 +351,14 @@ PassthroughWordleSolver                             PositionalLetterWordleSolver
          ^                                                       ^
          |                                                       |
 TrieBasedWordleSolver -----> WordleTrie       FrequencyAndPositionalLetterWordleSelector
+
+
+TrieBasedWordleSolver
+|- WordleTrie*                                 (owns list of current correct answers)
+|- FrequencyAndPositionalLetterWordleSelector* (owns behavior of selecting from a list of words)
+
 ```
+
+### Buffer Dependencies:
+WordleTrie::makeXXGuess()
+main
