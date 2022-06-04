@@ -98,6 +98,31 @@ mode:debug
 Wordle 3/6
 ```
 
+- Cheat Mode
+```
+$ ./solver --mode cheat
+Wordle Solver v4
+Size of wordlist: 2315
+Size of wordlist: 2315
+mode:cheat
+
+Guess #1
+guessing> chart
+Guess #1: chart
+checking> gbbbg
+Remaining Candidates: (4)
+ covet:22
+ clout:20
+ count:19
+ cleft:16
+Guess #2
+guessing> clout
+Guess #2: clout
+checking> gbyyg
+Remaining Candidates: (1)
+ count:25
+```
+
 - View Scoring
 ```
 $ sort -hk 2 -t'=' scores.txt > sorted_scores.txt
@@ -122,7 +147,7 @@ $ grep "success" guess_nums_6.csv | cut -d',' -f9 | awk 's+=$1{print s/NR}' | ta
 3.72113
 ```
 
-- Fastest (Work in Progress)
+- Fastest
 ```
 $ time ./solver --mode all --multi 2>guess_nums_6.csv
 Wordle Solver v4
@@ -279,15 +304,17 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 ## ToDo
 
-- [ ] Better/Additional dictionary - i.e. include allowed guesses dict
+- [X] Better/Additional dictionary - i.e. include allowed guesses dict
 
-- [ ] Select strategy & mode from cmd line
+- [ ] Select strategy from cmd line
+
+- [X] Select mode from cmd line
 
 - [X] Measure success rates of various algos against whole dictionary
 
 - [ ] Define richer exceptions and catch them in main to help in debugging
 
-- [ ] Thread each parallel execution (Clang Mac doesn't support threading :( )
+- [X] Thread each parallel execution (Clang Mac doesn't support threading for loops :( )
 
 - [ ] Break ties with more common letter in dictionary. TieBreaker class???? - mostly an unhit case
 
@@ -315,9 +342,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Check guess against guess dict
 
-- [ ] Support one output buffer per game, will help unlock multi-threaded game
-
-  - writing to the buffer is segfaulting, try small example
+- [X] Support one output buffer per game, will help unlock multi-threaded game
 
 ## Discussion
 
