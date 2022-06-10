@@ -5,11 +5,12 @@
 
 #define VERSION 4.0
 #define DEBUG true
-#define DEBUG_UNICODE true
+#define DEBUG_UNICODE false
 #define PRINT_GUESSES true
 #define PRINT_GUESSES_SIZE 20
-#define LIGHT_MODE false
+#define LIGHT_MODE true
 #define DICTIONARY_FILENAME "answers.txt"
+#define DICTIONARY_GUESSES_FILENAME "answers_extended.txt" // DICTIONARY_FILENAME
 #define CREATE_SCORES_FILE false
 #define DICTIONARY_SCORES_FILENAME "scores_new.txt"
 

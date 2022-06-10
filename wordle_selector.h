@@ -11,14 +11,31 @@
 using namespace std;
 
 
+// template <typename IterType>
+// class FwdIter {
+// public:
+//     FwdIter(IterType it) : m_iter(it) {}
+//     IterType::type next() {
+        
+//     }
+// private:
+//     IterType m_iter;
+// };
+
+
 using ForwardIterator = vector<string>::iterator;
 using SetIterator = set<string>::iterator;
+
+template <typename T>
+class word_iterator : public iterator<forward_iterator_tag, T>
+{
+};
 
 template <typename IterType>
 class WordleSelector {
 public:
     WordleSelector() { srand(time(nullptr)); }
-    virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) = 0;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) {}
 protected:
     size_t m_guessNum{0};
 };
@@ -63,8 +80,8 @@ class MostCommonLetterWordleSelector : public WordleSelector<IterType> {
 public:
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 protected:
-    bool containsAllHints(const string& word) const;
-    string getBestCandidate() const;
+    bool isInRange(const string& word) const;
+    string getBestCandidate(bool isInOriginalDictionary) const;
     void clearOldState();
     char getMostCommonLetter() const;
     void computeFrequencyMap();
@@ -131,20 +148,20 @@ enum class WordleSelectorType {
 
 template <typename IterType>
 struct WordleSelectorFactory {
-    static WordleSelector<IterType>* makeWordleSelector(const WordleSelectorType& selectorType) {
+    static unique_ptr<WordleSelector<IterType>> makeWordleSelector(const WordleSelectorType& selectorType) {
         switch (selectorType) {
         case WordleSelectorType::Random:
-            return new RandomWordleSelector<IterType>();
+            return make_unique<RandomWordleSelector<IterType>>();
         case WordleSelectorType::EnhancedRandom:
-            return new EnhancedRandomWordleSelector<IterType>();
+            return make_unqiue<EnhancedRandomWordleSelector<IterType>>();
         case WordleSelectorType::NaiveMostCommonLetter:
-            return new NaiveMostCommonLetterWordleSelector<IterType>();
+            return make_unique<NaiveMostCommonLetterWordleSelector<IterType>>();
         case WordleSelectorType::ImprovedMostCommonLetter:
-            return new ImprovedMostCommonLetterWordleSelector<IterType>();
+            return make_unique<ImprovedMostCommonLetterWordleSelector<IterType>>();
         case WordleSelectorType::PositionalLetter:
-            return new PositionalLetterWordleSelector<IterType>();
+            return make_unique<PositionalLetterWordleSelector<IterType>>();
         case WordleSelectorType::FrequencyAndPositionalLetter:
-            return new FrequencyAndPositionalLetterWordleSelector<IterType>();
+            return make_unique<FrequencyAndPositionalLetterWordleSelector<IterType>>();
         }
 
         if (DEBUG) cerr << "Error: [selector] invalid selectorType" << endl;
@@ -168,3 +185,15 @@ template class NaiveMostCommonLetterWordleSelector<ForwardIterator>;
 template class ImprovedMostCommonLetterWordleSelector<ForwardIterator>;
 template class PositionalLetterWordleSelector<ForwardIterator>;
 template class FrequencyAndPositionalLetterWordleSelector<ForwardIterator>;
+
+// unique_ptr<WordleSelectorBase> createWordleSelector(const string& selectorType) {
+//     std::unique_ptr<WordleSelectorImpl> selectorPtr;
+//     if (selectorType == "") {
+//         selectorPtr = WordleSelectorFactor<SetIterator>::makeWordleSelector(Wordle);
+//     } else if (selectorType == "") {
+//         selectorPtr = WordleSelectorFactor<SetIterator>::makeWordleSelector();
+//     } else {
+//         printUsage();
+//     }
+//     return selectorPtr;
+// }

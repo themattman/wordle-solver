@@ -18,7 +18,6 @@ using namespace std;
 
 
 WordlistWordleSolver::WordlistWordleSolver() : WordleSolverImpl() {
-    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -51,8 +50,7 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 
 /////////////////////
 
-TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
-    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
+TrieBasedWordleSolver::TrieBasedWordleSolver() : WordlistWordleSolver() {
     m_trie = new WordleTrie();
     loadWordList([this](const string& line){
         m_trie->insert(line);
@@ -89,7 +87,7 @@ string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess, buf_ptr wb, s
     throw;
 }
 
-void TrieBasedWordleSolver::printNumCands(const string& color) const {
+void TrieBasedWordleSolver::printNumCandidates(const string& color) const {
     if (DEBUG) {
         string color_code;
         string end_color_code = "\033[0m";
@@ -98,7 +96,11 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
         } else if (color == "yellow") {
             color_code = "\033[0;33m";
         } else if (color == "black") {
-            color_code = "\033[0;30m";
+            if (LIGHT_MODE) {
+                color_code = "\033[0;37m";
+            } else {
+                color_code = "\033[0;30m";
+            }
         }
         cout << "numCandidates [" << color_code << color << end_color_code << "] done:" << m_trie->getNumCandidates() << endl;
     }
@@ -106,15 +108,12 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    trimGreens(guess, createPositionVector(guess, WordleResult::GREEN));
-    printNumCands("green");
-    trimYellows(guess, createPositionVector(guess, WordleResult::YELLOW));
-    printNumCands("yellow");
-    trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
-    printNumCands("black");
-#if PRINT_GUESSES == true
-    m_trie->getCandidate(m_selector, m_knownCorrects, 0);
-#endif
+    trimGreenCandidates(guess, createPositionVector(guess, WordleResult::GREEN));
+    printNumCandidates("green");
+    trimYellowCandidates(guess, createPositionVector(guess, WordleResult::YELLOW));
+    printNumCandidates("yellow");
+    trimBlackCandidates(guess, createPositionVector(guess, WordleResult::BLACK));
+    printNumCandidates("black");
 }
 
 vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& allPositions, WordleResult wr) {
@@ -132,19 +131,19 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& al
     return positions;
 }
 
-void TrieBasedWordleSolver::trimGreens(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimGreenCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         m_trie->fixupGreen(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimYellows(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimYellowCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         m_trie->fixupYellow(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimBlacks(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimBlackCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         if (countOccurs(g.guessStr[p], g.guessStr) > 1) {
             if (isAnotherOccurrenceNotBlack(p, g)) {

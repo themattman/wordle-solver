@@ -342,6 +342,8 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [ ] Check guess against guess dict
 
+- [X] Hard mode checker
+
 - [X] Support one output buffer per game, will help unlock multi-threaded game
 
 ## Discussion
@@ -382,8 +384,54 @@ TrieBasedWordleSolver
 |- WordleTrie*                                 (owns list of current correct answers)
 |- FrequencyAndPositionalLetterWordleSelector* (owns behavior of selecting from a list of words)
 
+    +-----------------------+
+    |       WordleSolver    |
+    +-----------------------+
+    |    makeInitialGuess=0 |
+    | makeSubsequentGuess=0 |
+    |       processResult=0 |
+    |    getNumCandidates=0 |
+    +-----------------------+
+         ^
+         |
+    +-------------------------------+
+    |        WordleSolverImpl       |
+    +-------------------------------+
+    |             <stubs>           |
+    |    makeInitialGuess => "guess"|
+    | makeSubsequentGuess => "guess"|
+    |       processResult => {}     |
+    |    getNumCandidates => 0      |
+    +-------------------------------+
+         ^
+         |
+    +-------------------------------+                                     +---------------------------+
+    |     WordlistWordleSolver      |  ---------------------------------> |  WordleSelector<IterType> |
+    +-------------------------------+                                     +---------------------------+
+    |  WordlistWordleSolver => load |                                     |                  select=0 |
+    |      getNumCandidates => sz   |                                     +---------------------------+
+    |          loadWordList => ...  |                                     |           m_guessNum => 0 |
+    +-------------------------------+                                     +---------------------------+
+         ^                                                       ^
+         |                                                       |
+PassthroughWordleSolver                             PositionalLetterWordleSolver
+         ^                                                       ^
+         |                                                       |
+TrieBasedWordleSolver -----> WordleTrie       FrequencyAndPositionalLetterWordleSelector
+
+WordleScorer -> these can be composable
+score(begin, end, rangeSize, knowns, guessNum, unordered_map<string, size_t>)
+
 ```
 
 ### Buffer Dependencies:
 WordleTrie::makeXXGuess()
 main
+
+
+## Desires
+- Composable selectors
+- Easy mode guessing from another dictionary
+- Clearer Requirements around important methods - better stated docs/assumptions for classes/methods
+- measure perf on WordleChecker::resetFrequencyMap()
+- LETTER_COUNT in many loops

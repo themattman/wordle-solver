@@ -79,6 +79,10 @@ public:
     static bool isWordInDictionary(const string& word) {
         return isWordInDictionary(word, getDictionary());
     }
+
+    static bool isWordInDictionary(const string& word, const string& dictFileName) {
+        return isWordInDictionary(word, getDictionary(dictFileName));
+    }
 private:
     static WordleGuess stringToWordleGuess(const string& guess, const string& str) {
         vector<WordleResult> wr;

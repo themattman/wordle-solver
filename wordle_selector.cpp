@@ -1,4 +1,5 @@
 #include "wordle_selector.h"
+#include "wordle_helpers.h"
 
 #include <fstream>
 #include <iostream>
@@ -7,10 +8,12 @@
 
 using namespace std;
 
+#define NUM_EASY_MODE_GUESSES 2
+
 
 template <typename IterType>
 string RandomWordleSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                        const vector<WordleKnown>& knowns, size_t guessNum) {
+                                              const vector<WordleKnown>& knowns, size_t guessNum) {
     advance(begin, getRandom(begin, end, rangeSize));
     return *begin;
 }
@@ -23,7 +26,7 @@ size_t RandomWordleSelector<IterType>::getRandom(IterType begin, IterType end, s
 
 template <typename IterType>
 string EnhancedRandomWordleSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                                const vector<WordleKnown>& knowns, size_t guessNum) {
+                                                      const vector<WordleKnown>& knowns, size_t guessNum) {
     string selection;
     do {
         selection = RandomWordleSelector<IterType>::select(begin, end, rangeSize, knowns, guessNum);
@@ -64,7 +67,7 @@ bool EnhancedRandomWordleSelector<IterType>::containsOneVowel(const string& word
 
 template <typename IterType>
 string MostCommonLetterWordleSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
-                                                  const vector<WordleKnown>& knowns, size_t guessNum) {
+                                                        const vector<WordleKnown>& knowns, size_t guessNum) {
     clearOldState();
     this->m_guessNum = guessNum;
     m_knowns = knowns;
@@ -74,7 +77,7 @@ string MostCommonLetterWordleSelector<IterType>::select(IterType begin, IterType
 #if PRINT_GUESSES == true
     printCandidates();
 #endif
-    return getBestCandidate();
+    return getBestCandidate((guessNum <= NUM_EASY_MODE_GUESSES));
 }
 
 template <typename IterType>
@@ -83,31 +86,6 @@ void MostCommonLetterWordleSelector<IterType>::clearOldState() {
     m_frequencyMapLetter.clear();
     m_wordScore.clear();
     m_sortedWords.clear();
-}
-
-template <typename IterType>
-bool MostCommonLetterWordleSelector<IterType>::containsAllHints(const string& word) const {
-    // vector<char> knownHints;
-    // cout << "word: " << word << " hints: ";
-    // for (size_t i = 0; i < LETTER_COUNT; i++) {
-    //     if (this->m_knowns[i].result != WordleResult::BLACK) {
-    //         knownHints.push_back(this->m_knowns[i].letter);
-    //         cout << this->m_knowns[i].letter << ",";
-    //     }
-    // }
-    // cout << endl;
-
-    // for (size_t i = 0; i < LETTER_COUNT; i++) {
-    //     for (auto it = knownHints.begin(); it != knownHints.end(); it++) {
-    //         if (word[i] == *it) {
-    //             knownHints.erase(it);
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // return knownHints.empty();
-    return true;
 }
 
 template <typename IterType>
@@ -126,12 +104,36 @@ void MostCommonLetterWordleSelector<IterType>::printCandidates() const {
 }
 
 template <typename IterType>
-string MostCommonLetterWordleSelector<IterType>::getBestCandidate() const {
-    auto it = m_sortedWords.begin();
-    // for (;!containsAllHints(it->word); it++) {
-    //     cout << "nope." << endl;
-    // }
-    return it->word;
+bool MostCommonLetterWordleSelector<IterType>::isInRange(const string& word) const {
+    for (auto it = m_iterBegin; it != m_iterEnd; it++) {
+        if (*it == word) {
+            return true;
+        }
+    }
+    return false;
+}
+
+template <typename IterType>
+string MostCommonLetterWordleSelector<IterType>::getBestCandidate(bool isInOriginalDictionary) const {
+    //return m_sortedWords.begin()->word;
+    cout << "guess: [" << this->m_guessNum << "] isIn: [" << isInOriginalDictionary << "]" << endl;
+    auto dict = Helpers::getDictionary();
+    string topWord;
+    auto wordIt = m_sortedWords.begin();
+    if (!isInOriginalDictionary) {
+        return wordIt->word;
+    }
+
+    size_t i = 0;
+    do {
+        topWord = wordIt->word;
+        wordIt++;
+        if (i < 10) {
+            cout << "Selecting [" << topWord << "]" << endl;
+            i++;
+        }
+    } while((!Helpers::isWordInDictionary(topWord, dict)) || (!isInRange(topWord)));
+    return topWord;
 }
 
 template <typename IterType>
@@ -177,7 +179,7 @@ void MostCommonLetterWordleSelector<IterType>::sortWordsByFrequency() {
 
 template <typename IterType>
 void NaiveMostCommonLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                                                          unordered_map<string, size_t>& wordScore) {
+                                                                                unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
     for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         for (auto& c : *wordIt) {
@@ -204,7 +206,7 @@ void NaiveMostCommonLetterWordleSelector<IterType>::computeFrequencyMapInternal(
 
 template <typename IterType>
 void ImprovedMostCommonLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                                                             unordered_map<string, size_t>& wordScore) {
+                                                                                   unordered_map<string, size_t>& wordScore) {
     // Compute letter scores
     for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
         for (auto& c : *wordIt) {
@@ -245,7 +247,7 @@ void ImprovedMostCommonLetterWordleSelector<IterType>::computeFrequencyMapIntern
 
 template <typename IterType>
 void PositionalLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
-                                                                     unordered_map<string, size_t>& wordScore) {
+                                                                           unordered_map<string, size_t>& wordScore) {
     // Compute positional letter scores
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
@@ -318,8 +320,8 @@ void PositionalLetterWordleSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 void FrequencyAndPositionalLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
-                                                                                 unordered_map<string, size_t>& wordScore) {
-    // Compute positional letter scores
+                                                                                       unordered_map<string, size_t>& wordScore) {
+    // Compute positional letter scores from range
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();
         for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
@@ -332,7 +334,7 @@ void FrequencyAndPositionalLetterWordleSelector<IterType>::computeFrequencyMapIn
         m_positionLetterScores.push_back(letterMap);
     }
 
-    // Compute letter scores
+    // Compute letter scores from range
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
             char c = (*wordIt)[i];
@@ -343,49 +345,103 @@ void FrequencyAndPositionalLetterWordleSelector<IterType>::computeFrequencyMapIn
         }
     }
 
-    // Compute word scores & write to file
 #if CREATE_SCORES_FILE == true
     ofstream file_stream;
     if (m_initialGuess && g_num_runs == 0) {
         file_stream.open(DICTIONARY_SCORES_FILENAME);
     }
 #endif
-    for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
-        size_t score = 0;
-        set<char> wordLetters;
-        set<char> greenLetters;
-        for (size_t i = 0; i < this->m_knowns.size(); i++) {
-            if (this->m_knowns[i].result == WordleResult::GREEN) {
-                greenLetters.insert(this->m_knowns[i].letter);
-            }
+
+    // IterType itBegin;
+    // IterType itEnd;
+    // unordered_map<string, size_t>::iterator itBegin;
+    // unordered_map<string, size_t>::iterator itEnd;
+    if (this->m_guessNum <= NUM_EASY_MODE_GUESSES) {
+        // Create range from full guess file
+        ifstream full_guess_file_stream;
+        string word;
+        full_guess_file_stream.open(DICTIONARY_GUESSES_FILENAME);
+        while (std::getline(full_guess_file_stream, word)) {
+            wordScore[word] = 0;
         }
-        size_t i = 0;
-#if CREATE_SCORES_FILE == true
-        if (m_initialGuess && g_num_runs == 0) {
-            file_stream << *wordIt << ":";
-        }
-#endif
-        for (auto& c : *wordIt) {
-            // only give scores to each letter once
-            if ((wordLetters.find(c) == wordLetters.end() && this->m_guessNum < 6) || this->m_guessNum >= 6) {
-                if (greenLetters.find(c) == greenLetters.end()) {
-                    score += (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]);
+        auto itBegin = wordScore.begin();
+        auto itEnd = wordScore.end();
+
+        for (auto wordIt = itBegin; wordIt != itEnd; wordIt++) {
+            size_t score = 0;
+            set<char> wordLetters;
+            set<char> greenLetters;
+            for (size_t i = 0; i < this->m_knowns.size(); i++) {
+                if (this->m_knowns[i].result == WordleResult::GREEN) {
+                    greenLetters.insert(this->m_knowns[i].letter);
                 }
+            }
+            size_t i = 0;
+#if CREATE_SCORES_FILE == true
+            if (m_initialGuess && g_num_runs == 0) {
+                file_stream << wordIt->first << ":";
+            }
+#endif
+            for (auto& c : wordIt->first) {
+                // only give scores to each letter once
+                if ((wordLetters.find(c) == wordLetters.end() && this->m_guessNum < 6) || this->m_guessNum >= 6) {
+                    if (greenLetters.find(c) == greenLetters.end()) {
+                        score += (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]);
+                    }
+                }
+#if CREATE_SCORES_FILE == true
+                if (m_initialGuess && g_num_runs == 0) {
+                    file_stream << (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]) << ",";
+                }
+#endif
+                wordLetters.insert(c);
+                i++;
             }
 #if CREATE_SCORES_FILE == true
             if (m_initialGuess && g_num_runs == 0) {
-                file_stream << (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]) << ",";
+                file_stream << " = " << score << endl;
             }
 #endif
-            wordLetters.insert(c);
-            i++;
+            wordScore[wordIt->first] = score;
         }
+    } else {
+        for (auto wordIt = this->m_iterBegin; wordIt != this->m_iterEnd; wordIt++) {
+            size_t score = 0;
+            set<char> wordLetters;
+            set<char> greenLetters;
+            for (size_t i = 0; i < this->m_knowns.size(); i++) {
+                if (this->m_knowns[i].result == WordleResult::GREEN) {
+                    greenLetters.insert(this->m_knowns[i].letter);
+                }
+            }
+            size_t i = 0;
 #if CREATE_SCORES_FILE == true
-        if (m_initialGuess && g_num_runs == 0) {
-            file_stream << " = " << score << endl;
-        }
+            if (m_initialGuess && g_num_runs == 0) {
+                file_stream << wordIt << ":";
+            }
 #endif
-        wordScore.insert({*wordIt, score});
+            for (auto& c : *wordIt) {
+                // only give scores to each letter once
+                if ((wordLetters.find(c) == wordLetters.end() && this->m_guessNum < 6) || this->m_guessNum >= 6) {
+                    if (greenLetters.find(c) == greenLetters.end()) {
+                        score += (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]);
+                    }
+                }
+#if CREATE_SCORES_FILE == true
+                if (m_initialGuess && g_num_runs == 0) {
+                    file_stream << (m_positionLetterScores[i][c] + 2*m_fullLetterMap[c]) << ",";
+                }
+#endif
+                wordLetters.insert(c);
+                i++;
+            }
+#if CREATE_SCORES_FILE == true
+            if (m_initialGuess && g_num_runs == 0) {
+                file_stream << " = " << score << endl;
+            }
+#endif
+            wordScore[*wordIt] = score;
+        }
     }
 
     m_initialGuess = false;

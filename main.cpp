@@ -40,18 +40,20 @@ void printUsage() {
     cerr << "Options:" << endl;
     cerr << " -h,--help   : produce help message" << endl;
     cerr << " -s,--solver : choose between: trie(default),wordlist" << endl;
+    cerr << " -d,--hard   : enable hard mode" << endl;
     cerr << " -m,--mode   : choose between: all,cheat,debug,interactive,one" << endl;
     cerr << " -t,--multi  : multi-threaded (assumes --mode all)" << endl;
     cerr << " -w,--word   : answer word for certain modes" << endl;
     exit(1);
 }
 
-unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
-    unique_ptr<WordleSolverImpl> solverPtr;
+std::unique_ptr<WordleSolverImpl> createWordleSolver(const std::string& solverType,
+                                                     std::unique_ptr<WordleSelectorBase> selector) {
+    std::unique_ptr<WordleSolverImpl> solverPtr;
     if (solverType == "trie") {
-        solverPtr = make_unique<TrieBasedWordleSolver>();
+        solverPtr = make_unique<TrieBasedWordleSolver>(selector);
     } else if (solverType == "wordlist") {
-        solverPtr = make_unique<WordlistWordleSolver>();
+        solverPtr = make_unique<WordlistWordleSolver>(selector);
     } else {
         printUsage();
     }
@@ -59,14 +61,18 @@ unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
 }
 
 // Runs one iteration of the Wordle game with automated solver & checker.
-bool runOneGame(const string& solverType, const string& answer, size_t idx, shared_ptr<WordleBuffer> wb) {
-    auto solver = createWordleSolver(solverType);
-    auto checker = WordleChecker();
+bool runOneGame(const string& solverType, const string& answer, size_t idx,
+                shared_ptr<WordleBuffer> wb, bool isHardMode) {
+    auto selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(
+        WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
+    auto solver = createWordleSolver(solverType, selector);
+    auto checker = WordleChecker(isHardMode);
     checker.setAnswer(answer);
 
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver->makeInitialGuess(wb, idx));
-    bool result = checker.check(guess, numGuesses);
+    bool result = checker.check(guess);
+    numGuesses++;
     do {
         if (result) {
             if (guess == CorrectWordleGuess) {
@@ -79,7 +85,8 @@ bool runOneGame(const string& solverType, const string& answer, size_t idx, shar
         }
 
         guess = WordleGuess(solver->makeSubsequentGuess(numGuesses, wb, idx));
-        result = checker.check(guess, numGuesses);
+        result = checker.check(guess);
+        numGuesses++;
     } while (numGuesses < MAX_GUESSES);
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
@@ -92,7 +99,7 @@ bool runOneGame(const string& solverType, const string& answer, size_t idx, shar
 }
 
 // Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
-void runAllWordsMultiThreaded(const string& solverType) {
+void runAllWordsMultiThreaded(const string& solverType, bool isHardMode) {
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     auto wb = make_shared<WordleBuffer>();
@@ -100,7 +107,7 @@ void runAllWordsMultiThreaded(const string& solverType) {
 
     auto threads = vector<future<bool>>();
     for (size_t count = 0; count < words.size(); count++) {
-        threads.push_back(async(launch::async, runOneGame, solverType, words[count], count+1, wb));
+        threads.push_back(async(launch::async, runOneGame, solverType, words[count], count+1, wb, isHardMode));
     }
 
     for (size_t i = 0; i < threads.size(); i++) {
@@ -115,7 +122,7 @@ void runAllWordsMultiThreaded(const string& solverType) {
 }
 
 // Runs automated solver across entire dictionary.
-void runAllWords(const string& solverType) {
+void runAllWords(const string& solverType, bool isHardMode) {
     vector<string> words = Helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
@@ -123,7 +130,7 @@ void runAllWords(const string& solverType) {
     wb->write("guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer", 0, /*newline=*/ true);
 
     for (auto& word : words) {
-        if (runOneGame(solverType, word, runs+1, wb)) {
+        if (runOneGame(solverType, word, runs+1, wb, isHardMode)) {
             successes++;
         }
         g_num_runs++;
@@ -137,14 +144,15 @@ void runAllWords(const string& solverType) {
 
 // Run one iteration of solver against `answer`.
 // Useful for debugging solver & selector.
-void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
-    auto checker = WordleChecker();
+void debugMode(unique_ptr<WordleSolverImpl> solver, const string& answer, bool isHardMode) {
+    auto checker = WordleChecker(isHardMode);
     checker.setAnswer(answer);
 
     auto wb = make_shared<WordleBuffer>();
     size_t numGuesses = 0;
     auto guess = WordleGuess(solver->makeInitialGuess(wb, 1));
-    bool result = checker.check(guess, numGuesses);
+    bool result = checker.check(guess);
+    numGuesses++;
     if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
     do {
         if (result) {
@@ -157,7 +165,7 @@ void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
             solver->processResult(guess);
         }
         guess = WordleGuess(solver->makeSubsequentGuess(numGuesses, wb, 1));
-        result = checker.check(guess, numGuesses);
+        result = checker.check(guess);
         if (DEBUG) cout << "> [" << numGuesses << "] " << guess.guessStr << endl;
         if (result) {
             if (guess == CorrectWordleGuess) {
@@ -168,6 +176,7 @@ void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
             }
             solver->processResult(guess);
         }
+        numGuesses++;
     } while (numGuesses < MAX_GUESSES);
 
     if (numGuesses >= MAX_GUESSES && guess != CorrectWordleGuess) {
@@ -245,6 +254,7 @@ int main(int argc, char* argv[]) {
         ("help,h", "produce help message")
         ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
         // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
+        ("hard,d", "enable hard mode")
         ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one")
         ("multi,t", "multi-threaded (assumes --mode all)")
         ("word,w", po::value<string>(), "answer word for certain modes")
@@ -271,21 +281,25 @@ int main(int argc, char* argv[]) {
 
     if (vm.count("mode")) {
         cout << "Wordle Solver v" << VERSION << endl;
+        bool isHardMode = (vm.count("hard")) ? true : false;
+        cout << "hard mode:" << boolalpha << isHardMode << endl;
         string solverType = "trie";
         if (vm.count("solver")) {
             solverType = vm["solver"].as<string>();
         }
-        auto solver = createWordleSolver(solverType);
+        auto selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(
+            WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
+        auto solver = createWordleSolver(solverType, selector);
         auto solverMode = vm["mode"].as<string>();
         cout << "mode:" << solverMode << endl;
 
         if (solverMode == "all") {
             if (vm.count("multi")) {
                 cout << "multi-threaded" << endl << endl;
-                runAllWordsMultiThreaded(solverType);
+                runAllWordsMultiThreaded(solverType, isHardMode);
             } else {
                 cout << endl;
-                runAllWords(solverType);
+                runAllWords(solverType, isHardMode);
             }
         } else if (solverMode == "one") {
             if (!vm.count("word")) {
@@ -300,7 +314,7 @@ int main(int argc, char* argv[]) {
             cout << "TODO: pass unicode in as an option" << endl;
             auto wb = make_shared<WordleBuffer>();
             wb->write("guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer", 0, /*newline=*/ true);
-            runOneGame(solverType, vm["word"].as<string>(), 1, wb);
+            runOneGame(solverType, vm["word"].as<string>(), 1, wb, isHardMode);
         } else if (solverMode == "cheat") {
             cout << endl;
             cheatMode(move(solver));
@@ -314,7 +328,7 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
             cout << endl;
-            runDebug(move(solver), vm["word"].as<string>());
+            debugMode(move(solver), vm["word"].as<string>(), isHardMode);
         } else if (solverMode == "interactive") {
             cout << endl;
             interactiveMode(move(solver));
