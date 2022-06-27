@@ -17,7 +17,8 @@
 using namespace std;
 
 
-WordlistWordleSolver::WordlistWordleSolver() : WordleSolverImpl() {
+WordlistWordleSolver::WordlistWordleSolver(std::unique_ptr<WordleSelector<SetIterator>>& selector)
+    : WordleSolverImpl(move(selector)) {
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -50,7 +51,8 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 
 /////////////////////
 
-TrieBasedWordleSolver::TrieBasedWordleSolver() : WordlistWordleSolver() {
+TrieBasedWordleSolver::TrieBasedWordleSolver(std::unique_ptr<WordleSelector<SetIterator>>& selector)
+    : WordlistWordleSolver(move(selector)) {
     m_trie = new WordleTrie();
     loadWordList([this](const string& line){
         m_trie->insert(line);

@@ -435,3 +435,26 @@ main
 - Clearer Requirements around important methods - better stated docs/assumptions for classes/methods
 - measure perf on WordleChecker::resetFrequencyMap()
 - LETTER_COUNT in many loops
+
+
+## Refactor
+
+- numGuesses not exposed to each game/Checker
+- add isHardMode option
+- HardMode vs EasyMode Checker
+- static isWordInDictionary interface with filename param
+- whitespace consistency in wordle_selector
+- ensure best candidate selection exists in solution range and that it's in dictionary
+- provide a separate list of solutions that can be ranked
+- remove double printing of solutions in cheat mode/fix cheat mode
+
+- remove useless PassthroughWordleSolver
+- `trim<Color>s` -> `trim<Color>Candidates`
+- `printNumCands` -> `printNumCandidates`
+- use std:: needlessly in main.cpp - TODO: remove
+- remove containsAllHints (essnetially covered by the hard mode checker)
+- switch to smart ptrs in WordleSelectorFactory
+- WordleSolver takes a Selector in ctor at WordleSolver base class layer, instead of hard-coding in Impl sub class
+
+get[Initial|Subsequent]Range() not defined?
+

@@ -11,31 +11,14 @@
 using namespace std;
 
 
-// template <typename IterType>
-// class FwdIter {
-// public:
-//     FwdIter(IterType it) : m_iter(it) {}
-//     IterType::type next() {
-        
-//     }
-// private:
-//     IterType m_iter;
-// };
-
-
 using ForwardIterator = vector<string>::iterator;
 using SetIterator = set<string>::iterator;
-
-template <typename T>
-class word_iterator : public iterator<forward_iterator_tag, T>
-{
-};
 
 template <typename IterType>
 class WordleSelector {
 public:
     WordleSelector() { srand(time(nullptr)); }
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) {}
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) { return "empty"; }
 protected:
     size_t m_guessNum{0};
 };
@@ -43,7 +26,7 @@ protected:
 template <typename IterType>
 class RandomWordleSelector : public WordleSelector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum);
 private:
     size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
 };
@@ -51,7 +34,7 @@ private:
 template <typename IterType>
 class EnhancedRandomWordleSelector : public RandomWordleSelector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum);
 private:
     bool containsDoubleLetter(const string& word) const;
     bool isVowel(char letter) const;
@@ -78,7 +61,7 @@ struct WordScoreComp {
 template <typename IterType>
 class MostCommonLetterWordleSelector : public WordleSelector<IterType> {
 public:
-    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
+    string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum);
 protected:
     bool isInRange(const string& word) const;
     string getBestCandidate(bool isInOriginalDictionary) const;
@@ -87,8 +70,8 @@ protected:
     void computeFrequencyMap();
     void sortWordsByFrequency();
     void printCandidates() const;
-    virtual void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                             unordered_map<string, size_t>& wordScore) = 0;
+    void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
+                                     unordered_map<string, size_t>& wordScore);
 
     IterType m_iterBegin;
     IterType m_iterEnd;
@@ -104,21 +87,21 @@ template <typename IterType>
 class NaiveMostCommonLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                     unordered_map<string, size_t>& wordScore) override;
+                                     unordered_map<string, size_t>& wordScore);
 };
 
 template <typename IterType>
 class ImprovedMostCommonLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
-                                     unordered_map<string, size_t>& wordScore) override;
+                                     unordered_map<string, size_t>& wordScore);
 };
 
 template <typename IterType>
 class PositionalLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
-                                     unordered_map<string, size_t>& wordScore) override;
+                                     unordered_map<string, size_t>& wordScore);
     void clearOldState();
 
     bool m_initialGuess{true};
@@ -129,7 +112,7 @@ template <typename IterType>
 class FrequencyAndPositionalLetterWordleSelector : public PositionalLetterWordleSelector<IterType> {
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
-                                     unordered_map<string, size_t>& wordScore) override;
+                                     unordered_map<string, size_t>& wordScore);
     bool m_initialGuess{true};
     vector<unordered_map<char, size_t>> m_positionLetterScores;
     unordered_map<char, size_t> m_fullLetterMap;
@@ -153,7 +136,7 @@ struct WordleSelectorFactory {
         case WordleSelectorType::Random:
             return make_unique<RandomWordleSelector<IterType>>();
         case WordleSelectorType::EnhancedRandom:
-            return make_unqiue<EnhancedRandomWordleSelector<IterType>>();
+            return make_unique<EnhancedRandomWordleSelector<IterType>>();
         case WordleSelectorType::NaiveMostCommonLetter:
             return make_unique<NaiveMostCommonLetterWordleSelector<IterType>>();
         case WordleSelectorType::ImprovedMostCommonLetter:

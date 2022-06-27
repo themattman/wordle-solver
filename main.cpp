@@ -48,7 +48,7 @@ void printUsage() {
 }
 
 std::unique_ptr<WordleSolverImpl> createWordleSolver(const std::string& solverType,
-                                                     std::unique_ptr<WordleSelectorBase> selector) {
+                                                     std::unique_ptr<WordleSelector<SetIterator>>& selector) {
     std::unique_ptr<WordleSolverImpl> solverPtr;
     if (solverType == "trie") {
         solverPtr = make_unique<TrieBasedWordleSolver>(selector);

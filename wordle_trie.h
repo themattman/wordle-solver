@@ -43,7 +43,7 @@ public:
     void fixupBlack(size_t letterPosition, char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum);
+    string getCandidate(unique_ptr<WordleSelector<SetIterator>>& selector, const vector<WordleKnown>& knowns, size_t guessNum);
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates() const;
 private:

@@ -8,7 +8,7 @@
 using namespace std;
 
 
-string WordleTrie::getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum) {
+string WordleTrie::getCandidate(unique_ptr<WordleSelector<SetIterator>>& selector, const vector<WordleKnown>& knowns, size_t guessNum) {
     return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns, guessNum);
 }
 

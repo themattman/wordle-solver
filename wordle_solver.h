@@ -2,6 +2,7 @@
 
 #include "wordle_buffer.h"
 #include "wordle_rules.h"
+#include "wordle_selector.h"
 
 #include <string>
 
@@ -9,7 +10,8 @@ using buf_ptr = std::shared_ptr<WordleBuffer>;
 
 class WordleSolver {
 public:
-    WordleSolver(std::unique_ptr<WordleSelector<SetIterator>> selector) : m_selector(move(selector)) {}
+    WordleSolver(std::unique_ptr<WordleSelector<SetIterator>> selector)
+        : m_selector(move(selector)) {}
     virtual ~WordleSolver() {}
     virtual std::string makeInitialGuess(buf_ptr wb, size_t idx) = 0;
     virtual std::string makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) = 0;
@@ -25,13 +27,14 @@ protected:
 
 class WordleSolverImpl : public WordleSolver {
 public:
+    using WordleSolver::WordleSolver;
     ~WordleSolverImpl() {}
     std::string makeInitialGuess(buf_ptr wb, size_t idx) {
-        getInitialRange(iterBegin, iterEnd);
+        //getInitialRange(iterBegin, iterEnd);
         return "guess";
     }
     std::string makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) {
-        getSubsequentRange(SetIterator begin, SetIterator end);
+        //getSubsequentRange(SetIterator begin, SetIterator end);
         return "guess";
     }
     void processResult(const WordleGuess& guess) {}
