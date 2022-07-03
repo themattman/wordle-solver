@@ -47,9 +47,9 @@ void printUsage() {
     exit(1);
 }
 
-std::unique_ptr<WordleSolverImpl> createWordleSolver(const std::string& solverType,
-                                                     std::unique_ptr<WordleSelector<SetIterator>>& selector) {
-    std::unique_ptr<WordleSolverImpl> solverPtr;
+unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType,
+                                                     unique_ptr<WordleSelector<SetIterator>>& selector) {
+    unique_ptr<WordleSolverImpl> solverPtr;
     if (solverType == "trie") {
         solverPtr = make_unique<TrieBasedWordleSolver>(selector);
     } else if (solverType == "wordlist") {
@@ -117,7 +117,7 @@ void runAllWordsMultiThreaded(const string& solverType, bool isHardMode) {
     }
 
     cout << wb->read() << endl;
-    cout << successes << "/" << words.size() << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(words.size())) << endl;
+    cout << successes << "/" << words.size() << "=" << setprecision(4) << (static_cast<double>(successes)/static_cast<double>(words.size())) << endl;
     cout << "done." << endl;
 }
 
@@ -138,7 +138,7 @@ void runAllWords(const string& solverType, bool isHardMode) {
     }
 
     cout << wb->read() << endl;
-    cout << successes << "/" << runs << "=" << std::setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
+    cout << successes << "/" << runs << "=" << setprecision(4) << (static_cast<double>(successes)/static_cast<double>(runs)) << endl;
     cout << "done." << endl;
 }
 
@@ -263,7 +263,7 @@ int main(int argc, char* argv[]) {
     po::variables_map vm;
     try {
         po::store(po::parse_command_line(/*argc=*/argc, /*argv=*/argv, /*options_desc=*/desc), vm);
-    } catch (const std::exception& e) {
+    } catch (const exception& e) {
         cout << "Exception Error: " << e.what() << endl;
         return 3;
     }

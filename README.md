@@ -451,10 +451,9 @@ main
 - remove useless PassthroughWordleSolver
 - `trim<Color>s` -> `trim<Color>Candidates`
 - `printNumCands` -> `printNumCandidates`
-- use std:: needlessly in main.cpp - TODO: remove
+- use std:: needlessly in main.cpp
 - remove containsAllHints (essnetially covered by the hard mode checker)
 - switch to smart ptrs in WordleSelectorFactory
 - WordleSolver takes a Selector in ctor at WordleSolver base class layer, instead of hard-coding in Impl sub class
 
 get[Initial|Subsequent]Range() not defined?
-
