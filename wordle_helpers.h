@@ -2,6 +2,7 @@
 
 #include "wordle_rules.h"
 #include "wordle_solver.h"
+#include "wordlist_wordle_solver.h"
 
 #include <algorithm>
 #include <ctype.h>
@@ -19,6 +20,18 @@ inline size_t countOccurs(char letter, const string& word) {
 
 class Helpers {
 public:
+    static unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
+        unique_ptr<WordleSolverImpl> solverPtr;
+        if (solverType == "trie") {
+            solverPtr = make_unique<TrieBasedWordleSolver>();
+        } else if (solverType == "wordlist") {
+            solverPtr = make_unique<WordlistWordleSolver>();
+        // } else {
+        //     printUsage();
+        }
+        return solverPtr;
+    }
+
     static WordleGuess promptUserToCheckGuess(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
 
