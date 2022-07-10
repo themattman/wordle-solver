@@ -258,6 +258,10 @@ Role: Choose which word in a given list of words should be selected for the curr
 
   - All allowed guesses, larger dictionary than `answers.txt`
 
+- `game_modes.[h|cpp]`
+
+  - Defines each game mode, defines the rules and orchestration of each game type
+
 - `guess_nums_6.csv`
 
   - Results from current algorithm, 6 guesses allowed (default)
@@ -268,7 +272,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - `main.cpp`
 
-  - `main()` lives here
+  - `main()` lives here, arg parsing
 
 - `wordle_checker.[h|cpp]`
 
