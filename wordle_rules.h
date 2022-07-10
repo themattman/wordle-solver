@@ -12,6 +12,7 @@
 #define DICTIONARY_FILENAME "answers.txt"
 #define CREATE_SCORES_FILE false
 #define DICTIONARY_SCORES_FILENAME "scores_new.txt"
+#define NUM_QUORDLE_GAMES 4
 
 static size_t g_num_runs = 0; // TODO: remove, not implemented in multi-threaded
 static const size_t MAX_GUESSES  = 6;

@@ -10,6 +10,7 @@ Solver:   in main()
 Selector: in the respective `WordleSolver` constructor. Currently all locations in `wordlist_wordle_solver.cpp`.
  */
 
+#include "quordle_solver.h"
 #include "wordle_buffer.h"
 #include "wordle_checker.h"
 #include "wordle_helpers.h"
@@ -46,21 +47,9 @@ void printUsage() {
     exit(1);
 }
 
-unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType) {
-    unique_ptr<WordleSolverImpl> solverPtr;
-    if (solverType == "trie") {
-        solverPtr = make_unique<TrieBasedWordleSolver>();
-    } else if (solverType == "wordlist") {
-        solverPtr = make_unique<WordlistWordleSolver>();
-    } else {
-        printUsage();
-    }
-    return solverPtr;
-}
-
 // Runs one iteration of the Wordle game with automated solver & checker.
 bool runOneGame(const string& solverType, const string& answer, size_t idx, shared_ptr<WordleBuffer> wb) {
-    auto solver = createWordleSolver(solverType);
+    auto solver = Helpers::createWordleSolver(solverType);
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -239,13 +228,25 @@ int cheatMode(unique_ptr<WordleSolverImpl> solver) {
     return 0;
 }
 
+// *cheat mode for wordle*
+int quordleCheatMode(const string& solverType) { // TODO: should make an enum here??
+    auto qs = QuordleSolver(solverType, NUM_QUORDLE_GAMES);
+
+    for (size_t numGuesses = 0; numGuesses <= MAX_GUESSES; numGuesses++) {
+        string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
+        qs.processResults(Helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses));
+    }
+
+    return 0;
+}
+
 int main(int argc, char* argv[]) {
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help,h", "produce help message")
         ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
         // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
-        ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one")
+        ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one,quordle")
         ("multi,t", "multi-threaded (assumes --mode all)")
         ("word,w", po::value<string>(), "answer word for certain modes")
         ;
@@ -275,7 +276,7 @@ int main(int argc, char* argv[]) {
         if (vm.count("solver")) {
             solverType = vm["solver"].as<string>();
         }
-        auto solver = createWordleSolver(solverType);
+        auto solver = Helpers::createWordleSolver(solverType);
         auto solverMode = vm["mode"].as<string>();
         cout << "mode:" << solverMode << endl;
 
@@ -315,6 +316,8 @@ int main(int argc, char* argv[]) {
             }
             cout << endl;
             runDebug(move(solver), vm["word"].as<string>());
+        } else if (solverMode == "quordle") {
+            quordleCheatMode(solverType);
         } else if (solverMode == "interactive") {
             cout << endl;
             interactiveMode(move(solver));

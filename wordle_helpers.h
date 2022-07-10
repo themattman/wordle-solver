@@ -2,6 +2,7 @@
 
 #include "wordle_rules.h"
 #include "wordle_solver.h"
+#include "wordlist_wordle_solver.h"
 
 #include <algorithm>
 #include <ctype.h>
@@ -19,6 +20,18 @@ inline size_t countOccurs(char letter, const string& word) {
 
 class Helpers {
 public:
+    static unique_ptr<WordleSolverImpl> createWordleSolver(const string& solverType, size_t id = 0) {
+        unique_ptr<WordleSolverImpl> solverPtr;
+        if (solverType == "trie") {
+            solverPtr = make_unique<TrieBasedWordleSolver>(id);
+        } else if (solverType == "wordlist") {
+            solverPtr = make_unique<WordlistWordleSolver>(id);
+        // } else {
+        //     printUsage();
+        }
+        return solverPtr;
+    }
+
     static WordleGuess promptUserToCheckGuess(const string& output, size_t guessNumber) {
         cout << "Guess #" << guessNumber << ": " << output << endl;
 
@@ -28,6 +41,20 @@ public:
         }
 
         return stringToWordleGuess(output, input);
+    }
+
+    static vector<WordleGuess> promptUserToCheckQuordleGuess(const string& output, size_t guessNumber) {
+        cout << "   Guess #" << guessNumber << ": " << output << endl;
+        vector<WordleGuess> guesses;
+        for (size_t i = 0; i < NUM_QUORDLE_GAMES; i++) {
+            string input = collectUserInput(/*isRepeat=*/false, ("#" + to_string(i) + " checking"));
+            while(!isUserInputValidAnswer(input)) {
+                input = collectUserInput(/*isRepeat=*/true, ("#" + to_string(i) + " checking"));
+            }
+
+            guesses.push_back(stringToWordleGuess(output, input));
+        }
+        return guesses;
     }
 
     static WordleGuess promptUserToProvideGuess(size_t guessNumber) {
