@@ -18,7 +18,7 @@ using namespace std;
 
 
 WordlistWordleSolver::WordlistWordleSolver() : WordleSolverImpl() {
-    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
+    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter, m_id); // Choose `WordleSelector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
         m_wordSet.insert(word);
@@ -52,8 +52,8 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 /////////////////////
 
 TrieBasedWordleSolver::TrieBasedWordleSolver() : PassthroughWordleSolver() {
-    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter); // Choose `WordleSelector` HERE!!
-    m_trie = new WordleTrie();
+    m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter, m_id); // Choose `WordleSelector` HERE!!
+    m_trie = make_unique<WordleTrie>();
     loadWordList([this](const string& line){
         m_trie->insert(line);
     });
@@ -106,6 +106,7 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
+    cout << "processing" << endl;
     trimGreens(guess, createPositionVector(guess, WordleResult::GREEN));
     printNumCands("green");
     trimYellows(guess, createPositionVector(guess, WordleResult::YELLOW));
@@ -113,6 +114,7 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
 #if PRINT_GUESSES == true
+    cout << "printing!" << endl;
     m_trie->getCandidate(m_selector, m_knownCorrects, 0);
 #endif
 }

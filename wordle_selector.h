@@ -17,15 +17,18 @@ using SetIterator = set<string>::iterator;
 template <typename IterType>
 class WordleSelector {
 public:
-    WordleSelector() { srand(time(nullptr)); }
+    WordleSelector(size_t id)
+        : m_id(id) { srand(time(nullptr)); }
     virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) = 0;
 protected:
+    size_t m_id;
     size_t m_guessNum{0};
 };
 
 template <typename IterType>
 class RandomWordleSelector : public WordleSelector<IterType> {
 public:
+    using WordleSelector<IterType>::WordleSelector;
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 private:
     size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
@@ -34,6 +37,7 @@ private:
 template <typename IterType>
 class EnhancedRandomWordleSelector : public RandomWordleSelector<IterType> {
 public:
+    using RandomWordleSelector<IterType>::RandomWordleSelector;
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 private:
     bool containsDoubleLetter(const string& word) const;
@@ -61,6 +65,7 @@ struct WordScoreComp {
 template <typename IterType>
 class MostCommonLetterWordleSelector : public WordleSelector<IterType> {
 public:
+    using WordleSelector<IterType>::WordleSelector;
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
 protected:
     bool containsAllHints(const string& word) const;
@@ -70,6 +75,7 @@ protected:
     void computeFrequencyMap();
     void sortWordsByFrequency();
     void printCandidates() const;
+    void printLogPrefix() const;
     virtual void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                              unordered_map<string, size_t>& wordScore) = 0;
 
@@ -85,6 +91,8 @@ protected:
 
 template <typename IterType>
 class NaiveMostCommonLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
+public:
+    using MostCommonLetterWordleSelector<IterType>::MostCommonLetterWordleSelector;
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                      unordered_map<string, size_t>& wordScore) override;
@@ -92,6 +100,8 @@ protected:
 
 template <typename IterType>
 class ImprovedMostCommonLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
+public:
+    using MostCommonLetterWordleSelector<IterType>::MostCommonLetterWordleSelector;
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                      unordered_map<string, size_t>& wordScore) override;
@@ -99,6 +109,8 @@ protected:
 
 template <typename IterType>
 class PositionalLetterWordleSelector : public MostCommonLetterWordleSelector<IterType> {
+public:
+    using MostCommonLetterWordleSelector<IterType>::MostCommonLetterWordleSelector;
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
                                      unordered_map<string, size_t>& wordScore) override;
@@ -110,6 +122,8 @@ protected:
 
 template <typename IterType>
 class FrequencyAndPositionalLetterWordleSelector : public PositionalLetterWordleSelector<IterType> {
+public:
+    using PositionalLetterWordleSelector<IterType>::PositionalLetterWordleSelector;
 protected:
     void computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
                                      unordered_map<string, size_t>& wordScore) override;
@@ -131,20 +145,20 @@ enum class WordleSelectorType {
 
 template <typename IterType>
 struct WordleSelectorFactory {
-    static WordleSelector<IterType>* makeWordleSelector(const WordleSelectorType& selectorType) {
+    static WordleSelector<IterType>* makeWordleSelector(const WordleSelectorType& selectorType, size_t id = 0) {
         switch (selectorType) {
         case WordleSelectorType::Random:
-            return new RandomWordleSelector<IterType>();
+            return new RandomWordleSelector<IterType>(id);
         case WordleSelectorType::EnhancedRandom:
-            return new EnhancedRandomWordleSelector<IterType>();
+            return new EnhancedRandomWordleSelector<IterType>(id);
         case WordleSelectorType::NaiveMostCommonLetter:
-            return new NaiveMostCommonLetterWordleSelector<IterType>();
+            return new NaiveMostCommonLetterWordleSelector<IterType>(id);
         case WordleSelectorType::ImprovedMostCommonLetter:
-            return new ImprovedMostCommonLetterWordleSelector<IterType>();
+            return new ImprovedMostCommonLetterWordleSelector<IterType>(id);
         case WordleSelectorType::PositionalLetter:
-            return new PositionalLetterWordleSelector<IterType>();
+            return new PositionalLetterWordleSelector<IterType>(id);
         case WordleSelectorType::FrequencyAndPositionalLetter:
-            return new FrequencyAndPositionalLetterWordleSelector<IterType>();
+            return new FrequencyAndPositionalLetterWordleSelector<IterType>(id);
         }
 
         if (DEBUG) cerr << "Error: [selector] invalid selectorType" << endl;

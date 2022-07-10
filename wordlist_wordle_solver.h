@@ -64,6 +64,8 @@ class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
     TrieBasedWordleSolver();
+    TrieBasedWordleSolver(const TrieBasedWordleSolver& t) = delete;
+    TrieBasedWordleSolver(TrieBasedWordleSolver&& t) = delete;
     string makeInitialGuess(buf_ptr wb, size_t idx) override;
     string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override;
     void processResult(const WordleGuess& guess) override;
@@ -76,5 +78,5 @@ protected:
     void trimYellows(const WordleGuess& g, const vector<size_t>& positions);
     void trimBlacks(const WordleGuess& g, const vector<size_t>& positions);
 
-    WordleTrie* m_trie;
+    unique_ptr<WordleTrie> m_trie;
 };

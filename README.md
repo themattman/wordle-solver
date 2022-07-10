@@ -387,3 +387,6 @@ TrieBasedWordleSolver
 ### Buffer Dependencies:
 WordleTrie::makeXXGuess()
 main
+
+
+The movement/ownership of WordleTrie within the TrieBasedWordleSolver is messing up Quordle. Need to think through it more now. unique_ptr to hold the Trie, deleting ctors to see if that breaks compilation (doesn't)

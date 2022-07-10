@@ -22,11 +22,14 @@ protected:
 class WordleSolverImpl : public WordleSolver {
 public:
     WordleSolverImpl() = default;
+    WordleSolverImpl(size_t id) : m_id(id) {}
     ~WordleSolverImpl() {}
     std::string makeInitialGuess(buf_ptr wb, size_t idx) { return "guess"; }
     std::string makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) { return "guess"; }
     void processResult(const WordleGuess& guess) {}
     size_t getNumCandidates() const { return 0; }
+    size_t getId() const { return m_id; }
 protected:
     std::vector<WordleKnown> m_knownCorrects{LETTER_COUNT, {char(), WordleResult::BLACK}};
+    size_t m_id;
 };

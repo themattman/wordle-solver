@@ -32,6 +32,8 @@ private:
 class WordleTrie {
 public:
     WordleTrie() { m_root = new WordleTrieNode('_', this, nullptr); }
+    WordleTrie(const WordleTrie& t) = delete;
+    WordleTrie(WordleTrie&& t) = delete;
     bool insert(string word);
     void fixupGreen(size_t letterPosition, char letter) {
         removeExceptLetterAtLevel(0, letterPosition, letter, *m_root);
