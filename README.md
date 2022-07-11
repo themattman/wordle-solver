@@ -274,6 +274,10 @@ Role: Choose which word in a given list of words should be selected for the curr
 
   - `main()` lives here, arg parsing
 
+- `wordle_buffer.h`
+
+  - Used for the multi-threaded solver scenario, collects all output then dumps when done
+
 - `wordle_checker.[h|cpp]`
 
   - Automated checking against an answer
@@ -310,7 +314,7 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [X] Better/Additional dictionary - i.e. include allowed guesses dict
 
-- [ ] Select strategy from cmd line
+- [X] Select strategy from cmd line
 
 - [X] Select mode from cmd line
 
@@ -326,15 +330,17 @@ Role: Choose which word in a given list of words should be selected for the curr
 
 - [X] Implement `hard mode` `Solver`
 
-- [ ] Implement `hard mode` verifier
+- [ ] Implement `hard mode` verifier (experimental branch)
 
 - [ ] Replace several size checks with NUM_LETTERS to consolidate understanding of what is tied to this global
 
-- [ ] Raw pointers -> smart pointers
+- [ ] Raw pointers -> smart pointers (in progress, done?)
 
 - [ ] Track lowest score of letter in word, sort on this somehow in getBestCandidate. Don't pick words with low lowest letter scores even if their score is the highest.
 
 - [ ] How to optimize with easy (non-hard) mode guessing?
+
+- [ ] Track biggest string of ties (ensure guess busts worst case scenarios, to help reach 100% solve rate)
 
 - [X] Wordle Cheat Mode, allow user to select a non-top choice and let algo run with that instead of the auto chosen word
 
