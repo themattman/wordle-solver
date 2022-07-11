@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "wordle_buffer.h"
 #include "wordle_rules.h"
 
@@ -21,8 +22,12 @@ protected:
 
 class WordleSolverImpl : public WordleSolver {
 public:
-    WordleSolverImpl() = default;
-    WordleSolverImpl(size_t id) : m_id(id) {}
+    WordleSolverImpl() {
+        std::cout << "WSI ctor - id" << std::endl;
+    }
+    WordleSolverImpl(size_t id) : m_id(id) {
+        std::cout << "WSI ctor - id" << std::endl;
+    }
     ~WordleSolverImpl() {}
     std::string makeInitialGuess(buf_ptr wb, size_t idx) { return "guess"; }
     std::string makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) { return "guess"; }

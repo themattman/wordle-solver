@@ -60,10 +60,24 @@ public:
 class WordleTrie {
 public:
     WordleTrie() { m_root = new WordleTrieNode('_', this, nullptr); }
-    WordleTrie(const WordleTrie& t) = delete;
-    WordleTrie(WordleTrie&& t) = delete;
-    WordleTrie& operator=(const WordleTrie& wt) = delete;
-    WordleTrie&& operator=(WordleTrie&& wt) = delete;
+    WordleTrie(const WordleTrie& t) {
+        *this = t;
+    }
+    WordleTrie(WordleTrie&& t) {
+        *this = move(t);
+    }
+    WordleTrie& operator=(const WordleTrie& wt) {
+        m_root = wt.m_root;
+        m_candidates = wt.m_candidates;
+        return *this;
+    }
+    WordleTrie& operator=(WordleTrie&& wt) {
+        if (this != &wt) {
+            m_root = wt.m_root;
+            m_candidates = move(wt.m_candidates);
+        }
+        return *this;
+    }
     bool insert(string word);
     void fixupGreen(size_t letterPosition, char letter) {
         removeExceptLetterAtLevel(0, letterPosition, letter, *m_root);

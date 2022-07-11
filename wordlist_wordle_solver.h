@@ -17,7 +17,7 @@ using buf_ptr = shared_ptr<WordleBuffer>;
 class WordlistWordleSolver : public WordleSolverImpl {
 public:
     using WordleSolverImpl::WordleSolverImpl;
-    WordlistWordleSolver();
+    WordlistWordleSolver(size_t id = 0);
     size_t getNumCandidates() const override { return m_wordlist.size(); }
 protected:
     void loadWordList(function<void(string)> eachLineCallbackActor);
@@ -35,6 +35,7 @@ protected:
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
+    PassthroughWordleSolver(size_t id = 0);
     string makeInitialGuess(buf_ptr wb, size_t idx) override {
         return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, 0);
     }
@@ -63,11 +64,21 @@ Word Trie
 class TrieBasedWordleSolver : public PassthroughWordleSolver {
 public:
     using PassthroughWordleSolver::PassthroughWordleSolver;
-    TrieBasedWordleSolver();
-    TrieBasedWordleSolver(const TrieBasedWordleSolver& t) = delete;
-    TrieBasedWordleSolver(TrieBasedWordleSolver&& t) = delete;
-    TrieBasedWordleSolver& operator=(const TrieBasedWordleSolver& t) = delete;
-    TrieBasedWordleSolver& operator=(TrieBasedWordleSolver&& t) = delete;
+    TrieBasedWordleSolver(size_t id = 0);
+    TrieBasedWordleSolver(const TrieBasedWordleSolver& t) {
+        cout << "TBWS copy ctor" << endl;
+    }
+    TrieBasedWordleSolver(TrieBasedWordleSolver&& t) {
+        cout << "TBWS move ctor" << endl;
+    }
+    TrieBasedWordleSolver& operator=(const TrieBasedWordleSolver& t) {
+        cout << "TBWS copy ass" << endl;
+        return *this;
+    }
+    TrieBasedWordleSolver& operator=(TrieBasedWordleSolver&& t) {
+        cout << "TBWS move ass" << endl;
+        return *this;
+    }
     string makeInitialGuess(buf_ptr wb, size_t idx) override;
     string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override;
     void processResult(const WordleGuess& guess) override;
