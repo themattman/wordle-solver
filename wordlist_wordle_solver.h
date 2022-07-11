@@ -35,7 +35,7 @@ protected:
 class PassthroughWordleSolver : public WordlistWordleSolver {
 public:
     using WordlistWordleSolver::WordlistWordleSolver;
-    PassthroughWordleSolver(size_t id = 0);
+    PassthroughWordleSolver(size_t id = 0) : WordlistWordleSolver(id) {}
     string makeInitialGuess(buf_ptr wb, size_t idx) override {
         return m_selector->select(m_wordSet.begin(), m_wordSet.end(), m_wordSet.size(), m_knownCorrects, 0);
     }

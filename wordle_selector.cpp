@@ -112,7 +112,7 @@ bool MostCommonLetterWordleSelector<IterType>::containsAllHints(const string& wo
 
 template <typename IterType>
 void MostCommonLetterWordleSelector<IterType>::printLogPrefix() const {
-    cout << "[" << this->m_id << "]"  << endl;
+    cout << "[" << this->m_id << "] "; ///  << endl;
 }
 
 template <typename IterType>

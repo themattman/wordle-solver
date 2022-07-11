@@ -10,6 +10,8 @@ Solver:   in main()
 Selector: in the respective `WordleSolver` constructor. Currently all locations in `wordlist_wordle_solver.cpp`.
  */
 
+#include "quordle_helpers.h"
+#include "quordle_rules.h"
 #include "quordle_solver.h"
 #include "wordle_buffer.h"
 #include "wordle_checker.h"
@@ -171,11 +173,11 @@ void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
 int interactiveMode(unique_ptr<WordleSolverImpl> solver) {
     auto wb = make_shared<WordleBuffer>();
     size_t numGuesses = 1;
-    WordleGuess wg = Helpers::promptUserToCheckGuess(solver->makeInitialGuess(wb, 1), numGuesses);
+    WordleGuess wg = Helpers::promptUserToCheckWordleGuess(solver->makeInitialGuess(wb, 1), numGuesses);
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUserToCheckGuess(solver->makeSubsequentGuess(numGuesses, wb, 1), numGuesses);
+            wg = Helpers::promptUserToCheckWordleGuess(solver->makeSubsequentGuess(numGuesses, wb, 1), numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
@@ -205,12 +207,12 @@ int cheatMode(unique_ptr<WordleSolverImpl> solver) {
 
     size_t numGuesses = 1;
     string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
-    WordleGuess wg = Helpers::promptUserToCheckGuess(userGuess, numGuesses);
+    WordleGuess wg = Helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
             userGuess = Helpers::promptUserToMakeGuess(numGuesses);
-            wg = Helpers::promptUserToCheckGuess(userGuess, numGuesses);
+            wg = Helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }

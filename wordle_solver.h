@@ -18,16 +18,13 @@ public:
     virtual size_t getNumCandidates() const = 0;
 protected:
     std::vector<WordleKnown> m_knownCorrects{LETTER_COUNT, {char(), WordleResult::BLACK}};
+    bool m_solved{false};
 };
 
 class WordleSolverImpl : public WordleSolver {
 public:
-    WordleSolverImpl() {
-        std::cout << "WSI ctor - id" << std::endl;
-    }
-    WordleSolverImpl(size_t id) : m_id(id) {
-        std::cout << "WSI ctor - id" << std::endl;
-    }
+    WordleSolverImpl() = default;
+    WordleSolverImpl(size_t id) : m_id(id) {}
     ~WordleSolverImpl() {}
     std::string makeInitialGuess(buf_ptr wb, size_t idx) { return "guess"; }
     std::string makeSubsequentGuess(size_t numGuess, buf_ptr wb, size_t idx) { return "guess"; }

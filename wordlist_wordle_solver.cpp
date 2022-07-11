@@ -18,7 +18,6 @@ using namespace std;
 
 
 WordlistWordleSolver::WordlistWordleSolver(size_t id) : WordleSolverImpl(id) {
-    cout << "WLWS def ctor" << endl;
     m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter, m_id); // Choose `WordleSelector` HERE!!
     loadWordList([this](const string& word) -> void {
         m_wordlist.push_back(word);
@@ -51,12 +50,7 @@ void WordlistWordleSolver::loadWordList(function<void(string)> eachLineCallback)
 }
 
 /////////////////////
-PassthroughWordleSolver::PassthroughWordleSolver(size_t id) : WordlistWordleSolver(id) {
-    cout << "PTWS def ctor" << endl;
-}
-
 TrieBasedWordleSolver::TrieBasedWordleSolver(size_t id) : PassthroughWordleSolver(id) {
-    cout << "TBWS def ctor" << endl;
     m_selector = WordleSelectorFactory<SetIterator>::makeWordleSelector(WordleSelectorType::FrequencyAndPositionalLetter, m_id); // Choose `WordleSelector` HERE!!
     m_trie = make_unique<WordleTrie>();
     loadWordList([this](const string& line){
