@@ -26,3 +26,5 @@ target_link_libraries(solver ${LIB_LOCATION})
 
 #add_executable(test_solver wordle_checker_test.cpp wordle_checker.cpp wordle_selector.cpp)
 #add_executable(decoder wordle_decoder.cpp)
+
+add_executable(test_solver wordle_selector.cpp wordle_trie.cpp wordle_test.cpp)

@@ -17,12 +17,40 @@ public:
     WordleTrieNode() = delete;
     WordleTrieNode(char v, WordleTrie* wt, WordleTrieNode* parent, string prefix="", bool isLeaf=false)
         : val(v), children(), m_wordleTrie(wt), m_parent(parent), m_prefix(prefix), m_isLeaf(isLeaf) {}
+    WordleTrieNode(const WordleTrieNode& wtn) {
+        *this = wtn;
+    }
+    WordleTrieNode(const WordleTrieNode&& wtn) {
+        *this = move(wtn);
+    }
+    WordleTrieNode& operator=(const WordleTrieNode& wtn) {
+        val = wtn.val;
+        children = wtn.children;
+        m_wordleTrie = wtn.m_wordleTrie;
+        m_parent = wtn.m_parent;
+        m_prefix = wtn.m_prefix;
+        m_isLeaf = wtn.m_isLeaf;
+        return *this;
+    }
+    WordleTrieNode& operator=(WordleTrieNode&& wtn) {
+        if (this != &wtn) {
+            //delete[] m_wordleTrie;
+            val = wtn.val;
+            children = move(wtn.children);
+            m_wordleTrie = wtn.m_wordleTrie;
+            m_parent = wtn.m_parent;
+            m_prefix = wtn.m_prefix;
+            m_isLeaf = wtn.m_isLeaf;
+        }
+        return *this;
+    }
+
     char val;
     vector<WordleTrieNode> children;
     bool operator==(const WordleTrieNode& node) const { return node.val == val; }
     bool operator!=(const WordleTrieNode& node) const { return node.val != val; }
-private:
-    friend WordleTrie;
+    //private:
+    //friend WordleTrie;
     WordleTrie* m_wordleTrie;
     WordleTrieNode* m_parent;
     string m_prefix;
@@ -34,6 +62,8 @@ public:
     WordleTrie() { m_root = new WordleTrieNode('_', this, nullptr); }
     WordleTrie(const WordleTrie& t) = delete;
     WordleTrie(WordleTrie&& t) = delete;
+    WordleTrie& operator=(const WordleTrie& wt) = delete;
+    WordleTrie&& operator=(WordleTrie&& wt) = delete;
     bool insert(string word);
     void fixupGreen(size_t letterPosition, char letter) {
         removeExceptLetterAtLevel(0, letterPosition, letter, *m_root);

@@ -78,7 +78,7 @@ void WordleTrie::removeAllOfLetter(char letter, WordleTrieNode& node) {
     }
 
     removeLetterAtLevel(letter, node);
- 
+
     // Remove letter from all other children
     for (auto it = node.children.begin(); it != node.children.end(); it++) {
         removeAllOfLetter(letter, *it);

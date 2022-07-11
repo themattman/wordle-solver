@@ -66,6 +66,8 @@ public:
     TrieBasedWordleSolver();
     TrieBasedWordleSolver(const TrieBasedWordleSolver& t) = delete;
     TrieBasedWordleSolver(TrieBasedWordleSolver&& t) = delete;
+    TrieBasedWordleSolver& operator=(const TrieBasedWordleSolver& t) = delete;
+    TrieBasedWordleSolver& operator=(TrieBasedWordleSolver&& t) = delete;
     string makeInitialGuess(buf_ptr wb, size_t idx) override;
     string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override;
     void processResult(const WordleGuess& guess) override;
