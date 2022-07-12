@@ -1,16 +1,18 @@
 #pragma once
 
 #include "quordle_rules.h"
+#include "wordle_checker.h"
 #include "wordle_rules.h"
 
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 
 class QuordleChecker {
 public:
-    QuordleChecker() : m_numGuesses(0) { loadDictionary(); }
+    QuordleChecker();
     /**
       * true:  operation was success, answer is set
       * false: input word not in dictionary
@@ -22,14 +24,12 @@ public:
       * true:  operation was success, answer is set
       * false: input isn't valid
       */
-    bool setAnswer(std::string answer);
-    void setRandomAnswer();
+    bool setAnswers(std::vector<std::string> answers);
+    void setRandomAnswers();
 private:
-    void resetFrequencyMap();
-    void loadDictionary(std::string filename=DICTIONARY_FILENAME);
-
-    std::unordered_set<std::string> m_dict;
-    std::string m_answer;
+    // std::unordered_set<std::string> m_dict;
+    // std::vector<std::string> m_answers;
     size_t m_numGuesses;
-    std::unordered_map<char, size_t> m_frequencyMap;
+    // std::unordered_map<char, size_t> m_frequencyMap;
+    std::vector<WordleChecker> m_checkers;
 };

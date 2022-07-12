@@ -326,7 +326,7 @@ void PositionalLetterWordleSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 void FrequencyAndPositionalLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& unused_letterMap,
-                                                                                 unordered_map<string, size_t>& wordScore) {
+                                                                                       unordered_map<string, size_t>& wordScore) {
     // Compute positional letter scores
     for (size_t i = 0; i < LETTER_COUNT; i++) {
         auto letterMap = unordered_map<char, size_t>();

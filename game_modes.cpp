@@ -9,6 +9,7 @@
 #include "wordle_solver.h"
 #include "wordlist_wordle_solver.h"
 
+#include <algorithm>
 #include <future>
 #include <memory>
 #include <string>
@@ -22,9 +23,14 @@ using namespace std;
 int quordleCheatMode(const string& solverType) { // TODO: should make an enum here??
     auto qs = QuordleSolver(solverType, NUM_QUORDLE_GAMES);
 
-    for (size_t numGuesses = 0; numGuesses <= MAX_GUESSES; numGuesses++) {
+    for (size_t numGuesses = 0; numGuesses <= QUORDLE_MAX_GUESSES; numGuesses++) {
         string userGuess = helpers::promptUserToMakeGuess(numGuesses);
-        qs.processResults(helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses));
+        qs.processResults(helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses, qs.m_isInPlay));
+        auto wb = make_shared<WordleBuffer>();
+        qs.makeGuess(numGuesses, wb);
+        if (find(qs.m_isInPlay.begin(), qs.m_isInPlay.end(), false) == qs.m_isInPlay.end()) {
+            cout << "Quordle! " << numGuesses << "/" << MAX_GUESSES << endl;
+        }
     }
 
     return 0;

@@ -113,7 +113,6 @@ void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
     printNumCands("black");
 #if PRINT_GUESSES == true
-    cout << "printing!" << endl;
     m_trie->getCandidate(m_selector, m_knownCorrects, 0);
 #endif
 }
