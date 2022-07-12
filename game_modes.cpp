@@ -27,13 +27,27 @@ int quordleCheatMode(const string& solverType) { // TODO: should make an enum he
         string userGuess = helpers::promptUserToMakeGuess(numGuesses);
         qs.processResults(helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses, qs.m_isInPlay));
         auto wb = make_shared<WordleBuffer>();
-        qs.makeGuess(numGuesses, wb);
-        if (find(qs.m_isInPlay.begin(), qs.m_isInPlay.end(), false) == qs.m_isInPlay.end()) {
-            cout << "Quordle! " << numGuesses << "/" << MAX_GUESSES << endl;
+        if (none_of(qs.m_isInPlay.begin(), qs.m_isInPlay.end(), [](bool v) { return v; })) {
+            switch (numGuesses) {
+                case 5:
+                    cout << "Eagle!" << endl; break;
+                case 6:
+                    cout << "Birdie!" << endl; break;
+                case 7:
+                    cout << "Par!" << endl; break;
+                case 8:
+                    cout << "Bogie!" << endl; break;
+                case 9:
+                    cout << "Double Bogie!" << endl; break;
+            };
+            cout << "Quordle! " << numGuesses << "/" << QUORDLE_MAX_GUESSES << endl;
+            return 0;
         }
+        qs.makeGuess(numGuesses, wb);
     }
 
-    return 0;
+    cout << "Quordle /" << QUORDLE_MAX_GUESSES << endl;
+    return 1;
 }
 
 // Runs one iteration of the Wordle game with automated solver & checker.

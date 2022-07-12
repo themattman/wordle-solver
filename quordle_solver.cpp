@@ -21,7 +21,7 @@ void QuordleSolver::processResults(const vector<WordleGuess>& guesses) {
     for (size_t i = 0; i < m_numSolvers; i++) {
         if (guesses[i].results == CorrectWordleResult) {
             m_isInPlay[i] = false;
-            cout << "ONE OF THE GAMES IS SOLVED!!" << i << endl;
+            // cout << "ONE OF THE GAMES IS SOLVED!!" << i << endl;
         }
     }
 

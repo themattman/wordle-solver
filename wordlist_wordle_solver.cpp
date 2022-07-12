@@ -105,13 +105,13 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    cout << "processing" << endl;
+    // cout << "processing" << endl;
     trimGreens(guess, createPositionVector(guess, WordleResult::GREEN));
-    printNumCands("green");
+    // printNumCands("green");
     trimYellows(guess, createPositionVector(guess, WordleResult::YELLOW));
-    printNumCands("yellow");
+    // printNumCands("yellow");
     trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
-    printNumCands("black");
+    // printNumCands("black");
 #if PRINT_GUESSES == true
     m_trie->getCandidate(m_selector, m_knownCorrects, 0);
 #endif
