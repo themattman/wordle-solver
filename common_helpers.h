@@ -2,7 +2,6 @@
 
 #include "wordle_rules.h"
 #include "wordle_solver.h"
-#include "wordlist_wordle_solver.h"
 
 #include <algorithm>
 #include <ctype.h>
@@ -14,9 +13,9 @@
 using namespace std;
 
 
-inline size_t countOccurs(char letter, const string& word) {
-    return std::count(word.begin(), word.end(), letter);
-}
+// inline size_t countOccurs(char letter, const string& word) {
+//     return std::count(word.begin(), word.end(), letter);
+// }
 
 namespace Helpers {
 

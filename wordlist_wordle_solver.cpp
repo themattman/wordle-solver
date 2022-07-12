@@ -1,5 +1,5 @@
+#include "helpers.h"
 #include "wordlist_wordle_solver.h"
-#include "wordle_helpers.h"
 #include "wordle_rules.h"
 #include "wordle_selector.h"
 #include "wordle_solver.h"
@@ -147,7 +147,7 @@ void TrieBasedWordleSolver::trimYellows(const WordleGuess& g, const vector<size_
 
 void TrieBasedWordleSolver::trimBlacks(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
-        if (countOccurs(g.guessStr[p], g.guessStr) > 1) {
+        if (helpers::countOccurs(g.guessStr[p], g.guessStr) > 1) {
             if (isAnotherOccurrenceNotBlack(p, g)) {
                 // only remove letter for current slot
                 m_trie->fixupYellow(p, g.guessStr[p]);

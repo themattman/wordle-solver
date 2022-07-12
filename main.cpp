@@ -10,12 +10,11 @@ Solver:   in main()
 Selector: in the respective `WordleSolver` constructor. Currently all locations in `wordlist_wordle_solver.cpp`.
  */
 
-#include "quordle_helpers.h"
+#include "helpers.h"
 #include "quordle_rules.h"
 #include "quordle_solver.h"
 #include "wordle_buffer.h"
 #include "wordle_checker.h"
-#include "wordle_helpers.h"
 #include "wordle_rules.h"
 #include "wordle_selector.h"
 #include "wordle_solver.h"
@@ -51,7 +50,7 @@ void printUsage() {
 
 // Runs one iteration of the Wordle game with automated solver & checker.
 bool runOneGame(const string& solverType, const string& answer, size_t idx, shared_ptr<WordleBuffer> wb) {
-    auto solver = Helpers::createWordleSolver(solverType);
+    auto solver = helpers::createWordleSolver(solverType);
     auto checker = WordleChecker();
     checker.setAnswer(answer);
 
@@ -84,7 +83,7 @@ bool runOneGame(const string& solverType, const string& answer, size_t idx, shar
 
 // Runs automated solver across entire dictionary on multiple threads to speed up time to completion.
 void runAllWordsMultiThreaded(const string& solverType) {
-    vector<string> words = Helpers::getDictionary();
+    vector<string> words = helpers::getDictionary();
     size_t successes = 0;
     auto wb = make_shared<WordleBuffer>();
     wb->write("guess1cands,guess2cands,guess3cands,guess4cands,guess5cands,guess6cands,result,words_left,num_guesses,answer", 0, /*newline=*/ true);
@@ -107,7 +106,7 @@ void runAllWordsMultiThreaded(const string& solverType) {
 
 // Runs automated solver across entire dictionary.
 void runAllWords(const string& solverType) {
-    vector<string> words = Helpers::getDictionary();
+    vector<string> words = helpers::getDictionary();
     size_t successes = 0;
     size_t runs = 0;
     auto wb = make_shared<WordleBuffer>();
@@ -173,11 +172,11 @@ void runDebug(unique_ptr<WordleSolverImpl> solver, const string& answer) {
 int interactiveMode(unique_ptr<WordleSolverImpl> solver) {
     auto wb = make_shared<WordleBuffer>();
     size_t numGuesses = 1;
-    WordleGuess wg = Helpers::promptUserToCheckWordleGuess(solver->makeInitialGuess(wb, 1), numGuesses);
+    WordleGuess wg = helpers::promptUserToCheckWordleGuess(solver->makeInitialGuess(wb, 1), numGuesses);
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            wg = Helpers::promptUserToCheckWordleGuess(solver->makeSubsequentGuess(numGuesses, wb, 1), numGuesses);
+            wg = helpers::promptUserToCheckWordleGuess(solver->makeSubsequentGuess(numGuesses, wb, 1), numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
@@ -206,13 +205,13 @@ int cheatMode(unique_ptr<WordleSolverImpl> solver) {
     // wordle_selectors.cpp:75 MostCommonLetterSelector<>::select() -> mcl, scores
 
     size_t numGuesses = 1;
-    string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
-    WordleGuess wg = Helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
+    string userGuess = helpers::promptUserToMakeGuess(numGuesses);
+    WordleGuess wg = helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
     if (wg != CorrectWordleGuess) {
         solver->processResult(wg);
         for (numGuesses++; numGuesses <= MAX_GUESSES; numGuesses++) {
-            userGuess = Helpers::promptUserToMakeGuess(numGuesses);
-            wg = Helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
+            userGuess = helpers::promptUserToMakeGuess(numGuesses);
+            wg = helpers::promptUserToCheckWordleGuess(userGuess, numGuesses);
             if (wg == CorrectWordleGuess) {
                 break;
             }
@@ -235,8 +234,8 @@ int quordleCheatMode(const string& solverType) { // TODO: should make an enum he
     auto qs = QuordleSolver(solverType, NUM_QUORDLE_GAMES);
 
     for (size_t numGuesses = 0; numGuesses <= MAX_GUESSES; numGuesses++) {
-        string userGuess = Helpers::promptUserToMakeGuess(numGuesses);
-        qs.processResults(Helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses));
+        string userGuess = helpers::promptUserToMakeGuess(numGuesses);
+        qs.processResults(helpers::promptUserToCheckQuordleGuess(userGuess, numGuesses));
     }
 
     return 0;
@@ -278,7 +277,7 @@ int main(int argc, char* argv[]) {
         if (vm.count("solver")) {
             solverType = vm["solver"].as<string>();
         }
-        auto solver = Helpers::createWordleSolver(solverType);
+        auto solver = helpers::createWordleSolver(solverType);
         auto solverMode = vm["mode"].as<string>();
         cout << "mode:" << solverMode << endl;
 
@@ -295,7 +294,7 @@ int main(int argc, char* argv[]) {
                 cerr << "'one' mode requires a 'word' as a solution" << endl;
                 printUsage();
             }
-            if (!Helpers::isWordInDictionary(vm["word"].as<string>())) {
+            if (!helpers::isWordInDictionary(vm["word"].as<string>())) {
                 cerr << "Error: [" << vm["word"].as<string>() << "] not in the wordlist" << endl;
                 return 1;
             }
@@ -312,7 +311,7 @@ int main(int argc, char* argv[]) {
                 cerr << "'debug' mode requires a 'word' as a solution" << endl;
                 printUsage();
             }
-            if (!Helpers::isWordInDictionary(vm["word"].as<string>())) {
+            if (!helpers::isWordInDictionary(vm["word"].as<string>())) {
                 cerr << "Error: [" << vm["word"].as<string>() << "] not in the wordlist" << endl;
                 return 1;
             }
