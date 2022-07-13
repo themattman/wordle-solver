@@ -392,3 +392,12 @@ main
 The movement/ownership of WordleTrie within the TrieBasedWordleSolver is messing up Quordle. Need to think through it more now. unique_ptr to hold the Trie, deleting ctors to see if that breaks compilation (doesn't)
 
 - [ ] processResult should return bool = true when complete to signal that the game was won, take this into account and mark each game as true and no longer consider their results
+
+## Bug
+
+0) slice
+1) renal
+2) noble
+3) lefty
+4) catty
+5) trait (why was tiara a possibility?)

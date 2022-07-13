@@ -16,6 +16,12 @@ string RandomWordleSelector<IterType>::select(IterType begin, IterType end, size
 }
 
 template <typename IterType>
+unordered_map<string, size_t> RandomWordleSelector<IterType>::getScores() const {
+    //IterType begin, IterType end, size_t rangeSize) {
+    return {};
+}
+
+template <typename IterType>
 size_t RandomWordleSelector<IterType>::getRandom(IterType begin, IterType end, size_t rangeSize) const {
     srand(time(NULL));
     return rand() % rangeSize;
@@ -61,6 +67,12 @@ bool EnhancedRandomWordleSelector<IterType>::containsOneVowel(const string& word
 }
 
 ////////////////
+
+template <typename IterType>
+unordered_map<string, size_t> MostCommonLetterWordleSelector<IterType>::getScores() const {
+    //IterType begin, IterType end, size_t rangeSize) {
+    return m_alphabetWordScore;
+}
 
 template <typename IterType>
 string MostCommonLetterWordleSelector<IterType>::select(IterType begin, IterType end, size_t rangeSize,
@@ -182,6 +194,11 @@ void MostCommonLetterWordleSelector<IterType>::sortWordsByFrequency() {
         m_sortedWords.insert(ws);
     }
 }
+
+// template <typename IterType>
+// void MostCommonLetterWordleSelector<IterType>::computeFrequencyMapInternal(
+//     unordered_map<char, size_t> &letterMap,
+//     unordered_map<string, size_t> &wordScore) {}
 
 template <typename IterType>
 void NaiveMostCommonLetterWordleSelector<IterType>::computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,

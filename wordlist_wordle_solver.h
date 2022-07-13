@@ -82,9 +82,8 @@ public:
     string makeInitialGuess(buf_ptr wb, size_t idx) override;
     string makeSubsequentGuess(size_t guessNum, buf_ptr wb, size_t idx) override;
     void processResult(const WordleGuess& guess) override;
-    size_t getNumCandidates() const override {
-        return m_trie->getNumCandidates();
-    }
+    size_t getNumCandidates() const override { return m_trie->getNumCandidates(); }
+    unordered_map<string, size_t> getScores() { return m_trie->getScores(m_selector); }
 protected:
     vector<size_t> createPositionVector(const WordleGuess& allPositions, WordleResult wr);
     bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;

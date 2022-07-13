@@ -20,6 +20,7 @@ public:
     WordleSelector(size_t id)
         : m_id(id) { srand(time(nullptr)); }
     virtual string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) = 0;
+    virtual unordered_map<string, size_t> getScores() const = 0; //IterType begin, IterType end, size_t rangeSize);
 protected:
     size_t m_id;
     size_t m_guessNum{0};
@@ -30,6 +31,7 @@ class RandomWordleSelector : public WordleSelector<IterType> {
 public:
     using WordleSelector<IterType>::WordleSelector;
     string select(IterType begin, IterType end, size_t rangeSize, const vector<WordleKnown>& knowns, size_t guessNum) override;
+    unordered_map<string, size_t> getScores() const override;
 private:
     size_t getRandom(IterType begin, IterType end, size_t rangeSize) const;
 };
@@ -76,6 +78,7 @@ protected:
     void sortWordsByFrequency();
     void printCandidates() const;
     void printLogPrefix() const;
+    unordered_map<string, size_t> getScores() const override;
     virtual void computeFrequencyMapInternal(unordered_map<char, size_t>& letterMap,
                                              unordered_map<string, size_t>& wordScore) = 0;
 

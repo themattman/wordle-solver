@@ -40,7 +40,7 @@ int quordleCheatMode(const string& solverType) { // TODO: should make an enum he
                 case 9:
                     cout << "Double Bogie!" << endl; break;
             };
-            cout << "Quordle! " << numGuesses << "/" << QUORDLE_MAX_GUESSES << endl;
+            cout << "Quordle! " << numGuesses+1 << "/" << QUORDLE_MAX_GUESSES << endl;
             return 0;
         }
         qs.makeGuess(numGuesses, wb);

@@ -89,9 +89,17 @@ public:
     void fixupBlack(size_t letterPosition, char letter) {
         removeAllOfLetter(letter, *m_root);
     }
-    string getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum);
+    string getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum) {
+        return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns, guessNum);
+    }
     size_t getNumCandidates() const { return m_candidates.size(); }
     void printCandidates() const;
+
+    // Can only be called after getCandidate().
+    // Doesn't regenerate results.
+    unordered_map<string, size_t> getScores(WordleSelector<SetIterator>* selector) {
+        return selector->getScores(); //m_candidates.begin(), m_candidates.end(), m_candidates.size());
+    }
 private:
     void insertAtNode(string prefix, string remainingWord, WordleTrieNode* node);
     bool letterExists(char letter, WordleTrieNode* node, WordleTrieNode** match);

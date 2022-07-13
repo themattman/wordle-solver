@@ -1,7 +1,7 @@
 #pragma once
 
 #include "wordle_rules.h"
-#include "wordle_solver.h"
+#include "wordlist_wordle_solver.h"
 
 #include <string>
 #include <utility>
@@ -18,7 +18,7 @@ class QuordleSolver {
     vector<bool> m_isInPlay;
  private:
     void printRemainingCandidates() const;
-    vector<unique_ptr<WordleSolver>> m_solvers;
+    vector<unique_ptr<TrieBasedWordleSolver>> m_solvers;
     vector<size_t> m_numCandidatesList;
     pair<size_t, size_t> m_lowestCountAndIndex; // 0: size, 1: index
     size_t m_numSolvers;

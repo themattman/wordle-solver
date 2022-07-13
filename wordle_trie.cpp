@@ -8,11 +8,6 @@
 using namespace std;
 
 
-string WordleTrie::getCandidate(WordleSelector<SetIterator>* selector, const vector<WordleKnown>& knowns, size_t guessNum) {
-    cout << "getCandidate:" << m_candidates.size() << endl;
-    return selector->select(m_candidates.begin(), m_candidates.end(), m_candidates.size(), knowns, guessNum);
-}
-
 void WordleTrie::printCandidates() const {
     cout << "Candidates: (Showing "
          << ((m_candidates.size() > PRINT_GUESSES_SIZE) ? PRINT_GUESSES_SIZE : m_candidates.size())
