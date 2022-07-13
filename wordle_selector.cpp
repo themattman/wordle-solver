@@ -99,26 +99,6 @@ void MostCommonLetterWordleSelector<IterType>::clearOldState() {
 
 template <typename IterType>
 bool MostCommonLetterWordleSelector<IterType>::containsAllHints(const string& word) const {
-    // vector<char> knownHints;
-    // cout << "word: " << word << " hints: ";
-    // for (size_t i = 0; i < LETTER_COUNT; i++) {
-    //     if (this->m_knowns[i].result != WordleResult::BLACK) {
-    //         knownHints.push_back(this->m_knowns[i].letter);
-    //         cout << this->m_knowns[i].letter << ",";
-    //     }
-    // }
-    // cout << endl;
-
-    // for (size_t i = 0; i < LETTER_COUNT; i++) {
-    //     for (auto it = knownHints.begin(); it != knownHints.end(); it++) {
-    //         if (word[i] == *it) {
-    //             knownHints.erase(it);
-    //             break;
-    //         }
-    //     }
-    // }
-
-    // return knownHints.empty();
     return true;
 }
 
@@ -148,9 +128,6 @@ void MostCommonLetterWordleSelector<IterType>::printCandidates() const {
 template <typename IterType>
 string MostCommonLetterWordleSelector<IterType>::getBestCandidate() const {
     auto it = m_sortedWords.begin();
-    // for (;!containsAllHints(it->word); it++) {
-    //     cout << "nope." << endl;
-    // }
     return it->word;
 }
 

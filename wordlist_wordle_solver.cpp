@@ -88,7 +88,7 @@ string TrieBasedWordleSolver::makeSubsequentGuess(size_t numGuess, buf_ptr wb, s
     throw;
 }
 
-void TrieBasedWordleSolver::printNumCands(const string& color) const {
+void TrieBasedWordleSolver::printNumCandidates(const string& color) const {
     if (DEBUG) {
         string color_code;
         string end_color_code = "\033[0m";
@@ -105,13 +105,9 @@ void TrieBasedWordleSolver::printNumCands(const string& color) const {
 
 void TrieBasedWordleSolver::processResult(const WordleGuess& guess) {
     // most restrictive -> least restrictive
-    // cout << "processing" << endl;
-    trimGreens(guess, createPositionVector(guess, WordleResult::GREEN));
-    // printNumCands("green");
-    trimYellows(guess, createPositionVector(guess, WordleResult::YELLOW));
-    // printNumCands("yellow");
-    trimBlacks(guess, createPositionVector(guess, WordleResult::BLACK));
-    // printNumCands("black");
+    trimGreenCandidates(guess, createPositionVector(guess, WordleResult::GREEN));
+    trimYellowCandidates(guess, createPositionVector(guess, WordleResult::YELLOW));
+    trimBlackCandidates(guess, createPositionVector(guess, WordleResult::BLACK));
 #if PRINT_GUESSES == true
     m_trie->getCandidate(m_selector, m_knownCorrects, 0);
 #endif
@@ -132,19 +128,19 @@ vector<size_t> TrieBasedWordleSolver::createPositionVector(const WordleGuess& al
     return positions;
 }
 
-void TrieBasedWordleSolver::trimGreens(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimGreenCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         m_trie->fixupGreen(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimYellows(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimYellowCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         m_trie->fixupYellow(p, g.guessStr[p]);
     }
 }
 
-void TrieBasedWordleSolver::trimBlacks(const WordleGuess& g, const vector<size_t>& positions) {
+void TrieBasedWordleSolver::trimBlackCandidates(const WordleGuess& g, const vector<size_t>& positions) {
     for (auto& p : positions) {
         if (helpers::countOccurs(g.guessStr[p], g.guessStr) > 1) {
             if (isAnotherOccurrenceNotBlack(p, g)) {

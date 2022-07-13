@@ -87,10 +87,10 @@ public:
 protected:
     vector<size_t> createPositionVector(const WordleGuess& allPositions, WordleResult wr);
     bool isAnotherOccurrenceNotBlack(size_t position, const WordleGuess& g) const;
-    void printNumCands(const string& color) const;
-    void trimGreens(const WordleGuess& g, const vector<size_t>& positions);
-    void trimYellows(const WordleGuess& g, const vector<size_t>& positions);
-    void trimBlacks(const WordleGuess& g, const vector<size_t>& positions);
+    void printNumCandidates(const string& color) const;
+    void trimGreenCandidates(const WordleGuess& g, const vector<size_t>& positions);
+    void trimYellowCandidates(const WordleGuess& g, const vector<size_t>& positions);
+    void trimBlackCandidates(const WordleGuess& g, const vector<size_t>& positions);
 
     unique_ptr<WordleTrie> m_trie;
 };

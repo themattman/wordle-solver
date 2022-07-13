@@ -45,7 +45,6 @@ void QuordleSolver::printRemainingCandidates() const {
     for (size_t i = 0; i < m_numSolvers; i++) {
         cout << "solver[" << i << "]: " << m_numCandidatesList[i] << endl;
     }
-    //cout << "*lowest* sz:" << m_lowestCountAndIndex.first << " idx:" << m_lowestCountAndIndex.second << endl;
 }
 
 string QuordleSolver::makeGuess(size_t numGuess, buf_ptr wb) {
@@ -60,8 +59,6 @@ string QuordleSolver::makeGuess(size_t numGuess, buf_ptr wb) {
         unordered_map<string, size_t> combinedScoreMap;
         for (size_t i = 0; i < m_numSolvers; i++) {
             if (m_isInPlay[i]) {
-                // cout << "Getting guess from: [" << i << "] w/numCandidates="
-                //    << m_solvers[i]->getNumCandidates() << endl;
                 nextGuess = m_solvers[i]->makeSubsequentGuess(numGuess, wb, i);
                 auto scoreMap = m_solvers[i]->getScores();
                 for (auto& wordScore : scoreMap) {
@@ -72,7 +69,6 @@ string QuordleSolver::makeGuess(size_t numGuess, buf_ptr wb) {
                         combinedScoreMap.insert(wordScore);
                     }
                 }
-                //combinedScoreMap.insert(combinedScoreMap.end(), scoreMap.begin(), scoreMap.end());
             }
         }
 
@@ -83,9 +79,6 @@ string QuordleSolver::makeGuess(size_t numGuess, buf_ptr wb) {
         nextGuess = (--invertedScoreMap.end())->second;
     }
 
-    // for (size_t i = 0; i < m_numSolvers; i++) {
-    //     if (m_solvers[i]
-    // }
     cout << "I pick: [" << nextGuess << "]" << endl;
     return nextGuess;
 }
