@@ -49,7 +49,7 @@ void QuordleSolver::printRemainingCandidates() const {
 
 string QuordleSolver::makeGuess(size_t numGuess, buf_ptr wb) {
     string nextGuess;
-    if (m_lowestCountAndIndex.first < 10) {
+    if (m_lowestCountAndIndex.first < 4) {
         // See if there's an obvious choice
         auto& solver = m_solvers[m_lowestCountAndIndex.second];
         nextGuess = solver->makeSubsequentGuess(numGuess, wb, m_lowestCountAndIndex.second);

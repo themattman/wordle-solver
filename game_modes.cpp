@@ -19,7 +19,6 @@
 using namespace std;
 
 
-// *cheat mode for wordle*
 int quordleCheatMode(const string& solverType) { // TODO: should make an enum here??
     auto qs = QuordleSolver(solverType, NUM_QUORDLE_GAMES);
 
@@ -45,6 +44,39 @@ int quordleCheatMode(const string& solverType) { // TODO: should make an enum he
         }
         qs.makeGuess(numGuesses, wb);
     }
+
+    cout << "Quordle /" << QUORDLE_MAX_GUESSES << endl;
+    return 1;
+}
+
+int quordleCheatAutoGuessMode(const string& solverType) {
+    auto qs = QuordleSolver(solverType, NUM_QUORDLE_GAMES);
+
+    string guess = "slice";
+    auto wb = make_shared<WordleBuffer>();
+    size_t numGuesses = 0;
+    do {
+        qs.processResults(helpers::promptUserToCheckQuordleGuess(
+                              guess, numGuesses, qs.m_isInPlay));
+        if (none_of(qs.m_isInPlay.begin(), qs.m_isInPlay.end(), [](bool v) { return v; })) {
+            switch (numGuesses) {
+                case 5:
+                    cout << "Eagle!" << endl; break;
+                case 6:
+                    cout << "Birdie!" << endl; break;
+                case 7:
+                    cout << "Par!" << endl; break;
+                case 8:
+                    cout << "Bogie!" << endl; break;
+                case 9:
+                    cout << "Double Bogie!" << endl; break;
+            };
+            cout << "Quordle! " << numGuesses+1 << "/" << QUORDLE_MAX_GUESSES << endl;
+            return 0;
+        }
+        numGuesses++;
+        guess = qs.makeGuess(numGuesses, wb);
+    } while (numGuesses <= QUORDLE_MAX_GUESSES);
 
     cout << "Quordle /" << QUORDLE_MAX_GUESSES << endl;
     return 1;

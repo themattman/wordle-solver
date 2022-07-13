@@ -13,6 +13,7 @@ using namespace std;
 
 
 int quordleCheatMode(const string& solverType);
+int quordleCheatAutoGuessMode(const string& solverType);
 bool runOneGame(const string& solverType, const string& answer, size_t idx, shared_ptr<WordleBuffer> wb);
 void runAllWordsMultiThreaded(const string& solverType);
 void runAllWords(const string& solverType);

@@ -43,7 +43,7 @@ void printUsage() {
     cerr << "Options:" << endl;
     cerr << " -h,--help   : produce help message" << endl;
     cerr << " -s,--solver : choose between: trie(default),wordlist" << endl;
-    cerr << " -m,--mode   : choose between: all,cheat,debug,interactive,one" << endl;
+    cerr << " -m,--mode   : choose between: all,cheat,debug,interactive,one,quordle,quordle_auto" << endl;
     cerr << " -t,--multi  : multi-threaded (assumes --mode all)" << endl;
     cerr << " -w,--word   : answer word for certain modes" << endl;
     exit(1);
@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
         ("help,h", "produce help message")
         ("solver,s", po::value<string>(), "choose between: trie(default),wordlist")
         // ("selector,l", po::value<string>(), "EnhancedRandom,FrequencyAndPositionalLetter(default),ImprovedMostCommonLetter,NaiveMostCommonLetter,PositionalLetter,Random")
-        ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one,quordle")
+        ("mode,m", po::value<string>(), "choose between: all,cheat,debug,interactive,one,quordle,quordle_auto")
         ("multi,t", "multi-threaded (assumes --mode all)")
         ("word,w", po::value<string>(), "answer word for certain modes")
         ;
@@ -127,6 +127,8 @@ int main(int argc, char* argv[]) {
             runDebug(move(solver), vm["word"].as<string>());
         } else if (solverMode == "quordle") {
             quordleCheatMode(solverType);
+        } else if (solverMode == "quordle_auto") {
+            quordleCheatAutoGuessMode(solverType);
         } else if (solverMode == "interactive") {
             cout << endl;
             interactiveMode(move(solver));

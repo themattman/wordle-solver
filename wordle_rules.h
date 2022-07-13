@@ -4,9 +4,9 @@
 #include <vector>
 
 #define VERSION 4.0
-#define DEBUG true
+#define DEBUG false
 #define DEBUG_UNICODE true
-#define PRINT_GUESSES true
+#define PRINT_GUESSES false
 #define PRINT_GUESSES_SIZE 20
 #define LIGHT_MODE false
 #define DICTIONARY_FILENAME "answers.txt"
